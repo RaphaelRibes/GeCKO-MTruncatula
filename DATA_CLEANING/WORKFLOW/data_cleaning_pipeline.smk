@@ -27,6 +27,7 @@ rule FinalTargets:
         working_directory+"/RESULTS/RAWDATA/"+fastq_R2_raw_base+"_fastqc.html",
 
         # RAW DATA -> reads count output
+        working_directory+"/RESULTS/RAWDATA/fastq_read_count_raw_data.txt",
 
         # DEMULTIPLEXED FASTQ outputs
         #expand("{working_directory}/DEMULT/{library_name}.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
@@ -62,11 +63,20 @@ rule Fastqc_RawFastqs:
         raw_data_folder+"/{base}.fastq.gz"
     output:
         working_directory+"/RESULTS/RAWDATA/{base}_fastqc.html"
-    envmodules:
-        config["modules"]["fastqc"]
+    conda:
+        "envs/conda_tools.yml"
     shell:
         "fastqc -o {working_directory}/RESULTS/RAWDATA/ {input}"
 
+
+rule CountReads_RawFastqs:
+    input:
+        fastq_R1_raw,
+        fastq_R2_raw
+    output:
+        working_directory+"/RESULTS/RAWDATA/fastq_read_count_raw_data.txt"
+    shell:
+        "{prgr}/fastq_read_count.sh --fastq_dir {working_directory}/RAWDATA --output {output}"
 
 
 rule Demultiplex_RawFastqs:
@@ -80,8 +90,8 @@ rule Demultiplex_RawFastqs:
     params:
         auth_subst_fraction = config["AUTH_SUBST_FRACTION"],
         threads = config["DEMULT_THREADS"]
-    envmodules:
-        config["modules"]["cutadapt"]
+    conda:
+        "envs/conda_tools.yml"
     shell:
         "{prgr}/demultiplex_with_cutadapt.sh --demultdir {working_directory}/DEMULT --R1 {input.fastq_R1_raw} "
         "--R2 {input.fastq_R2_raw} --tag_file {input.tag_file} --nodes {params.threads} "
@@ -91,8 +101,8 @@ rule Demultiplex_RawFastqs:
 
 rule CountReads_DemultFastqs:
     input:
-        fastqs_R1_demult = expand("{working_directory}/DEMULT/{library_name}.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
-        fastqs_R2_demult = expand("{working_directory}/DEMULT/{library_name}.R2.fastq.gz", library_name=library_names, working_directory=working_directory)
+        expand("{working_directory}/DEMULT/{library_name}.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
+        expand("{working_directory}/DEMULT/{library_name}.R2.fastq.gz", library_name=library_names, working_directory=working_directory)
     output:
         working_directory+"/RESULTS/DEMULT/fastq_read_count_demult.txt"
     shell:
@@ -113,8 +123,8 @@ rule Trimming_DemultFastqs:
         threads = config["TRIMMING_THREADS"],
         qual = config["TRIMMING_QUAL"],
         min_length = config["TRIMMING_MIN_LENGTH"]
-    envmodules:
-        config["modules"]["cutadapt"]
+    conda:
+        "envs/conda_tools.yml"
     shell:
         "{prgr}/trimming_with_cutadapt.sh --ind {wildcards.base} --trimdir {working_directory}/DEMULT_TRIM "
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapt_file {input.adapt_file} "
@@ -123,8 +133,8 @@ rule Trimming_DemultFastqs:
 
 rule CountReads_TrimmedFastqs:
     input:
-        fastqs_R1_trim = expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
-        fastqs_R2_trim = expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R1.fastq.gz", library_name=library_names, working_directory=working_directory)
+        expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
+        expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R1.fastq.gz", library_name=library_names, working_directory=working_directory)
     output:
         working_directory+"/RESULTS/DEMULT_TRIM/fastq_read_count_demult_trim.txt"
     shell:
@@ -136,8 +146,8 @@ rule MultiQC_TrimmedFastqs:
         expand("{working_directory}/DEMULT_TRIM/trimming_cutadapt_report_{library_name}.txt", library_name=library_names, working_directory=working_directory)
     output:
         working_directory+"/RESULTS/DEMULT_TRIM/trimming_multiqc_report.html"
-    envmodules:
-        config["modules"]["multiqc"]
+    conda:
+        "envs/conda_tools.yml"
     shell:
         "multiqc {input} -o {working_directory}/RESULTS/DEMULT_TRIM -n trimming_multiqc_report"
 
@@ -156,8 +166,8 @@ rule Fastqc_ConcatTrimmedFastqs:
         working_directory+"/DEMULT_TRIM/tmp_all_concat_trimmed.{R}.fastq.gz"
     output:
         working_directory+"/RESULTS/DEMULT_TRIM/all_trimmed.{R}_fastqc.html"
-    envmodules:
-        config["modules"]["fastqc"]
+    conda:
+        "envs/conda_tools.yml"
     shell:
         "fastqc -o {working_directory}/RESULTS/DEMULT_TRIM/ {input} ;"
         "mv {working_directory}/RESULTS/DEMULT_TRIM/tmp_all_concat_trimmed.{wildcards.R}_fastqc.html {working_directory}/RESULTS/DEMULT_TRIM/all_trimmed.{wildcards.R}_fastqc.html ;"

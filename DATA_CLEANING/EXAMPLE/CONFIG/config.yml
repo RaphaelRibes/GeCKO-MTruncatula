@@ -16,9 +16,3 @@ AUTH_SUBST_FRACTION: 0.1
 TRIMMING_THREADS: 1
 TRIMMING_QUAL: 30
 TRIMMING_MIN_LENGTH: 36
-
-### MODULES ###
-modules:
-  fastqc: "fastqc/0.11.7"
-  cutadapt: "cutadapt/3.5-bin"
-  multiqc: "multiqc/1.9"

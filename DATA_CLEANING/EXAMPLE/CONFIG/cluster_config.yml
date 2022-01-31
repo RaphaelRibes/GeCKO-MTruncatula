@@ -5,7 +5,7 @@
         "output"         : "pipeline_rules_logs/{rule}.%j.out.txt",
         "error"          : "pipeline_rules_logs/{rule}.%j.err.txt"
     },
-  "TrimmingCutadapt" : {
+  "Trimming_DemultFastqs" : {
         "output"         : "pipeline_rules_logs/{rule}.{wildcards.base}.%j.out.txt",
         "error"          : "pipeline_rules_logs/{rule}.{wildcards.base}.%j.err.txt"
     }
