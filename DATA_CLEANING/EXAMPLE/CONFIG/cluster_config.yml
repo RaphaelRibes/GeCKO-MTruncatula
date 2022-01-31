@@ -1,0 +1,12 @@
+{
+  "__default__" : {
+      "partition"      : "agap_normal",
+        "job-name"       : "DC.{rule}",
+        "output"         : "pipeline_rules_logs/{rule}.%j.out.txt",
+        "error"          : "pipeline_rules_logs/{rule}.%j.err.txt"
+    },
+  "TrimmingCutadapt" : {
+        "output"         : "pipeline_rules_logs/{rule}.{wildcards.base}.%j.out.txt",
+        "error"          : "pipeline_rules_logs/{rule}.{wildcards.base}.%j.err.txt"
+    }
+}

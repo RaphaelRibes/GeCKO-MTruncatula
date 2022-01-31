@@ -1,0 +1,24 @@
+### GENERAL VARIABLES ###
+PRGR: "/home/girodollej/PRGR_SNAKEMAKE"
+WORKDIR: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001"
+
+### INPUT FILES ###
+FASTQ_R1: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_L001_R1_001.fastq.gz"
+FASTQ_R2: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_L001_R2_001.fastq.gz"
+TAG_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/METADATA/tag_file_VIR_Cap001.txt"
+ADAPT_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/METADATA/adapter_file_VIR_Cap001.txt"
+
+### DEMULTIPLEXING PARAMETERS ###
+DEMULT_THREADS: 1
+AUTH_SUBST_FRACTION: 0.1
+
+### TRIMMING PARAMETERS ###
+TRIMMING_THREADS: 1
+TRIMMING_QUAL: 30
+TRIMMING_MIN_LENGTH: 36
+
+### MODULES ###
+modules:
+  fastqc: "fastqc/0.11.7"
+  cutadapt: "cutadapt/3.5-bin"
+  multiqc: "multiqc/1.9"
