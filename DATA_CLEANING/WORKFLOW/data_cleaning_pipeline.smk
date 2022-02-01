@@ -64,7 +64,7 @@ rule Fastqc_RawFastqs:
     output:
         working_directory+"/RESULTS/RAWDATA/{base}_fastqc.html"
     conda:
-        "envs/conda_tools.yml"
+        "ENVS/conda_tools.yml"
     shell:
         "fastqc -o {working_directory}/RESULTS/RAWDATA/ {input}"
 
@@ -91,7 +91,7 @@ rule Demultiplex_RawFastqs:
         auth_subst_fraction = config["AUTH_SUBST_FRACTION"],
         threads = config["DEMULT_THREADS"]
     conda:
-        "envs/conda_tools.yml"
+        "ENVS/conda_tools.yml"
     shell:
         "{prgr}/demultiplex_with_cutadapt.sh --demultdir {working_directory}/DEMULT --R1 {input.fastq_R1_raw} "
         "--R2 {input.fastq_R2_raw} --tag_file {input.tag_file} --nodes {params.threads} "
@@ -124,7 +124,7 @@ rule Trimming_DemultFastqs:
         qual = config["TRIMMING_QUAL"],
         min_length = config["TRIMMING_MIN_LENGTH"]
     conda:
-        "envs/conda_tools.yml"
+        "ENVS/conda_tools.yml"
     shell:
         "{prgr}/trimming_with_cutadapt.sh --ind {wildcards.base} --trimdir {working_directory}/DEMULT_TRIM "
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapt_file {input.adapt_file} "
@@ -147,7 +147,7 @@ rule MultiQC_TrimmedFastqs:
     output:
         working_directory+"/RESULTS/DEMULT_TRIM/trimming_multiqc_report.html"
     conda:
-        "envs/conda_tools.yml"
+        "ENVS/conda_tools.yml"
     shell:
         "multiqc {input} -o {working_directory}/RESULTS/DEMULT_TRIM -n trimming_multiqc_report"
 
@@ -167,7 +167,7 @@ rule Fastqc_ConcatTrimmedFastqs:
     output:
         working_directory+"/RESULTS/DEMULT_TRIM/all_trimmed.{R}_fastqc.html"
     conda:
-        "envs/conda_tools.yml"
+        "ENVS/conda_tools.yml"
     shell:
         "fastqc -o {working_directory}/RESULTS/DEMULT_TRIM/ {input} ;"
         "mv {working_directory}/RESULTS/DEMULT_TRIM/tmp_all_concat_trimmed.{wildcards.R}_fastqc.html {working_directory}/RESULTS/DEMULT_TRIM/all_trimmed.{wildcards.R}_fastqc.html ;"
