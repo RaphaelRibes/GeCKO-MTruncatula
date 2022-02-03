@@ -1,16 +1,16 @@
 ### GENERAL VARIABLES ###
-PRGR: "/home/girodollej/PRGR_SNAKEMAKE"
+PRGR: "/home/girodollej/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW/SCRIPTS"
 WORKDIR: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001"
 
 ### INPUT FILES ###
 FASTQ_R1: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_L001_R1_001.fastq.gz"
 FASTQ_R2: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_L001_R2_001.fastq.gz"
-TAG_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/METADATA/tag_file_VIR_Cap001.txt"
-ADAPT_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/METADATA/adapter_file_VIR_Cap001.txt"
+TAG_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/tag_file_VIR_Cap001.txt"
+ADAPT_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/adapter_file_VIR_Cap001.txt"
 
 ### DEMULTIPLEXING PARAMETERS ###
 DEMULT_THREADS: 1
-AUTH_SUBST_FRACTION: 0.1
+SUBSTITUTIONS: 0.1
 
 ### TRIMMING PARAMETERS ###
 TRIMMING_THREADS: 1

@@ -16,15 +16,15 @@ fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[1].replace('.fastq','').replace(
 fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
 raw_data_folder = fastq_R1_raw.rsplit('/', 1)[0]
 
-
+fastq_raw_base = fastq_R1_raw_base.replace('_R1','')
 
 ### PIPELINE ###
 
 rule FinalTargets:
     input:
         # RAW DATA -> fastqc outputs
-        working_directory+"/RESULTS/RAWDATA/"+fastq_R1_raw_base+"_fastqc.html",
-        working_directory+"/RESULTS/RAWDATA/"+fastq_R2_raw_base+"_fastqc.html",
+        working_directory+"/RESULTS/RAWDATA/"+fastq_R1_raw_base+"_fastqc.zip",
+        working_directory+"/RESULTS/RAWDATA/"+fastq_R2_raw_base+"_fastqc.zip",
 
         # RAW DATA -> reads count output
         working_directory+"/RESULTS/RAWDATA/fastq_read_count_raw_data.txt",
@@ -44,16 +44,18 @@ rule FinalTargets:
         working_directory+"/RESULTS/DEMULT_TRIM/fastq_read_count_demult_trim.txt",
 
         # TRIMMED FASTQ -> multiQC output
-        working_directory+"/RESULTS/DEMULT_TRIM/trimming_multiqc_report.html",
+        working_directory+"/RESULTS/GLOBAL/trimming_multiqc_report.html",
 
         # CONCATENATED TRIMMED FASTQ output
         #working_directory+"/DEMULT_TRIM/smk_all_concat_trimmed.R1.fastq.gz",
         #working_directory+"/DEMULT_TRIM/smk_all_concat_trimmed.R2.fastq.gz"
 
         # CONCATENATED TRIMMED FASTQ -> fastqc outputs
-        working_directory+"/RESULTS/DEMULT_TRIM/all_trimmed.R1_fastqc.html",
-        working_directory+"/RESULTS/DEMULT_TRIM/all_trimmed.R2_fastqc.html"
+        working_directory+"/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.R1_fastqc.zip",
+        working_directory+"/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.R2_fastqc.zip",
 
+        # TRIMMED FASTQ -> multiQC output
+        working_directory+"/RESULTS/GLOBAL/DATA_CLEANING_multiqc_global_report.html"
 
  # ----------------------------------------------------------------------------------------------- #
 
@@ -62,7 +64,9 @@ rule Fastqc_RawFastqs:
     input:
         raw_data_folder+"/{base}.fastq.gz"
     output:
-        working_directory+"/RESULTS/RAWDATA/{base}_fastqc.html"
+        #working_directory+"/RESULTS/RAWDATA/{base}_fastqc.html"
+        working_directory+"/RESULTS/RAWDATA/{base}_fastqc.zip"
+
     conda:
         "ENVS/conda_tools.yml"
     shell:
@@ -88,14 +92,14 @@ rule Demultiplex_RawFastqs:
         expand("{working_directory}/DEMULT/{library_name}.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
         expand("{working_directory}/DEMULT/{library_name}.R2.fastq.gz", library_name=library_names, working_directory=working_directory)
     params:
-        auth_subst_fraction = config["AUTH_SUBST_FRACTION"],
+        substitutions = config["SUBSTITUTIONS"],
         threads = config["DEMULT_THREADS"]
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "{prgr}/demultiplex_with_cutadapt.sh --demultdir {working_directory}/DEMULT --R1 {input.fastq_R1_raw} "
+        "{prgr}/demultiplex_with_cutadapt_Morgane.sh --demultdir {working_directory}/DEMULT --R1 {input.fastq_R1_raw} "
         "--R2 {input.fastq_R2_raw} --tag_file {input.tag_file} --nodes {params.threads} "
-        "--auth_subst {params.auth_subst_fraction}"
+        "--substitutions {params.substitutions}"
 
 
 
@@ -118,7 +122,8 @@ rule Trimming_DemultFastqs:
     output:
         working_directory+"/DEMULT_TRIM/{base}_trimmed.R1.fastq.gz",
         working_directory+"/DEMULT_TRIM/{base}_trimmed.R2.fastq.gz",
-        working_directory+"/DEMULT_TRIM/trimming_cutadapt_report_{base}.txt"
+        working_directory+"/DEMULT_TRIM/trimming_cutadapt_report_{base}.txt",
+        temp(working_directory+"/DEMULT_TRIM/tmp_trimming_cutadapt_report_{base}.txt")
     params:
         threads = config["TRIMMING_THREADS"],
         qual = config["TRIMMING_QUAL"],
@@ -128,50 +133,84 @@ rule Trimming_DemultFastqs:
     shell:
         "{prgr}/trimming_with_cutadapt.sh --ind {wildcards.base} --trimdir {working_directory}/DEMULT_TRIM "
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapt_file {input.adapt_file} "
-        "--nodes {params.threads} --qual {params.qual} --min_length {params.min_length}"
+        "--nodes {params.threads} --qual {params.qual} --min_length {params.min_length};"
+        "sed 's/R1//g' {working_directory}/DEMULT_TRIM/trimming_cutadapt_report_{wildcards.base}.txt | sed 's/R2//g' > {working_directory}/DEMULT_TRIM/tmp_trimming_cutadapt_report_{wildcards.base}.txt"
 
 
 rule CountReads_TrimmedFastqs:
     input:
         expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
-        expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R1.fastq.gz", library_name=library_names, working_directory=working_directory)
+        expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R2.fastq.gz", library_name=library_names, working_directory=working_directory)
     output:
         working_directory+"/RESULTS/DEMULT_TRIM/fastq_read_count_demult_trim.txt"
     shell:
         "{prgr}/fastq_read_count.sh --fastq_dir {working_directory}/DEMULT_TRIM --output {output}"
 
 
-rule MultiQC_TrimmedFastqs:
+rule Fastqc_TrimmedFastqs:
     input:
-        expand("{working_directory}/DEMULT_TRIM/trimming_cutadapt_report_{library_name}.txt", library_name=library_names, working_directory=working_directory)
+        working_directory+"/DEMULT_TRIM/{base}_trimmed.{R}.fastq.gz"
     output:
-        working_directory+"/RESULTS/DEMULT_TRIM/trimming_multiqc_report.html"
+        #working_directory+"/RESULTS/DEMULT_TRIM/{base}_trimmed.{R}_fastqc.html",
+        working_directory+"/RESULTS/DEMULT_TRIM/{base}_trimmed.{R}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {working_directory}/RESULTS/DEMULT_TRIM -n trimming_multiqc_report"
+        "fastqc -o {working_directory}/RESULTS/DEMULT_TRIM/ {input}"
+
+
+rule MultiQC_TrimmedFastqs:
+    input:
+        expand("{working_directory}/DEMULT_TRIM/tmp_trimming_cutadapt_report_{library_name}.txt", library_name=library_names, working_directory=working_directory),
+        expand("{working_directory}/RESULTS/DEMULT_TRIM/{library_name}_trimmed.R1_fastqc.zip", library_name=library_names, working_directory=working_directory),
+        expand("{working_directory}/RESULTS/DEMULT_TRIM/{library_name}_trimmed.R2_fastqc.zip", library_name=library_names, working_directory=working_directory)
+
+    output:
+        working_directory+"/RESULTS/GLOBAL/trimming_multiqc_report.html"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "multiqc {input} -o {working_directory}/RESULTS/GLOBAL -n trimming_multiqc_report"
+
 
 
 rule Concatenate_TrimmedFastqs:
     input:
         fastqs_trim = expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.{{R}}.fastq.gz", library_name=library_names, working_directory=working_directory)
     output:
-        temp(working_directory+"/DEMULT_TRIM/tmp_all_concat_trimmed.{R}.fastq.gz")
+        temp(working_directory+"/DEMULT_TRIM/"+fastq_raw_base+"_trimmed.{R}.fastq.gz")
     shell:
-        "cat {input.fastqs_trim} > {working_directory}/DEMULT_TRIM/tmp_all_concat_trimmed.{wildcards.R}.fastq.gz"
+        "cat {input.fastqs_trim} > {working_directory}/DEMULT_TRIM/{fastq_raw_base}_trimmed.{wildcards.R}.fastq.gz"
 
 
 rule Fastqc_ConcatTrimmedFastqs:
     input:
-        working_directory+"/DEMULT_TRIM/tmp_all_concat_trimmed.{R}.fastq.gz"
+        working_directory+"/DEMULT_TRIM/"+fastq_raw_base+"_trimmed.{R}.fastq.gz"
     output:
-        working_directory+"/RESULTS/DEMULT_TRIM/all_trimmed.{R}_fastqc.html"
+        #working_directory+"/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.{R}_fastqc.html"
+        working_directory+"/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.{R}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "fastqc -o {working_directory}/RESULTS/DEMULT_TRIM/ {input} ;"
-        "mv {working_directory}/RESULTS/DEMULT_TRIM/tmp_all_concat_trimmed.{wildcards.R}_fastqc.html {working_directory}/RESULTS/DEMULT_TRIM/all_trimmed.{wildcards.R}_fastqc.html ;"
-        "mv {working_directory}/RESULTS/DEMULT_TRIM/tmp_all_concat_trimmed.{wildcards.R}_fastqc.zip {working_directory}/RESULTS/DEMULT_TRIM/all_trimmed.{wildcards.R}_fastqc.zip"
+        "fastqc -o {working_directory}/RESULTS/DEMULT_TRIM/ {input};"
+        "mv {working_directory}/RESULTS/DEMULT_TRIM/{fastq_raw_base}_trimmed.{wildcards.R}_fastqc.html {working_directory}/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.{wildcards.R}_fastqc.html ;"
+        "mv {working_directory}/RESULTS/DEMULT_TRIM/{fastq_raw_base}_trimmed.{wildcards.R}_fastqc.zip {working_directory}/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.{wildcards.R}_fastqc.zip"
+
+
+rule MultiQC_Global:
+    input:
+        working_directory+"/RESULTS/RAWDATA/"+fastq_R1_raw_base+"_fastqc.zip",
+        working_directory+"/RESULTS/RAWDATA/"+fastq_R2_raw_base+"_fastqc.zip",
+        working_directory+"/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.R1_fastqc.zip",
+        working_directory+"/RESULTS/DEMULT_TRIM/all_samples_concat_trimmed.R2_fastqc.zip"
+    output:
+        working_directory+"/RESULTS/GLOBAL/DATA_CLEANING_multiqc_global_report.html"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "multiqc {input} -o {working_directory}/RESULTS/GLOBAL -n DATA_CLEANING_multiqc_global_report"
+
+
 
 
 #muse-login.hpc-lr.univ-montp2.fr

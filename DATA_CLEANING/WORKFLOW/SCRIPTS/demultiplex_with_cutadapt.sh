@@ -55,8 +55,8 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --auth_subst)
-  AUTH_SUBST_FRACTION="$2"
+  --substitutions)
+  SUBSTITUTIONS="$2"
   shift # past argument
   shift # past value
   ;;
@@ -94,7 +94,7 @@ awk '{print ">"$1"\n^"$3}' $TAG_FILE > ${DEMULT_DIR}/Cutadapt_tmp/R2_tags_cutada
 
 
 ## 2/ DEMULTIPLEX
-cutadapt -e $AUTH_SUBST_FRACTION --no-indels --pair-adapters -j $NODES -g file:${DEMULT_DIR}/Cutadapt_tmp/R1_tags_cutadapt.fasta -G file:${DEMULT_DIR}/Cutadapt_tmp/R2_tags_cutadapt.fasta -o ${DEMULT_DIR}/{name}.R1.fastq.gz -p ${DEMULT_DIR}/{name}.R2.fastq.gz $R1 $R2 > ${DEMULT_DIR}/demultiplexing_cutadapt_report.txt
+cutadapt -e $SUBSTITUTIONS --no-indels --pair-adapters -j $NODES -g file:${DEMULT_DIR}/Cutadapt_tmp/R1_tags_cutadapt.fasta -G file:${DEMULT_DIR}/Cutadapt_tmp/R2_tags_cutadapt.fasta -o ${DEMULT_DIR}/{name}.R1.fastq.gz -p ${DEMULT_DIR}/{name}.R2.fastq.gz $R1 $R2 > ${DEMULT_DIR}/demultiplexing_cutadapt_report.txt
 
 ## 3/ REMOVE TMP FILES
 rm -r ${DEMULT_DIR}/Cutadapt_tmp
