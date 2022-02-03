@@ -97,7 +97,7 @@ rule Demultiplex_RawFastqs:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "{prgr}/demultiplex_with_cutadapt_Morgane.sh --demultdir {working_directory}/DEMULT --R1 {input.fastq_R1_raw} "
+        "{prgr}/demultiplex_with_cutadapt.sh --demultdir {working_directory}/DEMULT --R1 {input.fastq_R1_raw} "
         "--R2 {input.fastq_R2_raw} --tag_file {input.tag_file} --nodes {params.threads} "
         "--substitutions {params.substitutions}"
 
