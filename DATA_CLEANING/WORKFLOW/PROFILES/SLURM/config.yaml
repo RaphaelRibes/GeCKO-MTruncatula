@@ -1,0 +1,1 @@
+cluster: "sbatch -p {cluster.partition} --job-name {cluster.job-name} -e {cluster.error} -o {cluster.output}"

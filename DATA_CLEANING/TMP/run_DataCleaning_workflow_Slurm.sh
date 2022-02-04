@@ -14,6 +14,7 @@ mkdir -p Logs_DataCleaningWorkflow
 
 PRGR=/home/girodollej/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW
 CONFIG=/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG
+PROFILE=${PRGR}"/PROFILES"
 
 
 ## DRYRUN ##
@@ -30,16 +31,18 @@ CONFIG=/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG
 #snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-envmodules --cluster "sbatch -p {cluster.partition} --job-name {cluster.job-name} -e {cluster.error} -o {cluster.output}"
 
 ## RUN WITH CONDA ##
-snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --cluster "sbatch -p {cluster.partition} --job-name {cluster.job-name} -e {cluster.error} -o {cluster.output}"
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --cluster "sbatch -p {cluster.partition} --job-name {cluster.job-name} -e {cluster.error} -o {cluster.output}"
 
-## GENERATE PIPELINE REPORT ##
+## GENERATE PIPELINE REPORT -> à lancer hors sbatch sinon ça ne marche pas ##
 #snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --report Snakemake_Report_DataCleaning.html --cluster "sbatch -p {cluster.partition} --job-name {cluster.job-name} -e {cluster.error} -o {cluster.output}"
 
 
                                   ### CLUSTER CONFIG MAKING USE OF PROFILES ###
 
-## RUN WITH ENVMODULES ##
-
 ## RUN WITH CONDA ##
+snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SLURM
 
-## GENERATE PIPELINE REPORT ##
+
+## GENERATE PIPELINE REPORT -> à lancer hors sbatch sinon ça ne marche pas ##
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --report Snakemake_Report_DataCleaning.html --profile ${PROFILE}/SLURM
+
