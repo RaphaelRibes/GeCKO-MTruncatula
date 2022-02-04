@@ -106,4 +106,4 @@ R1_readthrough_seq=$(grep -w $IND_NAME $ADAPTERS_SEQ_FILE | cut -f2)
 R2_readthrough_seq=$(grep -w $IND_NAME $ADAPTERS_SEQ_FILE | cut -f3)
 
 ## Run cutadapt
-cutadapt --action=trim --quality-cutoff $QC --minimum-length $MIN_LENGTH --no-indels -j $NODES -a $R1_readthrough_seq -A $R2_readthrough_seq -o ${TRIM_DIR}/${IND_NAME}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${IND_NAME}_trimmed.R2.fastq.gz $R1_DEMULT $R2_DEMULT > ${TRIM_DIR}/trimming_cutadapt_report_${IND_NAME}.txt
+cutadapt --action=trim --quality-cutoff $QC --minimum-length $MIN_LENGTH --no-indels -j $NODES -a $R1_readthrough_seq -A $R2_readthrough_seq -o ${TRIM_DIR}/${IND_NAME}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${IND_NAME}_trimmed.R2.fastq.gz $R1_DEMULT $R2_DEMULT > ${TRIM_DIR}/trimming_cutadapt_${IND_NAME}.info

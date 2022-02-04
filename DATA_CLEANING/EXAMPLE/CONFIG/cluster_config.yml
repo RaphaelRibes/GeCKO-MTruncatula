@@ -2,11 +2,11 @@
   "__default__" : {
       "partition"      : "agap_normal",
         "job-name"       : "DC.{rule}",
-        "output"         : "pipeline_rules_logs/{rule}.%j.out.txt",
-        "error"          : "pipeline_rules_logs/{rule}.%j.err.txt"
+        "output"         : "Logs_DataCleaningWorkflow/{rule}.%j.out.txt",
+        "error"          : "Logs_DataCleaningWorkflow/{rule}.%j.err.txt"
     },
   "Trimming_DemultFastqs" : {
-        "output"         : "pipeline_rules_logs/{rule}.{wildcards.base}.%j.out.txt",
-        "error"          : "pipeline_rules_logs/{rule}.{wildcards.base}.%j.err.txt"
+        "output"         : "Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error"          : "Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.err.txt"
     }
 }
