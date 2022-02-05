@@ -6,11 +6,23 @@ import os,sys
 
 ### Get variables from config file
 samples = pd.read_csv(config["TAG_FILE"], sep='\t', header=None).iloc[:, 0]
-scripts_dir = config["WORKFLOW_DIR"]+"/DATA_CLEANING/WORKFLOW/SCRIPTS"
-working_directory = config["WORKDIR"] #essayer de le récupérer (ce serait là où le snakemake est lancé)
 fastq_R1_raw = config["FASTQ_R1"]
 fastq_R2_raw = config["FASTQ_R2"]
 outputs_dirname = config["OUTPUTS_DIRNAME"]
+
+### Retrieve paths
+path_to_snakefile = workflow.snakefile
+print(path_to_snakefile)
+snakefile_dir = path_to_snakefile.rsplit('/', 1)[0]
+print(snakefile_dir)
+scripts_dir = snakefile_dir+"/SCRIPTS"
+print(scripts_dir)
+working_directory = os.getcwd()
+print(working_directory)
+
+
+#scripts_dir = config["WORKFLOW_DIR"]+"/DATA_CLEANING/WORKFLOW/SCRIPTS"
+#working_directory = config["WORKDIR"] #essayer de le récupérer (ce serait là où le snakemake est lancé)
 
 ### Create variables for outputs subfolders
 outputs_directory = working_directory+"/"+outputs_dirname+"/DATA_CLEANING"
@@ -28,6 +40,7 @@ fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[1].replace('.fastq','').replace(
 raw_data_dir = fastq_R1_raw.rsplit('/', 1)[0]
 
 fastq_raw_base = fastq_R1_raw_base.replace('_R1','')
+
 
 
 

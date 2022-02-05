@@ -1,7 +1,8 @@
 ### GENERAL VARIABLES ###
-WORKFLOW_DIR: "/home/girodollej/CAPTURE_PIPELINES_SNAKEMAKE"
-WORKDIR: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001"
+#WORKFLOW_DIR: "/home/girodollej/CAPTURE_PIPELINES_SNAKEMAKE"
+#WORKDIR: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001"
 OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
+SKIP_DEMULT: FALSE
 
 ### INPUT FILES ###
 FASTQ_R1: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_L001_R1_001.fastq.gz"

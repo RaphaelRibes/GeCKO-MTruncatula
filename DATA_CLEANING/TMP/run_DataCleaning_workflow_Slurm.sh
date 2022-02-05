@@ -9,6 +9,7 @@
 module purge
 module load snakemake/5.13.0
 module load anaconda/python3.8
+module load singularity/3.6.3
 
 mkdir -p Logs_DataCleaningWorkflow
 
@@ -40,9 +41,15 @@ PROFILE=${PRGR}"/PROFILES"
                                   ### CLUSTER CONFIG MAKING USE OF PROFILES ###
 
 ## RUN WITH CONDA ##
-snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SLURM
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SLURM
 
+## RUN WITH CONDA + SINGULARITY -> pour l'instant ça ne marche pas ##
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --use-singularity --profile ${PROFILE}/SLURM
 
 ## GENERATE PIPELINE REPORT -> à lancer hors sbatch sinon ça ne marche pas ##
 #snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --report Snakemake_Report_DataCleaning.html --profile ${PROFILE}/SLURM
+
+## CONTAINERIZE -> option inconnue pour l'instant ##
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SLURM --containerize > Dockerfile
+
 

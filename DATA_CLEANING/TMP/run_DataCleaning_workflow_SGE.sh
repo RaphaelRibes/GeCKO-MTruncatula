@@ -5,8 +5,7 @@ mkdir -p Logs_DataCleaningWorkflow
 
 PRGR=/home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW
 CONFIG=/home/jogirodolle/work/DATA_TEST/VIR/CONFIG
-
-
+PROFILE=${PRGR}"/PROFILES"
 
 ## DRYRUN ##
 #snakemake --snakefile ${PRGR}/DataCleaning.smk -n --dag --forceall --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --printshellcmds
@@ -28,19 +27,25 @@ CONFIG=/home/jogirodolle/work/DATA_TEST/VIR/CONFIG
                                   ### CLUSTER CONFIG MAKING USE OF PROFILES ###
 
 ## RUN WITH CONDA ##
-snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --profile /home/jogirodolle/save/PROFILES_SNAKEMAKE/SGE
+  # Create environment only (once)
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --conda-create-envs-only --profile ${PROFILE}/SGE
 
-## RUN WITH CONDA + SINGULARITY ##
-#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-singularity --use-conda --profile /home/jogirodolle/save/PROFILES_SNAKEMAKE/SGE
+  # Run
+snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SGE
+
+
+## RUN WITH CONDA + SINGULARITY -> se lance mais il ne trouve plus les chemins... ##
+#snakemake --snakefile ${PRGR}/DataCleaning_sgl.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-singularity --use-conda --profile ${PROFILE}/SGE
 
 ## GENERATE PIPELINE REPORT ##
-#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --report Snakemake_Report_DataCleaning.html --profile /home/jogirodolle/save/PROFILES_SNAKEMAKE/SGE
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --report Snakemake_Report_DataCleaning.html --profile ${PROFILE}/SGE
 
-
+## CONTAINERIZE -> marche pas pour l'instant, il faudrait passer à la dernière version de snakemake je pense ##
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SGE --containerize > Dockerfile
 
 
 
 
 # Example on Migale :
-#qsub -q long.q -V -b yes -cwd -N DataCleaning "conda activate snakemake-6.9.1 ; ./run_DataCleaning_workflow_Migale.sh"
-#qsub -q short.q -V -b yes -cwd -N DataCleaning "conda activate snakemake-6.9.1 ; ./run_DataCleaning_workflow_Migale.sh"
+#qsub -q long.q -V -b yes -cwd -N DataCleaning "conda activate snakemake-6.9.1 ; ./run_DataCleaning_workflow_SGE.sh"
+#qsub -q short.q -V -b yes -cwd -N DataCleaning "conda activate snakemake-6.9.1 ; ./run_DataCleaning_workflow_SGE.sh"
