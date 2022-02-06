@@ -1,17 +1,27 @@
 ### GENERAL VARIABLES ###
-WORKFLOW_DIR: "/home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE"
-WORKDIR: "/home/jogirodolle/work/DATA_TEST/VIR"
 OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
+SKIP_DEMULT: FALSE
+
 
 ### INPUT FILES ###
+# Leave blank if raw fastq files need demultiplexing (then SKIP_DEMULT must be set to FALSE)
+DEMULT_DIR: ""
+
+# Leave blank if fastq files are already demultiplexed (then SKIP_DEMULT must be set to TRUE)
 FASTQ_R1: "/home/jogirodolle/work/DATA_TEST/VIR/RAWDATA/CapBleVirus_S1_L001_R1_001.fastq.gz"
 FASTQ_R2: "/home/jogirodolle/work/DATA_TEST/VIR/RAWDATA/CapBleVirus_S1_L001_R2_001.fastq.gz"
+
+# Mandatory files (if SKIP_DEMULT is set to TRUE, only the first column of the TAG_FILE will be of use)
 TAG_FILE: "/home/jogirodolle/work/DATA_TEST/VIR/CONFIG/tag_file_VIR_Cap001.txt"
 ADAPT_FILE: "/home/jogirodolle/work/DATA_TEST/VIR/CONFIG/adapter_file_VIR_Cap001.txt"
 
+
+
 ### DEMULTIPLEXING PARAMETERS ###
+# Leave blank if fastq files are already demultiplexed and SKIP_DEMULT is set to TRUE
 DEMULT_THREADS: 1
 DEMULT_SUBSTITUTIONS: 0.1
+
 
 ### TRIMMING PARAMETERS ###
 TRIMMING_THREADS: 1

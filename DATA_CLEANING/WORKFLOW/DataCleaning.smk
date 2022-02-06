@@ -2,86 +2,71 @@
 
 import pandas as pd
 import os,sys
+import operator
+from itertools import compress
 
 
-### Get variables from config file
+####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
+
+### Variables from config file
 samples = pd.read_csv(config["TAG_FILE"], sep='\t', header=None).iloc[:, 0]
 fastq_R1_raw = config["FASTQ_R1"]
 fastq_R2_raw = config["FASTQ_R2"]
 outputs_dirname = config["OUTPUTS_DIRNAME"]
+SkipDemult = config["SKIP_DEMULT"]
+user_demult_dir = config["DEMULT_DIR"]
 
-### Retrieve paths
+### Raw fastq files path and base names
+fastq_R1_raw_base = fastq_R2_raw_base = raw_data_dir = fastq_raw_base = ""
+if not SkipDemult:
+    fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
+    fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
+    raw_data_dir = fastq_R1_raw.rsplit('/', 1)[0]
+    fastq_raw_base = fastq_R1_raw_base.replace('_R1','')
+
+### Define paths
 path_to_snakefile = workflow.snakefile
-print(path_to_snakefile)
 snakefile_dir = path_to_snakefile.rsplit('/', 1)[0]
-print(snakefile_dir)
 scripts_dir = snakefile_dir+"/SCRIPTS"
-print(scripts_dir)
 working_directory = os.getcwd()
-print(working_directory)
 
-
-#scripts_dir = config["WORKFLOW_DIR"]+"/DATA_CLEANING/WORKFLOW/SCRIPTS"
-#working_directory = config["WORKDIR"] #essayer de le récupérer (ce serait là où le snakemake est lancé)
-
-### Create variables for outputs subfolders
+### Define outputs subfolders
 outputs_directory = working_directory+"/"+outputs_dirname+"/DATA_CLEANING"
 rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
-demult_dir = outputs_directory+"/DEMULT"
+
+if SkipDemult:
+    demult_dir = user_demult_dir
+else:
+    demult_dir = outputs_directory+"/DEMULT"
+
 demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
 demult_trim_reports_dir = outputs_directory+"/DEMULT_TRIM/REPORTS"
 demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/fastqc"
 
 
-### Extract folder path and base names from raw files
-fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
-fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
-raw_data_dir = fastq_R1_raw.rsplit('/', 1)[0]
+### FUNCTIONS
 
-fastq_raw_base = fastq_R1_raw_base.replace('_R1','')
-
-
+def HideUnexpectedFiles(filesNames, hideFiles):
+    expectFiles = list(map(operator.not_, hideFiles))
+    expectedFiles = list(compress(filesNames, expectFiles))
+    return(expectedFiles)
 
 
 ### PIPELINE ###
 
 rule FinalTargets:
     input:
-        # RAW DATA -> fastqc outputs -> pour mémoire, HS
-        #rawdata_reports_dir+"/"+fastq_R1_raw_base+"_fastqc.zip",
-        #rawdata_reports_dir+"/"+fastq_R2_raw_base+"_fastqc.zip",
-        #
-        # RAW DATA -> reads count output
-        rawdata_reports_dir+"/Reads_Count_RawData.txt",
-
-        # DEMULTIPLEXED FASTQ outputs -> pour mémoire, HS
-        #expand("{working_directory}/DEMULT/{library_name}.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
-        #expand("{working_directory}/DEMULT/{library_name}.R2.fastq.gz", library_names=library_names, working_directory=working_directory),
-
-        # DEMULTIPLEXED FASTQ -> reads count output
+        HideUnexpectedFiles(
+        [rawdata_reports_dir+"/Reads_Count_RawData.txt",
         demult_reports_dir+"/Reads_Count_Demult.txt",
-
-        # TRIMMED FASTQ outputs -> pour mémoire, HS
-        #expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R1.fastq.gz", library_name=library_names, working_directory=working_directory),
-        #expand("{working_directory}/DEMULT_TRIM/{library_name}_trimmed.R2.fastq.gz", library_name=library_names, working_directory=working_directory),
-
-        # TRIMMED FASTQ -> reads count output
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt",
-
-        # TRIMMED FASTQ -> multiQC output
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
+        outputs_directory+"/multiQC_DataCleaning_Overall_Report.html"],
 
-        # CONCATENATED TRIMMED FASTQ output -> pour mémoire, HS
-        #working_directory+"/DEMULT_TRIM/smk_all_concat_trimmed.R1.fastq.gz",
-        #working_directory+"/DEMULT_TRIM/smk_all_concat_trimmed.R2.fastq.gz"
+        [SkipDemult, False, False, False, False]
+        )
 
-        # CONCATENATED TRIMMED FASTQ -> fastqc outputs -> pour mémoire, HS
-        #demult_trim_fastqc_reports_dir+"/all_samples_concat_trimmed.R1_fastqc.zip",
-        #demult_trim_fastqc_reports_dir+"/all_samples_concat_trimmed.R2_fastqc.zip",
-
-        # RAW DATA and CONCATENATED TRIMMED FASTQ -> multiQC output
-        outputs_directory+"/multiQC_DataCleaning_Overall_Report.html"
 
  # ----------------------------------------------------------------------------------------------- #
 
@@ -221,10 +206,15 @@ rule Fastqc_ConcatTrimmedFastqs:
 
 rule MultiQC_Global:
     input:
-        rawdata_reports_dir+"/"+fastq_R1_raw_base+"_fastqc.zip",
+        HideUnexpectedFiles(
+        [rawdata_reports_dir+"/"+fastq_R1_raw_base+"_fastqc.zip",
         rawdata_reports_dir+"/"+fastq_R2_raw_base+"_fastqc.zip",
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R1_fastqc.zip",
-        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R2_fastqc.zip"
+        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R2_fastqc.zip"],
+
+        [SkipDemult, SkipDemult, False, False]
+        )
+
     output:
         outputs_directory+"/multiQC_DataCleaning_Overall_Report.html"
     conda:
