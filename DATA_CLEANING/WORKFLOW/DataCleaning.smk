@@ -2,8 +2,9 @@
 
 import pandas as pd
 import os,sys
-import operator
 from itertools import compress
+
+#singularity: "docker://condaforge/mambaforge"
 
 
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
@@ -16,13 +17,13 @@ outputs_dirname = config["OUTPUTS_DIRNAME"]
 user_demult_dir = config["DEMULT_DIR"]
 
 if (user_demult_dir.length() == 0):
-    doDemultiplex = True
+    performDemultiplexing = True
 else:
-    doDemultiplex = False
+    performDemultiplexing = False
 
 ### Raw fastq files path and base names
 fastq_R1_raw_base = fastq_R2_raw_base = raw_data_dir = fastq_raw_base = ""
-if doDemultiplex:
+if performDemultiplexing:
     fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
     fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
     raw_data_dir = fastq_R1_raw.rsplit('/', 1)[0]
@@ -38,11 +39,10 @@ working_directory = os.getcwd()
 outputs_directory = working_directory+"/"+outputs_dirname+"/DATA_CLEANING"
 rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 
-if doDemultiplex:
+if performDemultiplexing:
     demult_dir = outputs_directory+"/DEMULT"
 else:
     demult_dir = user_demult_dir
-
 
 demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
@@ -68,7 +68,7 @@ rule FinalTargets:
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
         outputs_directory+"/multiQC_DataCleaning_Overall_Report.html"],
 
-        [doDemultiplex, True, True, True, True]
+        [performDemultiplexing, True, True, True, True]
         )
 
 
@@ -216,7 +216,7 @@ rule MultiQC_Global:
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R1_fastqc.zip",
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R2_fastqc.zip"],
 
-        [doDemultiplex, doDemultiplex, True, True]
+        [performDemultiplexing, performDemultiplexing, True, True]
         )
 
     output:

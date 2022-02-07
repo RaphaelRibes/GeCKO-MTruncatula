@@ -18,6 +18,7 @@ SAMPLE_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/tag_file_VIR_
 ADAPT_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/adapter_file_VIR_Cap001.txt"
 
 
+
 ### DEMULTIPLEXING PARAMETERS ###
 # Leave blank if fastq files are already demultiplexed and SKIP_DEMULT is set to TRUE
 DEMULT_THREADS: 1
