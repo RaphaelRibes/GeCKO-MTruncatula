@@ -16,7 +16,7 @@ fastq_R2_raw = config["FASTQ_R2"]
 outputs_dirname = config["OUTPUTS_DIRNAME"]
 user_demult_dir = config["DEMULT_DIR"]
 
-if (user_demult_dir.length() == 0):
+if (len(user_demult_dir) == 0):
     performDemultiplexing = True
 else:
     performDemultiplexing = False
@@ -53,7 +53,7 @@ demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/fastqc"
 ### FUNCTIONS
 
 def buildExpectedFiles(filesNames, isExpected):
-    expectedFiles = list(compress(filesNames, expectFiles))
+    expectedFiles = list(compress(filesNames, isExpected))
     return(expectedFiles)
 
 
