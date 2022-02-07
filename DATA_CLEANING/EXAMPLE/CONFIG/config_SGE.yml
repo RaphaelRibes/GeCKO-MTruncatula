@@ -12,7 +12,7 @@ FASTQ_R1: "/home/jogirodolle/work/DATA_TEST/VIR/RAWDATA/CapBleVirus_S1_L001_R1_0
 FASTQ_R2: "/home/jogirodolle/work/DATA_TEST/VIR/RAWDATA/CapBleVirus_S1_L001_R2_001.fastq.gz"
 
 # Mandatory files (if SKIP_DEMULT is set to TRUE, only the first column of the TAG_FILE will be of use)
-TAG_FILE: "/home/jogirodolle/work/DATA_TEST/VIR/CONFIG/tag_file_VIR_Cap001.txt"
+SAMPLE_FILE: "/home/jogirodolle/work/DATA_TEST/VIR/CONFIG/tag_file_VIR_Cap001.txt"
 ADAPT_FILE: "/home/jogirodolle/work/DATA_TEST/VIR/CONFIG/adapter_file_VIR_Cap001.txt"
 
 
