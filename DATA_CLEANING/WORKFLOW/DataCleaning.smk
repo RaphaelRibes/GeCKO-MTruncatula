@@ -13,12 +13,16 @@ samples = pd.read_csv(config["SAMPLE_FILE"], sep='\t', header=None).iloc[:, 0]
 fastq_R1_raw = config["FASTQ_R1"]
 fastq_R2_raw = config["FASTQ_R2"]
 outputs_dirname = config["OUTPUTS_DIRNAME"]
-SkipDemult = config["SKIP_DEMULT"]
 user_demult_dir = config["DEMULT_DIR"]
+
+if (user_demult_dir.length() == 0):
+    doDemultiplex = True
+else:
+    doDemultiplex = False
 
 ### Raw fastq files path and base names
 fastq_R1_raw_base = fastq_R2_raw_base = raw_data_dir = fastq_raw_base = ""
-if not SkipDemult:
+if doDemultiplex:
     fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
     fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
     raw_data_dir = fastq_R1_raw.rsplit('/', 1)[0]
@@ -34,10 +38,11 @@ working_directory = os.getcwd()
 outputs_directory = working_directory+"/"+outputs_dirname+"/DATA_CLEANING"
 rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 
-if SkipDemult:
-    demult_dir = user_demult_dir
-else:
+if doDemultiplex:
     demult_dir = outputs_directory+"/DEMULT"
+else:
+    demult_dir = user_demult_dir
+
 
 demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
@@ -47,8 +52,7 @@ demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/fastqc"
 
 ### FUNCTIONS
 
-def HideUnexpectedFiles(filesNames, hideFiles):
-    expectFiles = list(map(operator.not_, hideFiles))
+def buildExpectedFiles(filesNames, isExpected):
     expectedFiles = list(compress(filesNames, expectFiles))
     return(expectedFiles)
 
@@ -57,14 +61,14 @@ def HideUnexpectedFiles(filesNames, hideFiles):
 
 rule FinalTargets:
     input:
-        HideUnexpectedFiles(
+        buildExpectedFiles(
         [rawdata_reports_dir+"/Reads_Count_RawData.txt",
         demult_reports_dir+"/Reads_Count_Demult.txt",
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt",
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
         outputs_directory+"/multiQC_DataCleaning_Overall_Report.html"],
 
-        [SkipDemult, False, False, False, False]
+        [doDemultiplex, True, True, True, True]
         )
 
 
@@ -206,13 +210,13 @@ rule Fastqc_ConcatTrimmedFastqs:
 
 rule MultiQC_Global:
     input:
-        HideUnexpectedFiles(
+        buildExpectedFiles(
         [rawdata_reports_dir+"/"+fastq_R1_raw_base+"_fastqc.zip",
         rawdata_reports_dir+"/"+fastq_R2_raw_base+"_fastqc.zip",
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R1_fastqc.zip",
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R2_fastqc.zip"],
 
-        [SkipDemult, SkipDemult, False, False]
+        [doDemultiplex, doDemultiplex, True, True]
         )
 
     output:

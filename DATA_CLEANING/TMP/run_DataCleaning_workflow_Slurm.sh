@@ -13,7 +13,7 @@ module load singularity/3.6.3
 
 mkdir -p Logs_DataCleaningWorkflow
 
-PRGR=/home/girodollej/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW
+PRGR=/home/girodollej/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING
 CONFIG=/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG
 PROFILE=${PRGR}"/PROFILES"
 
@@ -41,7 +41,7 @@ PROFILE=${PRGR}"/PROFILES"
                                   ### CLUSTER CONFIG MAKING USE OF PROFILES ###
 
 ## RUN WITH CONDA ##
-#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SLURM
+snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SLURM
 
 ## RUN WITH CONDA + SINGULARITY -> pour l'instant ça ne marche pas ##
 #snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_Slurm.json --configfile ${CONFIG}/config_Slurm.yml --jobs 200 --printshellcmds --use-conda --use-singularity --profile ${PROFILE}/SLURM
