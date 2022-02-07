@@ -13,7 +13,7 @@ FASTQ_R2: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_
 # This directory should contain two fastq files per sample X (sampleX.R1.fastq.gz and sampleX.R2.fastq.gz)
 DEMULT_DIR: ""
 
-# Mandatory files (if SKIP_DEMULT is set to TRUE, only the first column of the SAMPLE_FILE will be of use)
+# Mandatory files (if fastq files are already demultiplexed, only the first column of the SAMPLE_FILE will be used)
 SAMPLE_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/tag_file_VIR_Cap001.txt"
 ADAPT_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/adapter_file_VIR_Cap001.txt"
 
