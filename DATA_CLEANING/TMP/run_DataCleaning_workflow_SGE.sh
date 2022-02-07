@@ -34,8 +34,8 @@ PROFILE=${PRGR}"/PROFILES"
 snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --profile ${PROFILE}/SGE
 
 
-## RUN WITH CONDA + SINGULARITY -> se lance mais il ne trouve plus les chemins... ##
-#snakemake --snakefile ${PRGR}/DataCleaning_sgl.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-singularity --use-conda --profile ${PROFILE}/SGE
+## RUN WITH CONDA + SINGULARITY (penser à bien mettre 'singularity: "docker://condaforge/mambaforge"' dans le .smk) ##
+#snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-singularity --singularity-args "-B /work_home/jogirodolle:/home/jogirodolle/work,/save_home/jogirodolle:/home/jogirodolle/save" --use-conda --profile ${PROFILE}/SGE
 
 ## GENERATE PIPELINE REPORT ##
 #snakemake --snakefile ${PRGR}/DataCleaning.smk --cluster-config ${CONFIG}/cluster_config_SGE.json --configfile ${CONFIG}/config_SGE.yml --jobs 200 --printshellcmds --use-conda --report Snakemake_Report_DataCleaning.html --profile ${PROFILE}/SGE
