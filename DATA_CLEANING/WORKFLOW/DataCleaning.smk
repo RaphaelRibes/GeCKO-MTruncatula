@@ -9,7 +9,7 @@ from itertools import compress
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Variables from config file
-samples = pd.read_csv(config["TAG_FILE"], sep='\t', header=None).iloc[:, 0]
+samples = pd.read_csv(config["SAMPLE_FILE"], sep='\t', header=None).iloc[:, 0]
 fastq_R1_raw = config["FASTQ_R1"]
 fastq_R2_raw = config["FASTQ_R2"]
 outputs_dirname = config["OUTPUTS_DIRNAME"]
@@ -96,7 +96,7 @@ rule Demultiplex_RawFastqs:
     input:
         fastq_R1_raw = fastq_R1_raw,
         fastq_R2_raw = fastq_R2_raw,
-        tag_file = config["TAG_FILE"]
+        tag_file = config["SAMPLE_FILE"]
     output:
         expand("{demult_dir}/{sample}.R1.fastq.gz", sample=samples, demult_dir=demult_dir),
         expand("{demult_dir}/{sample}.R2.fastq.gz", sample=samples, demult_dir=demult_dir)

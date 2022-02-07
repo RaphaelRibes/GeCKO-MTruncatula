@@ -11,10 +11,9 @@ DEMULT_DIR: ""
 FASTQ_R1: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_L001_R1_001.fastq.gz"
 FASTQ_R2: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/RAWDATA/CapBleVirus_S1_L001_R2_001.fastq.gz"
 
-# Mandatory files (if SKIP_DEMULT is set to TRUE, only the first column of the TAG_FILE will be of use)
-TAG_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/tag_file_VIR_Cap001.txt"
+# Mandatory files (if SKIP_DEMULT is set to TRUE, only the first column of the SAMPLE_FILE will be of use)
+SAMPLE_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/tag_file_VIR_Cap001.txt"
 ADAPT_FILE: "/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG/adapter_file_VIR_Cap001.txt"
-
 
 
 ### DEMULTIPLEXING PARAMETERS ###
