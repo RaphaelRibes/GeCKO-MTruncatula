@@ -3,6 +3,7 @@ OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
 
 
 
+
 ### INPUT FILES ###
 
 # Provide the raw fastq files to be demultiplexed (leave blank if fastq files are already demultiplexed)
