@@ -38,13 +38,15 @@ rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 
 if performDemultiplexing:
     demult_dir = outputs_directory+"/DEMULT"
+    demult_reports_infos_dir = outputs_directory+"/DEMULT/REPORTS/CUTADAPT_INFOS"
 else:
     demult_dir = user_demult_dir
 
 demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
 demult_trim_reports_dir = outputs_directory+"/DEMULT_TRIM/REPORTS"
-demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/fastqc"
+demult_trim_reports_infos_dir = demult_trim_reports_dir+"/CUTADAPT_INFOS"
+demult_trim_reports_fastqc_dir = demult_trim_reports_dir+"/FASTQC"
 
 
 ### FUNCTIONS
@@ -98,15 +100,17 @@ rule Demultiplex_RawFastqs:
         tag_file = config["SAMPLE_FILE"]
     output:
         expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir)
+        demult_reports_infos_dir+"/demultiplexing_cutadapt.info"
     params:
         substitutions = config["DEMULT_SUBSTITUTIONS"],
         threads = config["DEMULT_THREADS"]
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "{scripts_dir}/unpaired_demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R {input.fastq_raw} "
+        "{scripts_dir}/demultiplex_with_cutadapt_SE.sh --demultdir {demult_dir} --R {input.fastq_raw} "
         "--tag_file {input.tag_file} --nodes {params.threads} "
-        "--substitutions {params.substitutions}"
+        "--substitutions {params.substitutions};"
+        "mv {demult_dir}/demultiplexing_cutadapt.info {demult_reports_infos_dir}"
 
 
 rule CountReads_DemultFastqs:
@@ -125,18 +129,20 @@ rule Trimming_DemultFastqs:
         adapt_file = config["ADAPT_FILE"]
     output:
         demult_trim_dir+"/{base}_trimmed.fastq.gz",
-        demult_trim_dir+"/trimming_cutadapt_{base}.info"
+        demult_trim_reports_infos_dir+"/trimming_cutadapt_{base}.info",
+        temp(demult_trim_reports_infos_dir+"/tmp_trimming_cutadapt_{base}.info")
     params:
         threads = config["TRIMMING_THREADS"],
-        qual = config["TRIMMING_QUAL"],
-        min_length = config["TRIMMING_MIN_LENGTH"]
+        quality_cutoff = config["TRIMMING_QUAL"],
+        minimum_length = config["TRIMMING_MIN_LENGTH"]
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "{scripts_dir}/unpaired_trimming_with_cutadapt.sh --ind {wildcards.base} --trimdir {demult_trim_dir} "
+        "{scripts_dir}/trimming_with_cutadapt_SE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
         "--R {input.fastqs_demult} --adapt_file {input.adapt_file} "
-        "--nodes {params.threads} --qual {params.qual} --min_length {params.min_length};"
-        #"sed 's/R1//g' {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
+        "--nodes {params.threads} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
+        "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_reports_infos_dir}/trimming_cutadapt_{wildcards.base}.info;"
+        "sed 's/R1//g' {demult_trim_reports_infos_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_reports_infos_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
 
 
 rule CountReads_TrimmedFastqs:
@@ -156,7 +162,7 @@ rule Fastqc_TrimmedFastqs:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "fastqc -o {demult_trim_fastqc_reports_dir} {input}"
+        "fastqc -o {demult_trim_reports_fastqc_dir} {input}"
 
 
 rule MultiQC_TrimmedFastqs:
@@ -186,9 +192,9 @@ rule Fastqc_ConcatTrimmedFastqs:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "fastqc -o {demult_trim_fastqc_reports_dir} {input} ;"
-        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.html {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.fastqc.html ;"
-        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.zip {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.fastqc.zip"
+        "fastqc -o {demult_trim_reports_fastqc_dir} {input} ;"
+        "mv {demult_trim_reports_fastqc_dir}/{fastq_raw_base}_trimmed_fastqc.html {demult_trim_reports_fastqc_dir}/All_Samples_Concat_trimmed.fastqc.html ;"
+        "mv {demult_trim_reports_fastqc_dir}/{fastq_raw_base}_trimmed_fastqc.zip {demult_trim_reports_fastqc_dir}/All_Samples_Concat_trimmed.fastqc.zip"
 
 
 rule MultiQC_Global:

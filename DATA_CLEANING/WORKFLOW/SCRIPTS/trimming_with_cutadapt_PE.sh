@@ -2,13 +2,13 @@
 
 #---------------------------------------------------#
 #													#
-#    	   	trimming_with_cutadapt.sh	   			#
+#    	   	trimming_with_cutadapt_PE.sh	   		#
 #													#
 #---------------------------------------------------#
 
 # >>> USAGE CONTEXT:
 # github: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
-# This script is intended to be used by the Snakemake workflow "DATA_CLEANING"
+# This script is intended to be used by the Snakemake workflow "DATA_CLEANING" / Sequencing type: Paired end
 # tools: Cutadapt (DOI:10.14806/ej.17.1.200)
 
 # >>> OBJECTIVE(S):
@@ -22,9 +22,9 @@
 #--sample
 	# sample name 
 #--R1
-	# path to fastq.gz files corresponding to the R1 sequences by sample
+	# path to fastq.gz files corresponding to the R1 sequences by sample (after demultiplexing)
 #--R2
-	# path to fastq.gz files corresponding to the R2 sequences by sample
+	# path to fastq.gz files corresponding to the R2 sequences by sample (after demultiplexing)
 #--adapt_file
 	# path to the adapter_file.txt containing the list of samples names (column 1), sequences of adapter in the direction of read 1 after the sequencing fragment (column 2) and sequences of adapter in the direction of read 2 after the sequencing fragment (column 3)
 	# example (no header, tab-separated):
@@ -41,7 +41,7 @@
 
 # >>> OUTPUTS
 # two files by sample contain sequences demultiplexed : sample_trimmed.R1.fastq.gz and sample_trimmed.R2.fastq.gz >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
-# a report per sample, created automatically by Cutadap : trimming_cutadapt_sampleX.info >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT/CUTADAPT_INFOS
+# a report per sample, created automatically by Cutadap : trimming_cutadapt_sampleX.info >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM/REPORTS/CUTADAPT_INFOS
 
 
 #### ARGUMENTS:
@@ -123,9 +123,9 @@ fi
 
 #### SCRIPT
 
-## 1/ RETRIEVE FILES ABD SEQUENCES 
-R1_readthrough_seq=$(grep -w $SAMPLE ${ADAPTERS_SEQ_FILE} | cut -f2)
-R2_readthrough_seq=$(grep -w $SAMPLE ${ADAPTERS_SEQ_FILE} | cut -f3)
+## 1/ RETRIEVE FILES AND SEQUENCES 
+R1_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f2)
+R2_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f3)
 
 ## 2/ RUN CUTADAPT - TRIMMING
 cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels -j ${NODES} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}_trimmed.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

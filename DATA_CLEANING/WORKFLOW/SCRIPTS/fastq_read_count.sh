@@ -2,13 +2,13 @@
 
 #---------------------------------------------------#
 #													#
-#    	   		fastq_read_count.sh	   				#
+#    	   		fastq_read_count_PE .sh	   				#
 #													#
 #---------------------------------------------------#
 
 # >>> USAGE CONTEXT:
 # github: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
-# This script is intended to be used by the Snakemake workflow "DATA_CLEANING"
+# This script is intended to be used by the Snakemake workflow "DATA_CLEANING" / Sequencing type: Paired_end
 
 # >>> OBJECTIVE(S):
 # count reads in all fastq.gz files of folder

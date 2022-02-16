@@ -2,14 +2,14 @@
 
 #---------------------------------------------------#
 #													#
-#    		demultiplex_with_cutadapt.sh			#
+#    		demultiplex_with_cutadapt_PE.sh			#
 #													#
 #---------------------------------------------------#
 
 # >>> USAGE CONTEXT:
 # github: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
-# This script is intended to be used by the Snakemake workflow "DATA_CLEANING"
-# tools: Cutadapt (DOI:10.14806/ej.17.1.200)
+# This script is intended to be used by the Snakemake workflow "DATA_CLEANING" / Sequencing type: Paired end
+# tools: Cutadapt (DOI:10.14806/ej.17.1.200) https://cutadapt.readthedocs.io/en/stable/guide.html#demultiplexing
 
 # >>> OBJECTIVE(S):
 # demultiplex a pair of fastq files (R1 + R2) into individual paired fastq files
@@ -38,7 +38,7 @@
 
 # >>> OUTPUTS
 # two files by sample, listed in the sample file, contain sequences : sample.R1.fastq.gz and sample.R1.fastq.gz >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT
-# a report created automatically by Cutadap: demultiplexing_cutadapt.info >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT/CUTADAPT_INFOS
+# a report created automatically by Cutadap: demultiplexing_cutadapt.info >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT/REPORTS/CUTADAPT_INFOS
 
 
 #### ARGUMENTS:
