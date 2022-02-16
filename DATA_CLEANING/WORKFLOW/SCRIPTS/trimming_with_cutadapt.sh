@@ -1,27 +1,48 @@
 #!/usr/bin/env bash
 
+#---------------------------------------------------#
+#													#
+#    	   	trimming_with_cutadapt.sh	   			#
+#													#
+#---------------------------------------------------#
 
-#-----------------------------------------------------------------------------------------------------------
-#
-#    				TRIM A PAIR OF FASTQ FILES (R1 + R2) TO REMOVE ADAPTERS SEQUENCES AND LOW QUALITY READS
-#
-#-----------------------------------------------------------------------------------------------------------
+# >>> USAGE CONTEXT:
+# github: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
+# This script is intended to be used by the Snakemake workflow "DATA_CLEANING"
+# tools: Cutadapt (DOI:10.14806/ej.17.1.200)
 
+# >>> OBJECTIVE(S):
+# Trimming a pair of fastq files (R1 + R2 ) to remove adapters sequences, low quality sequences et short sequences
 
-# LAUNCHING EXAMPLE:
-#./trimming_with_cutadapt.sh --ind Anvergur_A --trimdir {working_directory}/DEMULT_TRIM --R1 Anvergur_A.R1.fastq.gz --R2 Anvergur_A.R2.fastq.gz --adapt_file adapter_file_VIR_Cap001.txt --nodes 1 --qual 30 --min_length 36
+# >>> LAUNCHING EXAMPLE AND SETTINGS:
+#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R1 sampleX.R1.fastq.gz --R2 sampleX.R2.fastq.gz --adapt_file adapter_file_DEV.txt --nodes 1 --quality_cutoff 30 --minimum_length 36
 
-  # Input file:
-  #> adapter_file example (no header, tab-separated) >> Ind_name; R1_3'_adapter_seq; R2_3'_adapter_seq:
-  #Anvergur_M ACTGCTTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACATTACTCGATCTCGTATGCCGTCTTCTGCTTG	ACTCGTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGGCTATAGTGTAGATCTCGGTGGTCGCCGTATCATT
-  #Pescadou_M ATCGTGACAGATCGGAAGAGCACACGTCTGAACTCCAGTCACATTACTCGATCTCGTATGCCGTCTTCTGCTTG	GGACATCAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGGCTATAGTGTAGATCTCGGTGGTCGCCGTATCATT
-  #Claudio_B2	AACTCGTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACATTACTCGATCTCGTATGCCGTCTTCTGCTTG	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGGCTATAGTGTAGATCTCGGTGGTCGCCGTATCATT
+#--trimdir
+	# storage space created by the workflow for the outputs of the trimming step: >>> {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
+#--sample
+	# sample name 
+#--R1
+	# path to fastq.gz files corresponding to the R1 sequences by sample
+#--R2
+	# path to fastq.gz files corresponding to the R2 sequences by sample
+#--adapt_file
+	# path to the adapter_file.txt containing the list of samples names (column 1), sequences of adapter in the direction of read 1 after the sequencing fragment (column 2) and sequences of adapter in the direction of read 2 after the sequencing fragment (column 3)
+	# example (no header, tab-separated):
+	#Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
+	#Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GCTGAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
+	#Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GATCTAAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
+#--nodes
+	# number of nodes to be allocated on cluster 
+#--quality_cutoff
+	# parameter can be used to trim low-quality ends from reads. exemple: --quality_cutoff 30 > replacement of nucleotides by N if the quality is lower than Q30 (1 chance out of 30 that the base is wrong)
+#--minimum_length
+	# parameter to indicate the minimum size of the sequences to be kept. 
+# this script launches cutapdat with one option by default: --no-indels 
 
-  # Output files:
-  # ...
+# >>> OUTPUTS
+# two files by sample contain sequences demultiplexed : sample_trimmed.R1.fastq.gz and sample_trimmed.R2.fastq.gz >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
+# a report per sample, created automatically by Cutadap : trimming_cutadapt_sampleX.info >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT/CUTADAPT_INFOS
 
-## Arguments description:
-  # ...
 
 #### ARGUMENTS:
 
@@ -36,8 +57,8 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --ind)
-  IND_NAME="$2"
+  --sample)
+  SAMPLE="$2"
   shift # past argument
   shift # past value
   ;;
@@ -61,26 +82,26 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --qual)
-  QC="$2"
+  --quality_cutoff)
+  QUALITY_CUTOFF="$2"
   shift # past argument
   shift # past value
   ;;
-  --min_length)
-  MIN_LENGTH="$2"
+  --minimum_length)
+  MINIMUM_LENGTH="$2"
   shift # past argument
   shift # past value
   ;;
-  *)    # unknown option
-  POSITIONAL+=("$1") # save it in an array for later
-  shift # past argument
+  *)    				# unknown option
+  POSITIONAL+=("$1") 	# save it in an array for later
+  shift 				# past argument
   ;;
 esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 
-### Manage file and folder paths (if relative path change it to absolute path)
+# Manage file and folder paths (if relative path change it to absolute path)
 
 if [[ ! "$ADAPTERS_SEQ_FILE" = /* ]] ; then
   ADAPTERS_SEQ_FILE=$(readlink -f $ADAPTERS_SEQ_FILE) ;
@@ -101,9 +122,10 @@ fi
 
 
 #### SCRIPT
-## Retrieve files and sequences
-R1_readthrough_seq=$(grep -w $IND_NAME $ADAPTERS_SEQ_FILE | cut -f2)
-R2_readthrough_seq=$(grep -w $IND_NAME $ADAPTERS_SEQ_FILE | cut -f3)
 
-## Run cutadapt
-cutadapt --action=trim --quality-cutoff $QC --minimum-length $MIN_LENGTH --no-indels -j $NODES -a $R1_readthrough_seq -A $R2_readthrough_seq -o ${TRIM_DIR}/${IND_NAME}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${IND_NAME}_trimmed.R2.fastq.gz $R1_DEMULT $R2_DEMULT > ${TRIM_DIR}/trimming_cutadapt_${IND_NAME}.info
+## 1/ RETRIEVE FILES ABD SEQUENCES 
+R1_readthrough_seq=$(grep -w $SAMPLE ${ADAPTERS_SEQ_FILE} | cut -f2)
+R2_readthrough_seq=$(grep -w $SAMPLE ${ADAPTERS_SEQ_FILE} | cut -f3)
+
+## 2/ RUN CUTADAPT - TRIMMING
+cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels -j ${NODES} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}_trimmed.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

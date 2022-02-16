@@ -1,24 +1,31 @@
 #!/usr/bin/env bash
 
+#---------------------------------------------------#
+#													#
+#    	   		fastq_read_count.sh	   				#
+#													#
+#---------------------------------------------------#
 
-#-----------------------------------------------------------------------------------------------------------
-#
-#    					COUNT READS IN ALL FASTQ.GZ FILES OF FOLDER
-#
-#-----------------------------------------------------------------------------------------------------------
+# >>> USAGE CONTEXT:
+# github: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
+# This script is intended to be used by the Snakemake workflow "DATA_CLEANING"
 
+# >>> OBJECTIVE(S):
+# count reads in all fastq.gz files of folder
 
-# LAUNCHING EXAMPLE:
-#./script_fastq_read_count.sh --fastq_dir /home/ardissonm/scratch/VIR/DEMULT --output /home/ardissonm/scratch/VIR/RESULTS/DEMULT/fastq_read_count_demult.txt
+# >>> LAUNCHING EXAMPLE AND SETTINGS:
+#./fastq_read_count.sh --fastq_dir {demult_dir} --output {demult_reports_dir}/fastq_read_count_demult.txt
 
-  # Output files:
-  # ...
+#--fastq_dir
+	# path to the folder containing the fastq.gz files for which to count reads/sequences
+#--output
+	# path to the file containing the read count results in the fastq.gz files
 
-## Arguments description:
-  # ...
+# >>> OUTPUTS
+# a file containing the read count results in the fastq.gz files. example: Reads_Count_DemultTrim.txt >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM/REPORTS
+
 
 #### ARGUMENTS:
-
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -40,16 +47,16 @@ case $key in
     DEFAULT=YES
     shift # past argument
     ;;
-    *)    # unknown option
-    POSITIONAL+=("$1") # save it in an array for later
-    shift # past argument
+    *)    				# unknown option
+    POSITIONAL+=("$1") 	# save it in an array for later
+    shift 				# past argument
     ;;
 esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 
-### Manage file and folder paths (if relative path change it to absolute path)
+# Manage file and folder paths (if relative path change it to absolute path)
 
 if [[ ! "$FASTQ_DIR" = /* ]] ; then  
   FASTQ_DIR=$(readlink -f $FASTQ_DIR) ;
@@ -57,7 +64,6 @@ fi
 if [[ ! "$OUTPUT" = /* ]] ; then 	
   OUTPUT=$(readlink -f $OUTPUT) ; 
 fi
-
 
 
 #### SCRIPT:
