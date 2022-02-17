@@ -41,6 +41,7 @@ if performDemultiplexing:
     demult_reports_infos_dir = outputs_directory+"/DEMULT/REPORTS/CUTADAPT_INFOS"
 else:
     demult_dir = user_demult_dir
+    demult_reports_infos_dir = ""
 
 demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
@@ -110,7 +111,6 @@ rule Demultiplex_RawFastqs:
         "{scripts_dir}/demultiplex_with_cutadapt_SE.sh --demultdir {demult_dir} --R {input.fastq_raw} "
         "--tag_file {input.tag_file} --nodes {params.threads} "
         "--substitutions {params.substitutions};"
-        "mkdir -p {demult_trim_reports_infos_dir};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_reports_infos_dir}"
 
 
