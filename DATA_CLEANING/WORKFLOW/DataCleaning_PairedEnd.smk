@@ -185,7 +185,7 @@ rule MultiQC_TrimmedFastqs:
         "ENVS/conda_tools.yml"
     shell:
         "multiqc {input} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report;"
-        "sed -i -e '/header_mqc-generalstats-cutadapt-percent_trimmed/s/>\([a-zA-Z][^>]*\)_trimmed.R/>\1.R/g' {demult_trim_reports_dir}/multiQC_Trimming_Report.html"
+        "sed -i -e '/header_mqc-generalstats-cutadapt-percent_trimmed/s/>\\([a-zA-Z][^>]*\\)_trimmed.R/>\\1.R/g' {demult_trim_reports_dir}/multiQC_Trimming_Report.html"
 
 
 rule Concatenate_TrimmedFastqs:
