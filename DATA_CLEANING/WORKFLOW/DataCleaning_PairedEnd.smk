@@ -106,7 +106,7 @@ rule Demultiplex_RawFastqs:
     output:
         expand("{demult_dir}/{sample}.R1.fastq.gz", sample=samples, demult_dir=demult_dir),
         expand("{demult_dir}/{sample}.R2.fastq.gz", sample=samples, demult_dir=demult_dir),
-        demult_reports_infos_dir+"/demultiplexing_cutadapt.info"
+
     params:
         substitutions = config["DEMULT_SUBSTITUTIONS"],
         threads = config["DEMULT_THREADS"]
@@ -116,6 +116,7 @@ rule Demultiplex_RawFastqs:
         "{scripts_dir}/demultiplex_with_cutadapt_PE.sh --demultdir {demult_dir} --R1 {input.fastq_R1_raw} "
         "--R2 {input.fastq_R2_raw} --tag_file {input.tag_file} --nodes {params.threads} "
         "--substitutions {params.substitutions};"
+        "mkdir -p {demult_trim_reports_infos_dir};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_reports_infos_dir}"
 
 rule CountReads_DemultFastqs:

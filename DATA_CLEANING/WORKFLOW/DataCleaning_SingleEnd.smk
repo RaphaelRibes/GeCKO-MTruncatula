@@ -99,8 +99,8 @@ rule Demultiplex_RawFastqs:
         fastq_raw = fastq_raw,
         tag_file = config["SAMPLE_FILE"]
     output:
-        expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir),
-        demult_reports_infos_dir+"/demultiplexing_cutadapt.info"
+        expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir)
+
     params:
         substitutions = config["DEMULT_SUBSTITUTIONS"],
         threads = config["DEMULT_THREADS"]
@@ -110,6 +110,7 @@ rule Demultiplex_RawFastqs:
         "{scripts_dir}/demultiplex_with_cutadapt_SE.sh --demultdir {demult_dir} --R {input.fastq_raw} "
         "--tag_file {input.tag_file} --nodes {params.threads} "
         "--substitutions {params.substitutions};"
+        "mkdir -p {demult_trim_reports_infos_dir};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_reports_infos_dir}"
 
 
@@ -158,7 +159,7 @@ rule Fastqc_TrimmedFastqs:
     input:
         demult_trim_dir+"/{base}_trimmed.fastq.gz"
     output:
-        demult_trim_reports_fastqc_dir+"/{base}_trimmed.fastqc.zip"
+        demult_trim_fastqc_reports_dir+"/{base}_trimmed.fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
@@ -167,9 +168,7 @@ rule Fastqc_TrimmedFastqs:
 
 rule MultiQC_TrimmedFastqs:
     input:
-        expand("{demult_trim_reports_infos_dir}/trimming_cutadapt_{sample}.info", sample=samples, demult_trim_reports_infos_dir=demult_trim_reports_infos_dir),
-        expand("{demult_trim_reports_fastqc_dir}/{sample}_trimmed.fastqc.zip", sample=samples, demult_trim_reports_fastqc_dir=demult_trim_reports_fastqc_dir)
-
+        expand("{demult_trim_dir}/trimming_cutadapt_{sample}.info", sample=samples, demult_trim_dir=demult_trim_dir)
     output:
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html"
     conda:
@@ -191,7 +190,7 @@ rule Fastqc_ConcatTrimmedFastqs:
     input:
         demult_trim_dir+"/"+fastq_raw_base+"_trimmed.fastq.gz"
     output:
-        demult_trim_reports_fastqc_dir+"/All_Samples_Concat_trimmed.fastqc.zip"
+        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
@@ -204,7 +203,7 @@ rule MultiQC_Global:
     input:
         buildExpectedFiles(
         [rawdata_reports_dir+"/"+fastq_raw_base+"_fastqc.zip",
-        demult_trim_reports_fastqc_dir+"/All_Samples_Concat_trimmed.fastqc.zip"],
+        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.fastqc.zip"],
 
         [performDemultiplexing, True]
         )

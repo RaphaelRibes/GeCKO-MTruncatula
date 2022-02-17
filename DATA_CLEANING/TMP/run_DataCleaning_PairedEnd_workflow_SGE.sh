@@ -3,8 +3,8 @@
 
 mkdir -p Logs_DataCleaningWorkflow
 
-PRGR=/home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW
-CONFIG=/home/jogirodolle/work/DATA_TEST/VIR/CONFIG
+PRGR=/storage/replicated/cirad_users/ardissonm/WORKFLOW/DATA_CLEANING
+CONFIG=./CONFIG
 PROFILE=${PRGR}"/PROFILES"
 
 ## DRYRUN ##

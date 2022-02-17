@@ -13,8 +13,8 @@ module load singularity/3.6.3
 
 mkdir -p Logs_DataCleaningWorkflow
 
-PRGR=/home/girodollej/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW
-CONFIG=/home/girodollej/scratch/DATA_TEST/VIR_Cap001/CONFIG
+PRGR=/storage/replicated/cirad_users/ardissonm/WORKFLOW/DATA_CLEANING
+CONFIG=./CONFIG
 PROFILE=${PRGR}"/PROFILES"
 
 
