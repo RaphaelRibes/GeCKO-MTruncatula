@@ -46,8 +46,8 @@ else:
 demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
 demult_trim_reports_dir = outputs_directory+"/DEMULT_TRIM/REPORTS"
-demult_trim_reports_infos_dir = demult_trim_reports_dir+"/CUTADAPT_INFOS"
-demult_trim_reports_fastqc_dir = demult_trim_reports_dir+"/FASTQC"
+demult_trim_cutadapt_reports_dir = demult_trim_reports_dir+"/CUTADAPT_INFOS"
+demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/FASTQC"
 
 
 ### FUNCTIONS
@@ -130,8 +130,8 @@ rule Trimming_DemultFastqs:
         adapt_file = config["ADAPT_FILE"]
     output:
         demult_trim_dir+"/{base}_trimmed.fastq.gz",
-        demult_trim_reports_infos_dir+"/trimming_cutadapt_{base}.info",
-        temp(demult_trim_reports_infos_dir+"/tmp_trimming_cutadapt_{base}.info")
+        demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info",
+        temp(demult_trim_cutadapt_reports_dir+"/tmp_trimming_cutadapt_{base}.info")
     params:
         threads = config["TRIMMING_THREADS"],
         quality_cutoff = config["TRIMMING_QUAL"],
@@ -142,8 +142,8 @@ rule Trimming_DemultFastqs:
         "{scripts_dir}/trimming_with_cutadapt_SE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
         "--R {input.fastqs_demult} --adapt_file {input.adapt_file} "
         "--nodes {params.threads} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
-        "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_reports_infos_dir}/trimming_cutadapt_{wildcards.base}.info;"
-        "sed 's/R1//g' {demult_trim_reports_infos_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_reports_infos_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
+        "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info;"
+        "sed 's/R1//g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_cutadapt_reports_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
 
 
 rule CountReads_TrimmedFastqs:
@@ -163,7 +163,7 @@ rule Fastqc_TrimmedFastqs:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "fastqc -o {demult_trim_reports_fastqc_dir} {input}"
+        "fastqc -o {demult_trim_fastqc_reports_dir} {input}"
 
 
 rule MultiQC_TrimmedFastqs:
@@ -194,9 +194,9 @@ rule Fastqc_ConcatTrimmedFastqs:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "fastqc -o {demult_trim_reports_fastqc_dir} {input} ;"
-        "mv {demult_trim_reports_fastqc_dir}/{fastq_raw_base}_trimmed_fastqc.html {demult_trim_reports_fastqc_dir}/All_Samples_Concat_trimmed.fastqc.html ;"
-        "mv {demult_trim_reports_fastqc_dir}/{fastq_raw_base}_trimmed_fastqc.zip {demult_trim_reports_fastqc_dir}/All_Samples_Concat_trimmed.fastqc.zip"
+        "fastqc -o {demult_trim_fastqc_reports_dir} {input} ;"
+        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.html {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.fastqc.html ;"
+        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.zip {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.fastqc.zip"
 
 
 rule MultiQC_Global:
