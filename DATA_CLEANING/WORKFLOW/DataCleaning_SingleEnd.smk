@@ -131,7 +131,7 @@ rule Trimming_DemultFastqs:
     output:
         demult_trim_dir+"/{base}_trimmed.fastq.gz",
         demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info",
-        temp(demult_trim_cutadapt_reports_dir+"/tmp_trimming_cutadapt_{base}.info")
+        #temp(demult_trim_cutadapt_reports_dir+"/tmp_trimming_cutadapt_{base}.info")
     params:
         threads = config["TRIMMING_THREADS"],
         quality_cutoff = config["TRIMMING_QUAL"],
@@ -143,7 +143,7 @@ rule Trimming_DemultFastqs:
         "--R {input.fastqs_demult} --adapt_file {input.adapt_file} "
         "--nodes {params.threads} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
         "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info;"
-        "sed 's/R1//g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_cutadapt_reports_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
+        #"sed 's/R1//g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_cutadapt_reports_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
 
 
 rule CountReads_TrimmedFastqs:
@@ -159,7 +159,7 @@ rule Fastqc_TrimmedFastqs:
     input:
         demult_trim_dir+"/{base}_trimmed.fastq.gz"
     output:
-        demult_trim_fastqc_reports_dir+"/{base}_trimmed.fastqc.zip"
+        demult_trim_fastqc_reports_dir+"/{base}_trimmed_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
@@ -168,13 +168,14 @@ rule Fastqc_TrimmedFastqs:
 
 rule MultiQC_TrimmedFastqs:
     input:
-        expand("{demult_trim_dir}/trimming_cutadapt_{sample}.info", sample=samples, demult_trim_dir=demult_trim_dir)
+        expand("{demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{sample}.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
+        expand("{demult_trim_fastqc_reports_dir}/{sample}_trimmed_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir)
     output:
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report"
+        "multiqc {input} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report ;"
         "sed -i -e '/header_mqc-generalstats-cutadapt-percent_trimmed/s/>\\([a-zA-Z][^>]*\\)_trimmed.R/>\\1.R/g' {demult_trim_reports_dir}/multiQC_Trimming_Report.html"
 
 
@@ -190,20 +191,20 @@ rule Fastqc_ConcatTrimmedFastqs:
     input:
         demult_trim_dir+"/"+fastq_raw_base+"_trimmed.fastq.gz"
     output:
-        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.fastqc.zip"
+        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
         "fastqc -o {demult_trim_fastqc_reports_dir} {input} ;"
-        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.html {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.fastqc.html ;"
-        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.zip {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.fastqc.zip"
+        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.html {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed_fastqc.html ;"
+        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed_fastqc.zip {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed_fastqc.zip"
 
 
 rule MultiQC_Global:
     input:
         buildExpectedFiles(
         [rawdata_reports_dir+"/"+fastq_raw_base+"_fastqc.zip",
-        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.fastqc.zip"],
+        demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed_fastqc.zip"],
 
         [performDemultiplexing, True]
         )
