@@ -38,10 +38,10 @@ rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 
 if performDemultiplexing:
     demult_dir = outputs_directory+"/DEMULT"
-    demult_reports_infos_dir = outputs_directory+"/DEMULT/REPORTS/CUTADAPT_INFOS"
+    demult_cutadapt_reports_dir = demult_dir+"/REPORTS/CUTADAPT_INFOS"
 else:
     demult_dir = user_demult_dir
-    demult_reports_infos_dir = ""
+    demult_cutadapt_reports_dir = ""
 
 demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
@@ -100,8 +100,8 @@ rule Demultiplex_RawFastqs:
         fastq_raw = fastq_raw,
         tag_file = config["SAMPLE_FILE"]
     output:
-        expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir)
-
+        expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir),
+        demult_cutadapt_reports_dir+"/demultiplexing_cutadapt.info"
     params:
         substitutions = config["DEMULT_SUBSTITUTIONS"],
         threads = config["DEMULT_THREADS"]
@@ -111,7 +111,7 @@ rule Demultiplex_RawFastqs:
         "{scripts_dir}/demultiplex_with_cutadapt_SE.sh --demultdir {demult_dir} --R {input.fastq_raw} "
         "--tag_file {input.tag_file} --nodes {params.threads} "
         "--substitutions {params.substitutions};"
-        "mv {demult_dir}/demultiplexing_cutadapt.info {demult_reports_infos_dir}"
+        "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 
 
 rule CountReads_DemultFastqs:
