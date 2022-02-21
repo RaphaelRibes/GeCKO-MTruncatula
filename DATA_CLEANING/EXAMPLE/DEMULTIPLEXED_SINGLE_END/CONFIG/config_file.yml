@@ -1,0 +1,29 @@
+### GENERAL VARIABLES ###
+OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
+
+### INPUT FILES ###
+
+# Provide the raw fastq files to be demultiplexed (leave blank if fastq files are already demultiplexed)
+FASTQ: ""
+
+# Provide the directory containing the demultiplexed raw fastq files (leave blank if raw fastq files need demultiplexing)
+# This directory should contain fastq files per sample X (PairedEnd:sampleX.R1.fastq.gz and sampleX.R2.fastq.gz / SingleEnd:sampleX.fastq.gz )
+DEMULT_DIR: "DEMULT"
+
+# Mandatory files (if fastq files are already demultiplexed, only the first column of the SAMPLE_FILE will be used)
+SAMPLE_FILE: "CONFIG/sample_file_MEL.txt"
+ADAPT_FILE: "CONFIG/adapter_file_MEL.txt"
+
+
+
+### DEMULTIPLEXING PARAMETERS ###
+# Leave blank if fastq files are already demultiplexed and SKIP_DEMULT is set to TRUE
+DEMULT_THREADS: 1
+DEMULT_SUBSTITUTIONS: 0.1
+
+
+### TRIMMING PARAMETERS ###
+TRIMMING_THREADS: 1
+TRIMMING_QUAL: 30
+TRIMMING_MIN_LENGTH: 36
+

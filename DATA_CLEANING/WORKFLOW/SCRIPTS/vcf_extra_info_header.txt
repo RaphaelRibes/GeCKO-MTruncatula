@@ -1,9 +1,0 @@
-##INFO=<ID=A1A1,Number=1,Type=Integer,Description="Number of homozygotes having (reference allele)">
-##INFO=<ID=A2A2,Number=1,Type=Integer,Description="Number of homozygotes having (alternate allele)">
-##INFO=<ID=A1A2,Number=1,Type=Integer,Description="Number of heterozygotes">
-##INFO=<ID=nbG,Number=1,Type=Integer,Description="Number of genotyped individuals, sum of A1A1, A2A2, A1A2">
-##INFO=<ID=pcNA,Number=1,Type=Float,Description="percentage of missing genotype for this site">
-##INFO=<ID=p,Number=1,Type=Float,Description="frequency of the reference allele">
-##INFO=<ID=q,Number=1,Type=Float,Description="frequency of the alternate allele">
-##INFO=<ID=He,Number=1,Type=Float,Description="Nei expected Heterozygosity">
-##INFO=<ID=F,Number=1,Type=Float,Description="Inbreeding coefficient">
