@@ -10,7 +10,7 @@ from itertools import compress
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Variables from config file
-samples = pd.read_csv(config["SAMPLE_FILE"], sep='\t', header=None).iloc[:, 0]
+samples = pd.read_csv(config["ADAPT_FILE"], sep='\t', header=None).iloc[:, 0]
 fastq_raw = config["FASTQ"]
 outputs_dirname = config["OUTPUTS_DIRNAME"]
 user_demult_dir = config["DEMULT_DIR"]
@@ -98,7 +98,7 @@ rule CountReads_RawFastqs:
 rule Demultiplex_RawFastqs:
     input:
         fastq_raw = fastq_raw,
-        tag_file = config["SAMPLE_FILE"]
+        barcode_file = config["BARCODE_FILE"]
     output:
         expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir),
         demult_cutadapt_reports_dir+"/demultiplexing_cutadapt.info"
@@ -109,7 +109,7 @@ rule Demultiplex_RawFastqs:
         "ENVS/conda_tools.yml"
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_SE.sh --demultdir {demult_dir} --R {input.fastq_raw} "
-        "--tag_file {input.tag_file} --nodes {params.threads} "
+        "--barcode_file {input.barcode_file} --nodes {params.threads} "
         "--substitutions {params.substitutions};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 
@@ -130,8 +130,7 @@ rule Trimming_DemultFastqs:
         adapt_file = config["ADAPT_FILE"]
     output:
         demult_trim_dir+"/{base}_trimmed.fastq.gz",
-        demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info",
-        #temp(demult_trim_cutadapt_reports_dir+"/tmp_trimming_cutadapt_{base}.info")
+        demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info"
     params:
         threads = config["TRIMMING_THREADS"],
         quality_cutoff = config["TRIMMING_QUAL"],
@@ -142,8 +141,7 @@ rule Trimming_DemultFastqs:
         "{scripts_dir}/trimming_with_cutadapt_SE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
         "--R {input.fastqs_demult} --adapt_file {input.adapt_file} "
         "--nodes {params.threads} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
-        "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info;"
-        #"sed 's/R1//g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_cutadapt_reports_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
+        "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info"
 
 
 rule CountReads_TrimmedFastqs:
@@ -214,7 +212,7 @@ rule MultiQC_Global:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Overall_Report"
+        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Overall_Report -c {scripts_dir}/config_multiQC_keepTrim.yaml"
 
 
 

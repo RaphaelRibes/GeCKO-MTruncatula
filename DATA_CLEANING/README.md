@@ -5,12 +5,14 @@
 The DATA_CLEANING workflow allows several steps to be carried out successively in order to obtain cleaned sequences.
 
 This workflow can be used with: 
-	- paired_end sequences (noted PE): one way sequencing and in output one fastq.gz file
-	- single_end sequences (noted SE): two way sequencing (Read1 et read2) and in output two files: R1.fastq.gz and R2.fastq.gz 
+		- single_end sequences (noted SE): one way sequencing and in output one fastq file
+		- paired_end sequences (noted PE) two way sequencing (Read1 et read2) and in output two fastq files
 
 moreover, input sequences can be :
 	- multiplexed: sequences of several samples in one (SE) or two (PE) fastq.gz files > all stages of the pipeline are completed 
 	- demultiplexed: sequences in one (SE) or two (PE) fastq.gz files per sample > the pipeline automatically starts at step 4
+
+**_format fichiers fastq.gz_**
 
 _**EXAMPLE ??? **_
 
@@ -50,13 +52,15 @@ This workflow uses 3 tools:
 
 ### 1/ Import DATA
 
-the input data are sequences from an Illumina sequencer (Miseq / Hiseq). 
-	- paired_end sequences (PE): one way sequencing and in output one fastq.gz file
-	- single_end sequences (SE): two way sequencing (Read1 et read2) and in output two files: R1.fastq.gz and R2.fastq.gz 
+The input data are sequences from an Illumina sequencer (Miseq / Hiseq). 
 
-moreover, input sequences can be :
-	- multiplexed: sequences of several samples in one (SE) or two (PE) fastq.gz files.
-	- demultiplexed: sequences in one (SE) or two (PE) fastq.gz files per sample.
+Input sequences can be multiplexed:
+	- single_end sequences (SE): one file in the format: name.fastq.gz
+	- paired_end sequences (PE): two files in the format : name_R1.fastq.gz and name_R2.fastq.gz 
+
+or already demultiplexed: 
+	- single_end sequences (SE): one file by sample in the format: sample.fastq.gz
+	- paired_end sequences (PE): two files by sample in the format : sample.R1.fastq.gz and sample.R2.fastq.gz
 
 The sequences are stored in a directory whose path is specified in the config_file.txt
 
@@ -91,24 +95,27 @@ SCRIPTS
 The WORKFLOW DATA_CLEANING needs several pieces of information about the dataset and the analysis parameters. 
 All the files containing this information are located in the CONFIG folder which must be placed next to the DATA to be analysed in workspace.
 
-**_cluster_config_SGE.json_** : file allowing to configure on a SGE-type computing cluster : the type of partition, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
-_cluster_config_SLURM.json_ : file allowing to configure on a SLURM-type computing cluster : the type of queue, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
+**_cluster_config_SGE_DataCleaning.json_** : file allowing to configure on a SGE-type computing cluster : the type of partition, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
+_cluster_config_SLURM_DataCleaning.json_ : file allowing to configure on a SLURM-type computing cluster : the type of queue, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
 
-**_config_file.yml_** : 
+**_config_DataCleaning.yml_** : 
 file containing the information and parameters that will be used by the snakemake workflow DATA_CLEANING
 
 > General variables:
 OUTPUTS_DIRNAME: Name of the directory that will contain all the workflow outputs (example: WOKFLOW_OUTPUTS )
 > Input files:
-_for PairedEnd config.file.txt_                                                                 _for SingleEnd config.file.txt_
-FASTQ_R1: path to the folder containing R1.fastq.gz file                      FASTQ: path to the folder containing fastq.gz file
-FASTQ_R2: path to the folder containing R2.fastq.gz file
-DEMULT_DIR: in the case of an analysis of already demultiplexed data, path to the folder containing the data.
-                         in the case of a demultiplexed data analysis, throw the empty field (note "").
-BARCODE_FILE:  in case the data has to be demultiplexed using the barcodes specific to each sample, path to the barcode_file.txt. see description below.
-                               in the case of an analysis of already demultiplexed data, throw the empty field (note "").                              
+FASTQ: if the sequencing is in Single_End AND the raw fastq files is multiplexed, if not leave blank: ""
+              path to the folder containing fastq.gz file. 
+FASTQ_R1: If the sequencing is in Paired_End AND the raw fastq files are  multiplexed, if not leave blank: ""                     
+                    path to the folder containing  fastq.gz file Read1. File extension format: name_R1.fastq.gz. 
+FASTQ_R2: If the sequencing is in Paired_End AND the raw fastq files are  multiplexed, if not leave blank: ""
+                    path to the folder containing  fastq.gz file Read2. File extension format: name_R2.fastq.gz. 
+DEMULT_DIR: If the raw fastq files are demultiplexed (sequencing Single_end or paired_end), if not leave blank: ""
+                        File extension format: PairedEnd > sampleX.R1.fastq.gz and sampleX.R2.fastq.gz / SingleEnd > sampleX.fastq.gz 
+BARCODE_FILE:  If the raw fastq files are multiplexed (sequencing Single_end or paired_end)with the barcodes specific to each sample , if not leave blank: ""
+                              path to the barcode_file.txt. see description below.                                                   
 ADAPTER_FILE: path to the adapter_file.txt. see description below.
-> Demultiplexing parameters 
+> Demultiplexing parameters : if the raw fastq files is multiplexed, if not leave blank: ""
 DEMULT_THREADS: number of threads to be allocated on cluster for the demultiplexing step with CUTADAPT (corresponds to parameter ""--nodes" of CUTADAPT tool)
 DEMULT_SUBSTITUTIONS: percentage of substitution by barcode (tag). Example: 1 substitution on a barcode of 8pb, note 0.15. (corresponds to parameter ""--substitutions" of                                                    CUTADAPT tool)
 > Trimming parameters
