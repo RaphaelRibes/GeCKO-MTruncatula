@@ -1,0 +1,24 @@
+{
+    "__default__" :
+    {
+        "q" : "short.q",
+        "N" : "RM.{rule}",
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.$JOB_ID.err.txt"
+    },
+    "Mapping_PairedEndFastqs" :
+    {
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt"
+    },
+    "Mapping_SingleEndFastqs" :
+    {
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt"
+    },
+    "CountReads_Bams" :
+    {
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt"
+    }
+}
