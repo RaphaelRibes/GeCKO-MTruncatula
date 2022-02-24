@@ -10,7 +10,7 @@ from itertools import compress
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Variables from config file
-samples = pd.read_csv(config["SAMPLE_FILE"], sep='\t', header=None).iloc[:, 0]
+samples = pd.read_csv(config["ADAPT_FILE"], sep='\t', header=None).iloc[:, 0]
 fastq_R1_raw = config["FASTQ_R1"]
 fastq_R2_raw = config["FASTQ_R2"]
 outputs_dirname = config["OUTPUTS_DIRNAME"]
@@ -103,7 +103,7 @@ rule Demultiplex_RawFastqs:
     input:
         fastq_R1_raw = fastq_R1_raw,
         fastq_R2_raw = fastq_R2_raw,
-        tag_file = config["SAMPLE_FILE"]
+        barcode_file = config["BARCODE_FILE"]
     output:
         expand("{demult_dir}/{sample}.R1.fastq.gz", sample=samples, demult_dir=demult_dir),
         expand("{demult_dir}/{sample}.R2.fastq.gz", sample=samples, demult_dir=demult_dir),
@@ -115,7 +115,7 @@ rule Demultiplex_RawFastqs:
         "ENVS/conda_tools.yml"
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_PE.sh --demultdir {demult_dir} --R1 {input.fastq_R1_raw} "
-        "--R2 {input.fastq_R2_raw} --tag_file {input.tag_file} --nodes {params.threads} "
+        "--R2 {input.fastq_R2_raw} --barcode_file {input.barcode_file} --nodes {params.threads} "
         "--substitutions {params.substitutions};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 

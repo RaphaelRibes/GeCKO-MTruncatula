@@ -16,7 +16,7 @@
 # Assignment of sequences to each of the genotypes according to the barcode or tag, located at the P5 and P7 ends, which were assigned to them during the construction of the libraries.
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R1 DEV.R1.fastq.gz --R2 DEV.R2.fastq.gz --tag_file sample_file_DEV.txt --nodes 1 --substitutions 0.15
+#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R1 DEV.R1.fastq.gz --R2 DEV.R2.fastq.gz --barcode_file barcode_file_DEV.txt --nodes 1 --substitutions 0.15
 
 #--demultdir
 	# folders that will contain the demultiplexing output files
@@ -24,8 +24,8 @@
 	# path to the fastq.gz file corresponding to the R1 sequences 
 #--R2
 	# path to the fastq.gz file corresponding to the R2 sequences
-#--tag_file
-	# path to the sample_file.txt containing the list of samples names (column 1) , sequences of barcode/tags for read 1 (P5) (column 2) and sequences of barcode/tags for read 2 (P7) (column 3)
+#--barcode_file
+	# path to the barcode_file.txt containing the list of samples names (column 1) , sequences of barcode for read 1 (P5) (column 2) and sequences of barcode for read 2 (P7) (column 3)
 	# example (no header, tab-separated):
 	#Tc2208a	AGCGCA	AGCGCA
 	#Tc2235a	CTCAGC	CTCAGC
@@ -33,7 +33,7 @@
 #--nodes
 	# number of nodes to be allocated on cluster 
 #--substitutions
-	# percentage of substitution by barcode (tag). Example: 1 substitution on a barcode of 8pb, note 0.15
+	# percentage of substitution by barcode. Example: 1 substitution on a barcode of 8pb, note 0.15
 # this script launches cutapdat with two options by default: --no-indels --pair-adapters
 
 # >>> OUTPUTS
@@ -64,8 +64,8 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --tag_file)
-  TAG_FILE="$2"
+  --barcode_file)
+  BARCODE_FILE="$2"
   shift # past argument
   shift # past value
   ;;
@@ -99,8 +99,8 @@ fi
 if [[ ! "$R2" = /* ]] ; then
   R2=$(readlink -f $R2) ;
 fi
-if [[ ! "$TAG_FILE" = /* ]] ; then
-  TAG_FILE=$(readlink -f $TAG_FILE) ;
+if [[ ! "$BARCODE_FILE" = /* ]] ; then
+  BARCODE_FILE=$(readlink -f $BARCODE_FILE) ;
 fi
 
 
@@ -108,11 +108,11 @@ fi
 
 ## 1/ CREATE BARCODE/TAGS FASTA FILES
 mkdir ${DEMULT_DIR}/Cutadapt_tmp
-awk '{print ">"$1"\n^"$2}' ${TAG_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R1_tags_cutadapt.fasta
-awk '{print ">"$1"\n^"$3}' ${TAG_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R2_tags_cutadapt.fasta
+awk '{print ">"$1"\n^"$2}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R1_barcode_cutadapt.fasta
+awk '{print ">"$1"\n^"$3}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R2_barcode_cutadapt.fasta
 
 ## 2/ RUN CUTADAPT - DEMULTIPLEXING
-cutadapt -e ${SUBSTITUTIONS} --no-indels --pair-adapters -j ${NODES} -g file:${DEMULT_DIR}/Cutadapt_tmp/R1_tags_cutadapt.fasta -G file:${DEMULT_DIR}/Cutadapt_tmp/R2_tags_cutadapt.fasta -o ${DEMULT_DIR}/{name}.R1.fastq.gz -p ${DEMULT_DIR}/{name}.R2.fastq.gz ${R1} ${R2} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
+cutadapt -e ${SUBSTITUTIONS} --no-indels --pair-adapters -j ${NODES} -g file:${DEMULT_DIR}/Cutadapt_tmp/R1_barcode_cutadapt.fasta -G file:${DEMULT_DIR}/Cutadapt_tmp/R2_barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.R1.fastq.gz -p ${DEMULT_DIR}/{name}.R2.fastq.gz ${R1} ${R2} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
 
 ## 3/ REMOVE TMP FILES
 rm -r ${DEMULT_DIR}/Cutadapt_tmp

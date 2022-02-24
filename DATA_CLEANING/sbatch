@@ -1,0 +1,2 @@
+
+sbatch --partition=agap_normal --job-name=M_PE --wrap="/home/ardissonm/scratch/TEST_WORKFLOW/runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path /storage/replicated/cirad_users/ardissonm/WORKFLOW/DATA_CLEANING/ --cluster-config /home/ardissonm/scratch/TEST_WORKFLOW/DATA_CLEANING/MULTIPLEXED_PAIRED_END/CONFIG/cluster_config_Slurm_DataCleaning.json --config-file /home/ardissonm/scratch/TEST_WORKFLOW/DATA_CLEANING/MULTIPLEXED_PAIRED_END/CONFIG/config_DataCleaning.yml --latency-wait 20 --jobs 200 --use-conda --job-scheduler SLURM"

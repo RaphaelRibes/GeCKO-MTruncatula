@@ -16,14 +16,14 @@
 # Assignment of sequences to each of the genotypes according to the barcode or tag, which were assigned to them during the construction of the libraries.
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R DEV.fastq.gz --tag_file sample_file_DEV.txt --nodes 1 --substitutions 0.15
+#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R DEV.fastq.gz --barcode_file barcode_file_DEV.txt --nodes 1 --substitutions 0.15
 
 #--demultdir
 	# folders that will contain the demultiplexing output files
 #--R
 	# path to the fastq.gz file corresponding to the sequences 
-#--tag_file
-	# path to the sample_file.txt containing the list of samples names (column 1) , sequences of barcode/tags (column 2)
+#--barcode_file
+	# path to the barcode_file.txt containing the list of samples names (column 1) , sequences of barcode (column 2)
 	# example (no header, tab-separated):
 	#Tc2208a	AGCGCA
 	#Tc2235a	CTCAGC
@@ -57,8 +57,8 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --tag_file)
-  TAG_FILE="$2"
+  --barcode_file)
+  BARCODE_FILE="$2"
   shift # past argument
   shift # past value
   ;;
@@ -89,9 +89,8 @@ fi
 if [[ ! "$R" = /* ]] ; then
   R=$(readlink -f $R) ;
 fi
-
-if [[ ! "$TAG_FILE" = /* ]] ; then
-  TAG_FILE=$(readlink -f $TAG_FILE) ;
+if [[ ! "$BARCODE_FILE" = /* ]] ; then
+  BARCODE_FILE=$(readlink -f $BARCODE_FILE) ;
 fi
 
 
@@ -99,10 +98,10 @@ fi
 
 ## 1/ CREATE BARCODE/TAGS FASTA FILES
 mkdir ${DEMULT_DIR}/Cutadapt_tmp
-awk '{print ">"$1"\n^"$2}' $TAG_FILE > ${DEMULT_DIR}/Cutadapt_tmp/tags_cutadapt.fasta
+awk '{print ">"$1"\n^"$2}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta
 
 ## 2/ RUN CUTADAPT - DEMULTIPLEXING
-cutadapt -e $SUBSTITUTIONS --no-indels -j $NODES -g file:${DEMULT_DIR}/Cutadapt_tmp/tags_cutadapt.fasta -o ${DEMULT_DIR}/{name}.fastq.gz  $R > ${DEMULT_DIR}/demultiplexing_cutadapt.info
+cutadapt -e ${SUBSTITUTIONS} --no-indels -j ${NODES} -g file:${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.fastq.gz  ${R} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
 
 ## 3/ REMOVE TMP FILES
 rm -r ${DEMULT_DIR}/Cutadapt_tmp

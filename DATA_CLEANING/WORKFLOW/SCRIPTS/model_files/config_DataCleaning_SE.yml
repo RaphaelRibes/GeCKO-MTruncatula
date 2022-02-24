@@ -1,0 +1,33 @@
+### GENERAL VARIABLES ###
+
+OUTPUTS_DIRNAME: ""
+PAIRED_END: ""
+
+### INPUT FILES ###
+
+# Complete this field if the sequencing is in Single_End AND the raw fastq files is multiplexed, if not leave blank: ""
+# File extension format: .fastq.gz 
+FASTQ: ""
+
+# Complete this field if the raw fastq files are demultiplexed (sequencing Single_end or paired_end), if not leave blank: ""
+# File extension format: PairedEnd > sampleX.R1.fastq.gz and sampleX.R2.fastq.gz / SingleEnd > sampleX.fastq.gz 
+DEMULT_DIR: ""
+
+# Mandatory files:
+# Complete this field if the raw fastq files are multiplexed (sequencing Single_end or paired_end), if not leave blank: ""
+BARCODE_FILE: ""
+# Complete this field in all cases
+ADAPT_FILE: ""
+
+
+### DEMULTIPLEXING PARAMETERS ###
+
+# Complete these two fields if the raw fastq files is multiplexed, if not leave blank: ""
+DEMULT_THREADS: ""
+DEMULT_SUBSTITUTIONS: ""
+
+
+### TRIMMING PARAMETERS ###
+TRIMMING_THREADS: "
+TRIMMING_QUAL: ""
+TRIMMING_MIN_LENGTH: ""
