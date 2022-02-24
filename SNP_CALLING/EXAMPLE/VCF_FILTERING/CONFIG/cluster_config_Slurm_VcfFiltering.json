@@ -1,0 +1,12 @@
+{
+  "__default__" : {
+      "partition"      : "agap_normal",
+        "job-name"       : "VF.{rule}",
+        "output"         : "Logs_VcfFilteringWorkflow/{rule}.%j.out.txt",
+        "error"          : "Logs_VcfFilteringWorkflow/{rule}.%j.err.txt"
+    },
+  "Trimming_DemultFastqs" : {
+        "output"         : "Logs_VcfFilteringWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error"          : "Logs_VcfFilteringWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+    }
+}

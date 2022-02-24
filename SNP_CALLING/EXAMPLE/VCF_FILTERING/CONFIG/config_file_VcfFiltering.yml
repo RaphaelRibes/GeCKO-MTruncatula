@@ -4,7 +4,7 @@ OUTPUTS_DIRNAME:  "WORKFLOW_OUTPUTS"
 #### INPUT FILES ###
 #
 ## Provide the VCF file to be filtered
-VCF_file: "/lustre/ranwezv/TEST_VCF/SNPs_SIMUL40_PLOIDY2_HET00001.vcf.gz"
+VCF_file: "/home/ardissonm/projects/GE2POP/TRITICUM/PARTAGE/VCF_DONNEES_SIMULEES_2022/SNPs_SIMUL40_PLOIDY2_HET00001.vcf.gz"
 
 ## Mail Johanna
 #Pour les sorties de reads2snps j’ai appliqué les filtres habituels :
