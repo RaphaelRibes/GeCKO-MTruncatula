@@ -1,0 +1,85 @@
+
+This script was made to help you launch our Snakemake workflows.
+
+To do so, follow the steps:
+
+1) Clone or copy the WORKFLOW folder (and all its contents) corresponding to the workflow you want to run.
+e.g. to clone all our workflows folders:
+$ git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git
+
+2) Copy the appropriate config and cluster_config files and adapt them to your data and your cluster.
+For more information on how to fill them out, see the more detailed help available on https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
+It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.json
+
+3) Use the launcher script runSnakemakeWorkflow.sh to run the workflow.
+
+*** BEFORE LAUNCHING ***
+- Make the script executable with:
+$ chmod 755 runSnakemakeWorkflow.sh
+
+- If the script was open on a Windows system and you will execute it on a Linux system, you may need to remove windows carriage returns ('\r') with:
+$ dos2unix runSnakemakeWorkflow.sh
+or
+$ sed -i 's/\r$//g' runSnakemakeWorkflow.sh ; sed -i 's/\r/\n/g' runSnakemakeWorkflow.sh
+
+- Make sure Snakemake and Conda are available to your working environment.
+Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' Snakemake, depending on your cluster's software management policy.
+If your cluster uses environment modules, you can add the 'module load' lines inside runSnakemakeWorkflow.sh: you will find a dedicated zone "WRITE YOUR MODULE LOADS HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out how to name the needed modules, use the 'module avail' command. The modules will be loaded every time you execute the script.
+If your cluster uses Conda environments, Conda will likely be readily available, and you will only need to conda activate Snakemake. To find out how to name the needed modules, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.
+
+
+*** OPTIONS ***
+
+POSSIBLE ACTIONS:
+--help: to print the help
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --help
+
+--dryrun: to only dryrun the workflow (and detect potential errors) without actually running it
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow WorkflowName --dryrun
+
+--unlock: to unlock the folder
+This must be used in case a previous Snakemake run was ended abruptly, and Snakemake returns an error such as:
+    "Error: Directory cannot be locked. Please make sure that no other Snakemake process is trying to create the same files in the following directory:
+    ...
+    If you are sure that no other instances of snakemake are running on this directory, the remaining lock was likely caused by a kill signal or a power loss. It can be removed with the --unlock argument."
+It can be combined with other actions. For example, to unlock and then run the workflow:
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --unlock --run-with-conda
+
+--report: to write an html report of the workflow's last run
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --report
+
+--diagram: to write an svg diagram of the workflow
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --diagram
+
+--run-with-conda: to actually run the workflow. Conda is used to manage the tools used in the different steps, and a conda environment will be built every time you run a new workflow in a new folder.
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --run-with-conda
+
+--conda-create-envs-only: to only create the workflow's conda environment without running the workflow
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --conda-create-envs-only
+
+
+MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):
+--workflow-path [...]: the path to the directory containing the workflow's snakefile (.smk). If the directory was cloned from GitHub, it should end with /WORKFLOW)
+--workflow [...]: the name of the workflow you want to run. Current existing options are 'DataCleaning' and 'ReadsMapping'
+
+CONFIGURATION PARAMETERS:
+--job-scheduler [...]: name of the job scheduler that is installed on your cluster. Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will run without submitting any job and any parallelization.
+--cluster-config [...]: path to the cluster config file. If omitted, this script will look for a cluster_config_WorkflowName.json file (eg: cluster_config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).
+--config-file [...]: path to the workflow's config file. If omitted, this script will look for a config_WorkflowName.json file (eg: config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from.
+
+EXTRA OPTIONS FOR --run-with-conda:
+--jobs [int]: the maximum number of jobs that can be run in parallel (default: 1)
+--printshellcmds: to print the shell commands run by Snakemake for each step
+--latency-wait [int]: the number of seconds Snakemake will wait after the end of a task to look for the expected output files (default: 20).
+You should increase it if Snakemake returns an error such as:
+    "MissingOutputException in ... of ...:
+    Job Missing files after 20 seconds:
+    ...
+    This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait."
+--forceall: run all the workflow's steps, even if output files already exist (and overwrite them). Without this argument, Snakemake's default behavior is to only run the steps for which output files are missing.
+
+ANY OTHER OPTIONS:
+--extra-snakemake-options ["..."]: any list of other Snakemake options that you may want to pass to the Snakemake command. Be careful to provide them between quotes. For an exhaustive list of Snakemake options see https://snakemake.readthedocs.io/en/stable/index.html.
+
+
+For more information or to report any issue, see our GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
