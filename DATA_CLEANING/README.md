@@ -35,10 +35,10 @@ These tools are loaded in a CONDA environment from the conda-forge and bioconda 
 &nbsp;
 ## How to use the DATA_CLEANING workflow
  
-1) Prepare your input data 
-2) Clone the WORKFLOW directory  
-3) Prepare the CONFIG files  
-4) Launch the analysis  
+1) [Prepare your input data](#1-prepare-your-input-data)  
+2) [Clone the WORKFLOW directory](#2-clone-the-workflow-directory)  
+3) [Prepare the CONFIG files](#3-prepare-the-config-files)  
+4) [Launch the analysis](#4-launch-the-analysis)  
 
 &nbsp;
 
@@ -66,18 +66,23 @@ To do this, you can use the command:
 ```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/tree/main/DATA_CLEANING/WORKFLOW.git```  
 
     
-### 3/ Prepare the CONFIG files
+### 3/ Prepare the config files
 
-The DATA_CLEANING WORKFLOW will need information about the dataset and the analysis parameters to performs its different steps.  
-The configuration information is provided through two files: cluster_config_DataCleaning.json and config_DataCleaning.yml.  
-If you name them exactly as written above and place them in a folder named 'CONFIG', the bash launching script will detect them automatically. Otherwise, you will have to pass them as arguments with --config and --cluster-config (see [below](####-4/-Run-Workflow_DataCleaning) for details).
+The DATA_CLEANING workflow will need information about the dataset and the analysis parameters to perform its different steps.  
+These information are provided through two files: *cluster_config_DataCleaning.json* and *config_DataCleaning.yml*.  
+If you name them exactly as written above and place them in a folder named 'CONFIG', the bash launching script will detect them automatically. Otherwise, you will have to pass them as arguments with --config and --cluster-config (see [below](#4-launch-the-analysis) for details).
 
-**_cluster_config_SGE_DataCleaning.json_** : file allowing to configure on a SGE-type computing cluster : the type of partition, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
-_cluster_config_SLURM_DataCleaning.json_ : file allowing to configure on a SLURM-type computing cluster : the type of queue, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
+**_cluster_config_DataCleaning.json_**: this file will be needed if you run the workflow on a computer cluster and want Snakemake to submit jobs. You <ins>only need to modify the partitions or queues names</ins> to match those of your cluster. The first section of the file gives the default values for the job-scheduler's parameters that Snakemake should use for all its steps (or rules). The following sections correspond to specific Snakemake steps, with new parameters values to overwrite the defaults. If you want to assign a different partition/queue for a specific step that does not yet have its own section, you can create a new section for it, preceded by a comma:  
 
-**_config_DataCleaning.yml_** : 
-file containing the information and parameters that will be used by the snakemake workflow DATA_CLEANING
+	"specificStepName" : {
+	"q" or "partition"         : "{partitionNameForSpecificStep}"
+	}  
 
+Our workflows support SGE and Slurm job-schedulers. You will find cluster-config files examples for both in the EXAMPLE/CONFIG folder.  
+
+
+**_config_DataCleaning.yml_**: this file will contain all the information and parameters that will be used by the DATA_CLEANING workflow.
+Here is a description of all its variables:
 > General variables:
 OUTPUTS_DIRNAME: Name of the directory that will contain all the workflow outputs (example: WOKFLOW_OUTPUTS )
 > Input files:
@@ -153,7 +158,7 @@ adapter_file.txt containing the list of samples names (column 1), sequences of a
         Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA
 
 
-### 4/ Run Workflow_DataCleaning
+### 4/ Launch the analysis
 
 .condarc >>> l'utilisation de CONDA pour la gestion des outils (FASTQC, MULTIQC et CUTADAPT) nécessite la création d'un environnement (envs_dirs) et d'un package (pkgs_dirs). Lors du lancement du workflow Snakemake, ils sont créer par défault dans l'espace Homedir qui est soumis en générale à des restrictions d'écritures.
 				   Compléter et copier ce fichier à l'endroit où se créer par défault les packages CONDA, pour rediriger la création le l'environnement et des packages CONDA vers l'espace de travail/stockage choisit 
@@ -191,3 +196,9 @@ SCRIPTS
     **_trimming_with_cutadapt.sh_SE_** : For Single End sequencing. Bash script allowing to trimming a fastq files  to remove adapters sequences, low quality sequences et short sequences. Use of tool CUTADAPT.
     **_fastq_read_count.sh_** : bash script allowing to count reads in all fastq.gz files of folder
 	
+
+
+
+
+**_cluster_config_SGE_DataCleaning.json_** : file allowing to configure on a SGE-type computing cluster : the type of partition, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
+**_cluster_config_SLURM_DataCleaning.json_** : file allowing to configure on a SLURM-type computing cluster : the type of queue, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
