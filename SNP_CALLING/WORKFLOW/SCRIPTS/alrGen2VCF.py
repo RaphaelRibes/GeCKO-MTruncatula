@@ -173,4 +173,4 @@ if __name__ == '__main__':
 	fic_gen_name = sys.argv[2]
 	fic_vcf_name = sys.argv[3]
 	nb_pos,nb_kept=alr_to_vcf(fic_alr_name, fic_gen_name, fic_vcf_name)
-	sys.stdout.write ("{} position have been considered and {} variable positions have been kept.\n\n".format(nb_pos,nb_kept))
+	sys.stdout.write ("{} positions have been considered and {} variable positions have been kept.\n\n".format(nb_pos,nb_kept))
