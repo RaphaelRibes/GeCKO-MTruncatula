@@ -106,8 +106,8 @@ This file is used to pass all the information and tools parameters that will be 
 
 **TRIMMIG PARAMETERS** (mandatory)  
 *TRIMMING_THREADS:*&nbsp;&nbsp;&nbsp;Number of threads to be allocated on your cluster for the trimming step with Cutadapt (will be passed to the "--nodes" Cutadapt parameter)  
-*TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality_cutoff" Cutadapt parameter)
-*TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum_length" Cutadapt parameter)
+*TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality_cutoff" Cutadapt parameter)  
+*TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum_length" Cutadapt parameter)  
 
 &nbsp;
 
@@ -181,18 +181,24 @@ adapter_file.txt containing the list of samples names (column 1), sequences of a
 
 ### 4/ Launch the analysis
 
-.condarc >>> l'utilisation de CONDA pour la gestion des outils (FASTQC, MULTIQC et CUTADAPT) nécessite la création d'un environnement (envs_dirs) et d'un package (pkgs_dirs). Lors du lancement du workflow Snakemake, ils sont créer par défault dans l'espace Homedir qui est soumis en générale à des restrictions d'écritures.
-				   Compléter et copier ce fichier à l'endroit où se créer par défault les packages CONDA, pour rediriger la création le l'environnement et des packages CONDA vers l'espace de travail/stockage choisit 
-  
-** En cours de modification:**
-run_DataCleaning_workflow_Slurm.sh >>> bash script to run the snakemake workflow DATA_CLEANING on a SLURM-type computing cluster. /!\ A MODIFIER /!\
-											copy this bash script into the workspace next to the data to be processed. 
-run_DataCleaning_workflow_SGE.sh >>> bash script to run the snakemake workflow DATA_CLEANING on a SGE-type computing cluster. /!\ A MODIFIER /!\
-											copy this bash script into the workspace next to the data to be processed. 
+**Environment**  
+You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
+
+**Launching**  
+To launch the DATA_CLEANING workflow, you can use our launching script runSnakemakeWorkflow.sh with the option --workflow DataCleaning.  
+For more help on how to use it, see our GitHub's general README file or run:  
+```./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/SMK_DIR``` 
+
+**Notes on Conda**  
+The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
+When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again.
+
+The pkgs_dirs folder however is common to your whole system or cluster personnal environment. Conda's default behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path you want Conda to store the packages in:  
 
 
-### 5/ Expected outputs
 
+### 5/ Expected outputs  
+...work in progress...
 
 
 
