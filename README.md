@@ -2,7 +2,7 @@ This repository provides several Snakemake workflows to clean sequenced reads, m
 You will find the different workflows in the corresponding folders:
 - DATA_CLEANING
 - READS_MAPPING
-- SNP_CALLING
+- SNP_CALLING  
 The bash launcher runSnakemakeWorkflow.sh can be used to easily run these different workflows on your own data. SGE and Slurm job schedulers are currently supported.
 
 
