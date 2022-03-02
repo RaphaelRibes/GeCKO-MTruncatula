@@ -1,4 +1,4 @@
-# CAPTURE_PIPELINES_SNAKEMAKE : DATA CLEANING
+# DATA CLEANING
 
 This DATA_CLEANING workflow generates demultiplexed cleaned sequences from raw sequenced data.
 
@@ -152,32 +152,36 @@ The CUTADAPT tool removes adaptor sequences after the fragment to be sequenced w
 adapter_file.txt containing, for each genotype, the sequence of adapters to be deleted when trimming with cutadapt. 
 Attention, the sequences of the adapters to be filled in must respect the reading directions 
 
-the sequence of illumina adapters and index i5 / i7 are available: [illumina-adapter-sequences](https://support-docs.illumina.com/SHARE/AdapterSeq/illumina-adapter-sequences.pdf)
+Illumina adapters and index i5/i7 sequences are available in [this document](https://support-docs.illumina.com/SHARE/AdapterSeq/illumina-adapter-sequences.pdf).
 
 
-Example with Paired End sequencing:
+**Example for paired-end sequencing:**
 
-![fragment_structure](C:\Users\ardisson\Documents\Analyses donnees NGS\GitHub\CAPTURE_PIPELINES_SNAKEMAKE\readme_img\DataCleaning_FragmentStructure.jpg )
+![fragment_structure](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_FragmentStructure.jpg)
 
-sequence of the adapter to be deleted on read1 (5'-3'):
-[barcode7revcomp]AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC[index7]ATCTCGTATGCCGTCTTCTGCTTG
-sequence of the adapter to be deleted on read2 (5'-3'):
-[barcode5revcomp]AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT[index5revcomp]GTGTAGATCTCGGTGGTCGCCGTATCATT
 
-_For Paired End sequencing_: 
-adapter_file.txt containing the list of samples names (column 1), sequences of adapter in the direction of read 1 after the sequencing fragment (column 2) and sequences of adapter in the direction of read 2 after the sequencing fragment (column 3)
-	example (no header, tab-separated):
-        Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
-        Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GCTGAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
-        Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GATCTAAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
+Technical sequence to look for and remove at the 3' end of R1 reads (given in 5'-3' reading direction):  
+[barcode7revcomp]AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC[index7]ATCTCGTATGCCGTCTTCTGCTTG  
+Technical sequence to look for and remove at the 3' end of R2 reads (given in 5'-3' reading direction):  
+[barcode5revcomp]AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT[index5revcomp]GTGTAGATCTCGGTGGTCGCCGTATCATT  
 
-_For Single End sequencing_: 
-adapter_file.txt containing the list of samples names (column 1), sequences of adapter in the direction of read after the sequencing fragment (column 2)
-	example (no header, tab-separated):
-        Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA
-        Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA
-        Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA
+_For paired-end sequencing_:  
+Three-column file specifying the samples names (column 1), technical sequences to look for and remove in R1 (column 2) and technical sequences to look for and remove in R2 (column 3)  
+	Example (no header, tab-separated):  
+	```
+        Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
+        Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GCTGAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
+        Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GATCTAAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
+	```
 
+_For single-end sequencing_:  
+Two-column file specifying the samples names (column 1) and technical sequences to look for and remove in reads (column 2)
+	Example (no header, tab-separated):  
+	```  
+        Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
+        Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
+        Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
+	```
 
 ### 4/ Launch the analysis
 
@@ -191,11 +195,15 @@ For more help on how to use it, see our GitHub's general README file or run:
 
 **Notes on Conda**  
 The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
-When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again.
+When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again.  
 
-The pkgs_dirs folder however is common to your whole system or cluster personnal environment. Conda's default behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path you want Conda to store the packages in:  
-
-
+The pkgs_dirs folder however is common to your whole system or cluster personnal environment. Conda's default behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path you want Conda to store the packages, following this example:  
+```
+envs_dirs:  
+    - /home/username/path/to/appropriate/folder/env  
+pkgs_dirs:  
+    - /home/username/path/to/appropriate/folder/pkgs  
+```
 
 ### 5/ Expected outputs  
 ...work in progress...
