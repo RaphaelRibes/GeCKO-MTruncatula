@@ -72,60 +72,81 @@ The DATA_CLEANING workflow will need information about the dataset and the analy
 These information are provided through two files: *cluster_config_DataCleaning.json* and *config_DataCleaning.yml*.  
 If you name them exactly as written above and place them in a folder named 'CONFIG', the bash launching script will detect them automatically. Otherwise, you will have to pass them as arguments with --config and --cluster-config (see [below](#4-launch-the-analysis) for details).
 
-**_cluster_config_DataCleaning.json_**: this file will be needed if you run the workflow on a computer cluster and want Snakemake to submit jobs. You <ins>only need to modify the partitions or queues names</ins> to match those of your cluster. The first section of the file gives the default values for the job-scheduler's parameters that Snakemake should use for all its steps (or rules). The following sections correspond to specific Snakemake steps, with new parameters values to overwrite the defaults. If you want to assign a different partition/queue for a specific step that does not yet have its own section, you can create a new section for it, preceded by a comma:  
+#### *cluster_config_DataCleaning.json file:*
+This file will be needed if you run the workflow on a computer cluster and want Snakemake to submit jobs. You <ins>only need to modify the partitions or queues names</ins> to match those of your cluster. The first section of the file gives the default values for the job-scheduler's parameters that Snakemake should use for all its steps (or rules). The following sections correspond to specific Snakemake steps, with new parameters values to overwrite the defaults. If you want to assign a different partition/queue for a specific step that does not yet have its own section, you can create a new section for it, preceded by a comma:  
 
 	"specificStepName" : {
 	"q" or "partition"         : "{partitionNameForSpecificStep}"
 	}  
 
-Our workflows support SGE and Slurm job-schedulers. You will find cluster-config files examples for both in the EXAMPLE/CONFIG folder.  
+Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-config files for both in the EXAMPLE/CONFIG folder</ins>.  
+
+&nbsp;
+
+#### *config_DataCleaning.yml file:*  
+This file is used to pass all the information and tools parameters that will be used by the DATA_CLEANING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
+
+**GENERAL VARIABLES**  
+*OUTPUTS_DIRNAME:*&nbsp;&nbsp;&nbsp;Name of the directory that the workflow will create, where to store its outputs (example: "WOKFLOW_OUTPUTS")  
+*PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end [TRUE or FALSE]  
+
+**INPUT FILES**  
+*FASTQ:*&nbsp;&nbsp;&nbsp;Path to the raw data fastq.gz file (for single-end AND multiplexed data only, otherwise leave blank: "")  
+*FASTQ_R1:*&nbsp;&nbsp;&nbsp;Path to the R1 raw data fastq.gz file, name format must be: name_R1.fastq.gz (for paired-end AND multiplexed data only, otherwise leave blank: "")  
+*FASTQ_R2:*&nbsp;&nbsp;&nbsp;Path to the R2 raw data fastq.gz file, name format must be: name_R2.fastq.gz (for paired-end AND multiplexed data only, otherwise leave blank: "")  
+*DEMULT_DIR:*&nbsp;&nbsp;&nbsp;Path to the folder containing the demultiplexed input files (for demultiplexed data only, otherwise leave blank: ""). Fastq files in the DEMULT_DIR folder must have the following name format: sampleX.R1.fastq.gz and sampleX.R2.fastq.gz for paired-end data; sampleX.fastq.gz for single-end data.  
+*BARCODE_FILE:*&nbsp;&nbsp;&nbsp;Path to the barcode file (for multiplexed data only otherwise leave blank: ""). See description [below](#barcode-file) for more details.  
+*ADAPTER_FILE:*&nbsp;&nbsp;&nbsp;Path to the adapter file. See description [below](#adapter-file) for more details.  
 
 
-**_config_DataCleaning.yml_**: this file will contain all the information and parameters that will be used by the DATA_CLEANING workflow.
-Here is a description of all its variables:
-> General variables:
-OUTPUTS_DIRNAME: Name of the directory that will contain all the workflow outputs (example: WOKFLOW_OUTPUTS )
-> Input files:
-FASTQ: if the sequencing is in Single_End AND the raw fastq files is multiplexed, if not leave blank: ""
-              path to the folder containing fastq.gz file. 
-FASTQ_R1: If the sequencing is in Paired_End AND the raw fastq files are  multiplexed, if not leave blank: ""                     
-                    path to the folder containing  fastq.gz file Read1. File extension format: name_R1.fastq.gz. 
-FASTQ_R2: If the sequencing is in Paired_End AND the raw fastq files are  multiplexed, if not leave blank: ""
-                    path to the folder containing  fastq.gz file Read2. File extension format: name_R2.fastq.gz. 
-DEMULT_DIR: If the raw fastq files are demultiplexed (sequencing Single_end or paired_end), if not leave blank: ""
-                        File extension format: PairedEnd > sampleX.R1.fastq.gz and sampleX.R2.fastq.gz / SingleEnd > sampleX.fastq.gz 
-BARCODE_FILE:  If the raw fastq files are multiplexed (sequencing Single_end or paired_end)with the barcodes specific to each sample , if not leave blank: ""
-                              path to the barcode_file.txt. see description below.                                                   
-ADAPTER_FILE: path to the adapter_file.txt. see description below.
-> Demultiplexing parameters : if the raw fastq files is multiplexed, if not leave blank: ""
-DEMULT_THREADS: number of threads to be allocated on cluster for the demultiplexing step with CUTADAPT (corresponds to parameter ""--nodes" of CUTADAPT tool)
-DEMULT_SUBSTITUTIONS: percentage of substitution by barcode (tag). Example: 1 substitution on a barcode of 8pb, note 0.15. (corresponds to parameter ""--substitutions" of                                                    CUTADAPT tool)
-> Trimming parameters
-TRIMMING_THREADS: number of threads to be allocated on cluster for the trimming step with CUTADAPT (corresponds to parameter ""--nodes" of CUTADAPT tool)
-TRIMMING_QUAL: parameter can be used to trim low-quality ends from reads. exemple:  30 > replacement of nucleotides by N if the quality is lower than Q30 (1 chance out of 30                                 that the base is wrong) (corresponds to parameter ""--quality_cutoff" of CUTADAPT tool)
-TRIMMING_MIN_LENGTH: parameter to indicate the minimum size of the sequences to be kept. (corresponds to parameter ""--minimum_length" of CUTADAPT tool)
+**DEMULTIPLEXING PARAMETERS** (mandatory if the raw fastq files are multiplexed, otherwise leave blank: "")  
+*DEMULT_THREADS:*&nbsp;&nbsp;&nbsp;Number of threads to be allocated on your cluster for the demultiplexing step with Cutadapt (will be passed to the "--nodes" Cutadapt parameter)  
+*DEMULT_SUBSTITUTIONS:*&nbsp;&nbsp;&nbsp;Fraction of authorized substitutions per barcode (tag). Example: to allow 1 substitution for an 8bp barcode, use '0.15'. (will be passed to the "--substitutions" Cutadapt parameter)  
 
 
-**_barcode_file.txt_** : 
-File containing information about the barcode specific to each sample, if demultiplexing required. 
+**TRIMMIG PARAMETERS** (mandatory)  
+*TRIMMING_THREADS:*&nbsp;&nbsp;&nbsp;Number of threads to be allocated on your cluster for the trimming step with Cutadapt (will be passed to the "--nodes" Cutadapt parameter)  
+*TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality_cutoff" Cutadapt parameter)
+*TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum_length" Cutadapt parameter)
 
-For Paired End sequencing: 
-Containing the list of samples names (column 1) , sequences of barcode for read 1 (P5) (column 2) and sequences of barcode for read 2 (P7) (column 3)
- example (no header, tab-separated):
-	Tc2208a	AGCGCA	AGCGCA
-	Tc2235a	CTCAGC	CTCAGC
-	Tc2249a	TAGATC	TAGATC	
+&nbsp;
 
-For Single End sequencing: 
-Containing the list of samples names (column 1) , sequences of barcode (column 2)
-example (no header, tab-separated):
-	Tc2208a	AGCGCA
-	Tc2235a	CTCAGC
-	Tc2249a	TAGATC
+*IN A NUTSHELL*  
+**Paired-end vs single-end**  
+Expected variables differ for paired-end and single-end data: if PAIRED_END is set to TRUE, both FASTQ_R1 and FASTQ_R2 are expected. If PAIRED_END is set to FALSE, only FASTQ is expected.  
 
+**Demultiplex or multiplexed data**  
+Some variables must be left blank (*variable: ""*), depending on whether the raw data is multiplexed or demultiplexed. In case of multiplexed data, DEMULT_DIR must be left blank. In case of demultiplexed data, FASTQ, FASTQ_R1, FASTQ_R2, BARCODE_FILE, DEMULT_THREADS and DEMULT_SUBSTITUTIONS must be left blank.
 
-**_adapter_file.txt_** : 
+<ins>Examples of config_DataCleaning.yml files adapted to each case can be found in the EXAMPLE/CONFIG folder</ins>.  
 
+&nbsp;
+
+#### *Barcode file:*  
+This file must provide the barcode sequences specific to each sample (only required if the data is multiplexed).  
+
+- For paired-end sequencing:  
+Three-column file, specifying samples names (column 1), sequences of barcodes for read 1 (P5) (column 2) and sequences of barcodes for read 2 (P7) (column 3).  
+Example (no header, tab-separated):  
+
+	```
+	Tc2208a	AGCGCA	AGCGCA  
+	Tc2235a	CTCAGC	CTCAGC  
+	Tc2249a	TAGATC	TAGATC  
+	```  
+
+- For single-end sequencing:  
+Two-column file, specifying samples names (column 1), and sequences of barcodes (column 2)  
+Example (no header, tab-separated):  
+	```
+	Tc2208a	AGCGCA  
+	Tc2235a	CTCAGC  
+	Tc2249a	TAGATC  
+	```
+
+&nbsp;
+
+#### *Adapter file:*  
 Illumina sequencing starts at the first base of the fragment to be sequenced or the barcode. 
 The CUTADAPT tool removes adaptor sequences after the fragment to be sequenced which appears when the fragment size is smaller than the sequencing unit. 
 adapter_file.txt containing, for each genotype, the sequence of adapters to be deleted when trimming with cutadapt. 
@@ -177,28 +198,3 @@ run_DataCleaning_workflow_SGE.sh >>> bash script to run the snakemake workflow D
 
 
 
-### MORE RANDOM INFO: NO NEED TO READ BELOW
-The WORKFLOW directory contains 3 folders:  
-
-ENVS
-  **_conda.tools.yml_** : file containing the list of tools needed for the conda environment. This file is used in the sanemake workflow in the "conda" parameter of the rules. 
-
-PROFILES
-    SGE
-        **_config.yaml_** : file containing the parameters for launching a job on an SGE cluster (qsub, partition, etc). this file is called by the **run??? script  >>> à compléter**
-    SLURM
-        **_config.yaml_** : file containing the parameters for launching a job on an SLURM cluster (qsub, partition, etc). this file is called by the **run??? script  >>> à compléter**
-
-SCRIPTS
-    **_demultiplex_with_cutadapt_PE.sh_** : For Paired End sequencing.  Bash script allowing to demultiplex a pair of fastq files (R1 + R2) into individual paired fastq files according to the barcode/tag, located at the P5 and P7 ends.
-   ** _demultiplex_with_cutadapt_SE.sh_** : For Single End sequencing.  Bash script allowing to demultiplex  fastq file into individual fastq files according to the barcode/tag, located at the P5 ends.
-    **_trimming_with_cutadapt.sh_PE_** : For Paired End sequencing.  Bash script allowing to trimming a pair of fastq files (R1 + R2 ) to remove adapters sequences, low quality sequences et short sequences. Use of tool CUTADAPT.
-    **_trimming_with_cutadapt.sh_SE_** : For Single End sequencing. Bash script allowing to trimming a fastq files  to remove adapters sequences, low quality sequences et short sequences. Use of tool CUTADAPT.
-    **_fastq_read_count.sh_** : bash script allowing to count reads in all fastq.gz files of folder
-	
-
-
-
-
-**_cluster_config_SGE_DataCleaning.json_** : file allowing to configure on a SGE-type computing cluster : the type of partition, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
-**_cluster_config_SLURM_DataCleaning.json_** : file allowing to configure on a SLURM-type computing cluster : the type of queue, the name of the log files, etc. It is possible to define a default version and/or to adapt it to each of the snakmake workflow rules
