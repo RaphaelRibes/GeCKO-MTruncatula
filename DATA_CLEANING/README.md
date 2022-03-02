@@ -147,10 +147,10 @@ Example (no header, tab-separated):
 &nbsp;
 
 #### *Adapter file:*  
-Illumina sequencing starts at the first base of the fragment to be sequenced or the barcode. 
-The CUTADAPT tool removes adaptor sequences after the fragment to be sequenced which appears when the fragment size is smaller than the sequencing unit. 
-adapter_file.txt containing, for each genotype, the sequence of adapters to be deleted when trimming with cutadapt. 
-Attention, the sequences of the adapters to be filled in must respect the reading directions 
+
+This file is used for the trimming step, which removes unwanted technical sequences remaining in the reads. These sequences appear when biological fragments are shorter than expected: in such cases, the whole biological fragment is sequenced from one end to the other, and the sequencer reaches the technical adapter sequence on the 3' end of the fragment, adding its sequence (or part of it) at the end of the read. This technical part of the sequenced read then need to be removed, which is what Cutadapt does in our workflow.  
+
+The adapter file must provide, for each sample, the expected technical sequences that may have been accidentally sequenced. They must be given in the 5'-3' reading direction, as they are expected to be sequenced following the biological sequence part of the read.  
 
 Illumina adapters and index i5/i7 sequences are available in [this document](https://support-docs.illumina.com/SHARE/AdapterSeq/illumina-adapter-sequences.pdf).
 
@@ -161,26 +161,32 @@ Illumina adapters and index i5/i7 sequences are available in [this document](htt
 
 
 Technical sequence to look for and remove at the 3' end of R1 reads (given in 5'-3' reading direction):  
-[barcode7revcomp]AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC[index7]ATCTCGTATGCCGTCTTCTGCTTG  
-Technical sequence to look for and remove at the 3' end of R2 reads (given in 5'-3' reading direction):  
-[barcode5revcomp]AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT[index5revcomp]GTGTAGATCTCGGTGGTCGCCGTATCATT  
 
-_For paired-end sequencing_:  
+	[barcode7revcomp]AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC[index7]ATCTCGTATGCCGTCTTCTGCTTG  
+	
+Technical sequence to look for and remove at the 3' end of R2 reads (given in 5'-3' reading direction):  
+
+	[barcode5revcomp]AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT[index5revcomp]GTGTAGATCTCGGTGGTCGCCGTATCATT  
+
+
+- _For paired-end sequencing_:  
 Three-column file specifying the samples names (column 1), technical sequences to look for and remove in R1 (column 2) and technical sequences to look for and remove in R2 (column 3)  
 	Example (no header, tab-separated):  
-	```
-        Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
-        Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GCTGAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
-        Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GATCTAAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
-	```
 
-_For single-end sequencing_:  
-Two-column file specifying the samples names (column 1) and technical sequences to look for and remove in reads (column 2)
+	```
+	Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
+	Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GCTGAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
+	Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GATCTAAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA  
+	```
+	
+- _For single-end sequencing_:  
+Two-column file specifying the samples names (column 1) and technical sequences to look for and remove in reads (column 2)  
 	Example (no header, tab-separated):  
-	```  
-        Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
-        Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
-        Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
+
+	```
+	Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
+	Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
+	Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
 	```
 
 ### 4/ Launch the analysis
