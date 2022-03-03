@@ -6,7 +6,7 @@ You will find the different workflows in the corresponding folders:
 - READS_MAPPING
 - SNP_CALLING  
 
-These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make pipelines installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each pipeline produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarize key information for this step. Finally, we provide a bash launcher called runSnakemakeWorkflow.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
+These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make pipelines installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each pipeline produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runSnakemakeWorkflow.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
 
 To execute one of the workflows, follow the steps:  
 
@@ -42,17 +42,17 @@ The following section describes the different pipeline actions and parameters. I
 
 &nbsp;
 #### QUICK STARTER:  
-There are only to mandatory option, one specifying where the snakemake pipeline folder is, the other is the name of the pipeline you want to run. So to demultiplex and trim your reads simply type:
+There are only two mandatory options, one specifying where the snakemake pipeline folder is, the other is the name of the pipeline you want to run. So to demultiplex and trim your reads simply type:
 
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning```
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --run-with-conda```
 
 on my computer this will look like:
 
 ```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/ --workflow DataCleaning```
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file /PATH/TO/SMK_DIR/Pipeline/CONFIG/cluster_config_Pipeline.json  (/home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/DataCleaning/CONFIG/config_DataCleaning.json in this exemple). The same folder also contain the file (cluster_config_DataCleaning.json) used by default to provide specific cluster information (e.g. job queue names) related to this pipeline. 
+The information regarding the fastq files, read index etc. are, by default, retrieved from the config file /PATH/TO/SMK_DIR/Pipeline/CONFIG/cluster_config_Pipeline.json  (/home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/DataCleaning/CONFIG/config_DataCleaning.json in this exemple). The same folder also contains the file cluster_config_DataCleaning.json used by default to provide specific cluster information (e.g. job queue names) related to this pipeline. 
 
-To use the full resource of my HPC environment (slurm), it thus suffices to adapt this cluster config file and to type the following command
+To use the full resource of my HPC environment (Slurm), it thus suffices to adapt this cluster config file and to type the following command
 
 ```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/ --workflow DataCleaning --job-scheduler SLURM```  
 
