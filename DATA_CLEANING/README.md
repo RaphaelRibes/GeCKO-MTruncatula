@@ -27,10 +27,35 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 
 &nbsp;
 
+
+## QUICK START
+
+To easily launch the workflow, use our runSnakemakeWorkflow.sh launcher:  
+```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path PATH/TO/SMK_DIR --run-with-conda```  
+
+Needed files:  
+- the DATA_CLEANING/WORKFLOW folder  
+- the runSnakemakeWorkflow.sh launcher  
+- your raw fastq.gz file(s)  
+- the cluster_config_DataCleaning.yml (in case you work on a cluster) and config_DataCleaning.yml files in a CONFIG folder  
+- a barcode file in case of multiplexed data and an adapter file  
+
+&nbsp;
+For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:
+```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path /home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE/READS_MAPPING/WORKFLOW --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_Slurm_DataCleaning.json --run-with-conda --jobs 20 --job-scheduler SLURM```  
+
+
+&nbsp;
+
+(Schéma à revoir:)  
+![DataCleaning_4elements](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_4elements.png?raw=true)
+
+
+
 ## How to use the DATA_CLEANING workflow
  
 1) [Prepare your input data](#1-prepare-your-input-data)  
-2) [Clone the WORKFLOW directory](#2-clone-the-workflow-directory)  
+2) [Clone our GitHub repository](#2-clone-our-github-repository)  
 3) [Prepare the CONFIG files](#3-prepare-the-config-files)  
 4) [Launch the analysis](#4-launch-the-analysis)  
 5) [Expected outputs](#5-expected-outputs)
@@ -51,11 +76,11 @@ or already demultiplexed:
 The demultiplexed sequences must be placed together in a folder to be specified in the config_file.txt.  
 
 
-### 2/ Clone the WORKFLOW directory
+### 2/ Clone our GitHub repository
 
-The DATA_CLEANING WORKFLOW folder must be fully copied or cloned in a workspace/storage of your choice.  
-To do this, you can use the command:  
-```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/tree/main/DATA_CLEANING/WORKFLOW.git```  
+The DATA_CLEANING WORKFLOW folder must be fully copied in a workspace/storage of your choice.  
+For example, you can clone the whole repository with:  
+```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```   
 
     
 ### 3/ Prepare the config files
@@ -187,9 +212,11 @@ Two-column file specifying the samples names (column 1) and technical sequences 
 You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
 
 **Launching**  
-To launch the DATA_CLEANING workflow, you can use our launching script runSnakemakeWorkflow.sh with the option --workflow DataCleaning.  
+To launch the DATA_CLEANING workflow, you can use our launching script runSnakemakeWorkflow.sh with the option --workflow DataCleaning:  
+```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path PATH/TO/SMK_DIR --run-with-conda```  
+
 For more help on how to use it, see our GitHub's general README file or run:  
-```./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/SMK_DIR``` 
+```./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/SMK_DIR```  
 
 **Notes on Conda**  
 The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
@@ -203,9 +230,6 @@ pkgs_dirs:
     - /home/username/path/to/appropriate/folder/pkgs  
 ```
 
-&nbsp;
-
-![DataCleaning_4elements](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_4elements.png?raw=true)
 
 
 
