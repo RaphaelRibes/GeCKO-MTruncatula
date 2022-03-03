@@ -41,7 +41,8 @@ Needed files:
 - a barcode file in case of multiplexed data and an adapter file  
 
 &nbsp;
-For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:
+
+For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:  
 ```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path /home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE/READS_MAPPING/WORKFLOW --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_Slurm_DataCleaning.json --run-with-conda --jobs 20 --job-scheduler SLURM```  
 
 
