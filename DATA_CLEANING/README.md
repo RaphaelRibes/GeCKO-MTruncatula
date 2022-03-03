@@ -12,7 +12,8 @@ Besides, input sequences can be :
 
 
 
-### The DATA_CLEANING workflow's steps  
+### The DATA_CLEANING workflow's steps
+Steps 1, 2, 3, 4 are done for mulitplexed data and skipped otherwise. 
 1) Quality analysis of raw sequences/reads from sequencing (FASTQC)  
 2) Counting the number of reads in one (SE) or two (PE) fastq.gz files  
 3) Demultiplex in one (SE) or two (PE) fastq.gz files into individual fastq files based on the barcode or tag specifci to each samples (CUTADAPT)  
