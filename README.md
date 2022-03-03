@@ -41,21 +41,22 @@ Either install them on your computer, or if you are working on a cluster, you ma
 The following section describes the different pipeline actions and parameters. It what follows /PATH/TO/SMK_DIR refer to the directory containing the snakemake workflow you wish to use, e.g something like /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/.
 
 &nbsp;
-#### QUICK STARTER:  
-There are only two mandatory options, one specifying where the snakemake pipeline folder is, the other is the name of the pipeline you want to run. So to demultiplex and trim your reads simply type:
+#### QUICK START:  
+There are three mandatory options: one specifying the snakemake WORKFLOW directory, another to provide the name of the pipeline you want to run, and finally the action you want to perform. To run the workflow, you need to use the '--run-with-conda' action. So to demultiplex and trim your reads simply type:
 
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --run-with-conda```
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --run-with-conda```
 
-on my computer this will look like:
+On my computer this will look like:
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/ --workflow DataCleaning```
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW --workflow DataCleaning --run-with-conda```
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file /PATH/TO/SMK_DIR/Pipeline/CONFIG/cluster_config_Pipeline.json  (/home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/DataCleaning/CONFIG/config_DataCleaning.json in this exemple). The same folder also contains the file cluster_config_DataCleaning.json used by default to provide specific cluster information (e.g. job queue names) related to this pipeline. 
+The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/cluster_config_Pipeline.json  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.json in this exemple). The same folder also contains the file cluster_config_DataCleaning.json used by default to provide specific cluster information (e.g. job queue names) related to this pipeline.
 
-To use the full resource of my HPC environment (Slurm), it thus suffices to adapt this cluster config file and to type the following command
+To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/ --workflow DataCleaning --job-scheduler SLURM```  
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW --workflow DataCleaning --job-scheduler SLURM --jobs 100 --run-with-conda```  
 
+&nbsp;
 
 #### POSSIBLE ACTIONS:  
 
@@ -88,8 +89,8 @@ Conda is used to manage the tools used in the different steps, and a conda envir
 **--conda-create-envs-only**&nbsp;&nbsp;&nbsp;*only create the workflow's conda environment without running the workflow*  
 ```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --conda-create-envs-only```  
 
-
 &nbsp;
+
 #### MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):  
 **--workflow-path [...]**&nbsp;&nbsp;&nbsp;*path to the directory containing the workflow's snakefile (.smk)*  
 If the directory was cloned from GitHub, it should end with /WORKFLOW)  
@@ -98,6 +99,7 @@ If the directory was cloned from GitHub, it should end with /WORKFLOW)
 Current existing options are 'DataCleaning' and 'ReadsMapping'  
 
 &nbsp;
+
 #### CONFIGURATION PARAMETERS:  
 **--job-scheduler [...]**&nbsp;&nbsp;&nbsp;*name of the job scheduler that is installed on your cluster*  
 Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will run without submitting any job and any parallelization.  
@@ -109,6 +111,7 @@ If omitted, this script will look for a cluster_config_WorkflowName.json file (e
 If omitted, this script will look for a config_WorkflowName.json file (eg: config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from.  
 
 &nbsp;
+
 #### EXTRA OPTIONS FOR --run-with-conda:  
 **--jobs [int]**&nbsp;&nbsp;&nbsp;*maximum number of jobs that can be run in parallel (default: 1)*  
 
@@ -126,6 +129,7 @@ You should increase it if Snakemake returns an error such as:
 Without this argument, Snakemake's default behavior is to only run the steps for which output files are missing.  
 
 &nbsp;
+
 #### ANY OTHER OPTIONS:  
 **--extra-snakemake-options ["..."]**&nbsp;&nbsp;&nbsp;*any list of other Snakemake options that you may want to pass to the Snakemake command*  
 Be careful to provide them between quotes. For an exhaustive list of Snakemake options see https://snakemake.readthedocs.io/en/stable/index.html.  
