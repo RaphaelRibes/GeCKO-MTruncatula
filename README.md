@@ -54,7 +54,7 @@ The information regarding the fastq files, read index etc. are, by default, retr
 
 To use the full resource of my HPC environment (slurm), it thus suffices to adapt this cluster config file and to type the following command
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/ --workflow DataCleaning --job-scheduler slurm```  
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/ --workflow DataCleaning --job-scheduler SLURM```  
 
 
 #### POSSIBLE ACTIONS:  
