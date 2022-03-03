@@ -7,13 +7,13 @@ It can be used to process:
 - Paired-end sequences (PE), sequenced from both ends of each DNA fragment.  
 
 Besides, input sequences can be :
-- Multiplexed (sequences of several samples packed in only one (SE) or a pair of (PE) fastq.gz files): all stages of the workflow will be completed
-- Demultiplexed (sequences of each sample packed in separate fastq.gz files, one per sample if SE or a pair if PE): the workflow will skip steps 1 to 3
+- Multiplexed (sequences of several samples packed in only one (SE) or a pair of (PE) fastq.gz files)
+- Demultiplexed (sequences of each sample packed in separate fastq.gz files, one per sample if SE or a pair if PE)
 
 
 
 ### The DATA_CLEANING workflow's steps
-Steps 1, 2, 3, 4 are done for mulitplexed data and skipped otherwise. 
+Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise. 
 1) Quality analysis of raw sequences/reads from sequencing (FASTQC)  
 2) Counting the number of reads in one (SE) or two (PE) fastq.gz files  
 3) Demultiplex in one (SE) or two (PE) fastq.gz files into individual fastq files based on the barcode or tag specifci to each samples (CUTADAPT)  
