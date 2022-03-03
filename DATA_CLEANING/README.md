@@ -25,25 +25,16 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 
 ![DataCleaning_Workflow](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true)
 
-## Tools
-This workflow uses the following tools: 
-- [Cutadapt v3.5 ](https://cutadapt.readthedocs.io/en/v3.5/)
-- [FastQC v11.9](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
-- [MultiQC v1.11](https://github.com/ewels/MultiQC/releases)
- 
-These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
-
 &nbsp;
+
 ## How to use the DATA_CLEANING workflow
  
 1) [Prepare your input data](#1-prepare-your-input-data)  
 2) [Clone the WORKFLOW directory](#2-clone-the-workflow-directory)  
 3) [Prepare the CONFIG files](#3-prepare-the-config-files)  
 4) [Launch the analysis](#4-launch-the-analysis)  
+5) [Expected outputs](#5-expected-outputs)
 
-&nbsp;
-
-![DataCleaning_4elements](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_4elements.png?raw=true)
 
 
 ### 1/ Prepare your input data
@@ -212,10 +203,23 @@ pkgs_dirs:
     - /home/username/path/to/appropriate/folder/pkgs  
 ```
 
+&nbsp;
+
+![DataCleaning_4elements](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_4elements.png?raw=true)
+
+
+
 ### 5/ Expected outputs  
 ...work in progress...
 
 
+## Tools
+This workflow uses the following tools: 
+- [Cutadapt v3.5 ](https://cutadapt.readthedocs.io/en/v3.5/)
+- [FastQC v11.9](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
+- [MultiQC v1.11](https://github.com/ewels/MultiQC/releases)
+ 
+These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
 
 
