@@ -6,16 +6,16 @@ You will find the different workflows in the corresponding folders:
 - READS_MAPPING
 - SNP_CALLING  
 
-These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make pipelines installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each pipeline produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runSnakemakeWorkflow.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
+These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each workflow produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runSnakemakeWorkflow.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
 
 To execute one of the workflows, follow the steps:  
 
 1) Clone or copy the WORKFLOW folder (and all its contents) corresponding to the workflow you want to run.  
 e.g. to clone all our workflows folders:  
-```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```  
+```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS.git```  
 
 2) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
-For more information on this step, see the more detailed README placed in each pipeline folder.  
+For more information on this step, see the more detailed README placed in each workflow folder.  
 It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.json  
 
 3) Use the launcher script runSnakemakeWorkflow.sh to run the workflow.  
@@ -36,25 +36,25 @@ Either install them on your computer, or if you are working on a cluster, you ma
     - For cluster using Conda environment. Conda will likely be readily available, and you will only need to conda activate Snakemake. To find out the precise name of the snakemake module, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.  
 
 &nbsp;
-### Using the pipelines
+### Using the workflow
 
-The following section describes the different pipeline actions and parameters. It what follows /PATH/TO/SMK_DIR refer to the directory containing the snakemake workflow you wish to use, e.g something like /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/.
+The following section describes the different workflow actions and parameters. What follows /PATH/TO/SMK_DIR refers to the directory containing the snakemake workflow you wish to use, e.g something like /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/.
 
 &nbsp;
 #### QUICK START:  
-There are three mandatory options: one specifying the snakemake WORKFLOW directory, another to provide the name of the pipeline you want to run, and finally the action you want to perform. To run the workflow, you need to use the '--run-with-conda' action. So to demultiplex and trim your reads simply type:
+There are three mandatory options: one specifying the snakemake WORKFLOW directory, another to provide the name of the workflow you want to run, and finally the action you want to perform. To run the workflow, you need to use the '--run-with-conda' action. So to demultiplex and trim your reads simply type:
 
 ```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --run-with-conda```
 
 On my computer this will look like:
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW --workflow DataCleaning --run-with-conda```
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning --run-with-conda```
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/cluster_config_Pipeline.json  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.json in this exemple). The same folder also contains the file cluster_config_DataCleaning.json used by default to provide specific cluster information (e.g. job queue names) related to this pipeline.
+The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.yml in this exemple). The same folder also contains the file cluster_config_DataCleaning.json used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_PIPELINES_SNAKEMAKE/DATA_CLEANING/WORKFLOW --workflow DataCleaning --job-scheduler SLURM --jobs 100 --run-with-conda```  
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning --job-scheduler SLURM --jobs 100 --run-with-conda```  
 
 &nbsp;
 
@@ -108,7 +108,7 @@ Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will r
 If omitted, this script will look for a cluster_config_WorkflowName.json file (eg: cluster_config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).  
 
 **--config-file [...]**&nbsp;&nbsp;&nbsp;*path to the workflow's config file*  
-If omitted, this script will look for a config_WorkflowName.json file (eg: config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from.  
+If omitted, this script will look for a config_WorkflowName.yml file (eg: config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from.  
 
 &nbsp;
 
