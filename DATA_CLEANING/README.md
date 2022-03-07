@@ -47,8 +47,7 @@ For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END da
 
 
 &nbsp;
-
-(Schéma à revoir:)  
+ 
 ![Image non trouvée : https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_4elements.png?raw=true](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_4elements.png?raw=true "Image non trouvée : https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_4elements.png?raw=true")
 
 
