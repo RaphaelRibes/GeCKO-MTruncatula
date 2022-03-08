@@ -31,7 +31,7 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 ## QUICK START
 
 To easily launch the workflow, use our runSnakemakeWorkflow.sh launcher:  
-```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path PATH/TO/SMK_DIR --run-with-conda```  
+```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path PATH/TO/WORKFLOW```  
 
 Needed files:  
 - the DATA_CLEANING/WORKFLOW folder  
@@ -43,7 +43,7 @@ Needed files:
 &nbsp;
 
 For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:  
-```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path /home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE/READS_MAPPING/WORKFLOW --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_Slurm_DataCleaning.json --run-with-conda --jobs 20 --job-scheduler SLURM```  
+```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path /home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE/READS_MAPPING/WORKFLOW --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_Slurm_DataCleaning.json --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
@@ -213,10 +213,10 @@ You can run this workflow on a computer or on a computer cluster. You will need 
 
 **Launching**  
 To launch the DATA_CLEANING workflow, you can use our launching script runSnakemakeWorkflow.sh with the option --workflow DataCleaning:  
-```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path PATH/TO/SMK_DIR --run-with-conda```  
+```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path PATH/TO/WORKFLOW```  
 
 For more help on how to use it, see our GitHub's general README file or run:  
-```./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/SMK_DIR```  
+```./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/WORKFLOW```  
 
 **Notes on Conda**  
 The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
