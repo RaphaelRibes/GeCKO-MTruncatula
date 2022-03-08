@@ -116,24 +116,51 @@ if [ "${MAPPER}" = "bwa-mem2_mem" ] ; then
   else
     bwa-mem2 mem ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
   fi
-
-elif [ "${MAPPER}" = "bowtie" ] ; then
-  echo "bowtie is not implemented yet :("
-
-elif [ "${MAPPER}" = "minimap" ] ; then
-  echo "minimap is not implemented yet :("
-
-else
-  echo "The provided mapper is unknown. Implemented mappers are 'bwa-mem2_mem', 'bowtie' and 'minimap'."
 fi
+
+if [ "${MAPPER}" = "bwa_mem" ] ; then
+  if [ "${PAIRED}" = "TRUE" ] ; then
+    bwa mem ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
+  else
+    bwa mem ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
+  fi
+fi
+
+if [ "${MAPPER}" = "bowtie2" ] ; then
+  REF_INDEX=$(echo $REF | sed 's/.fasta//' | sed 's/.fa//')
+  if [ "${PAIRED}" = "TRUE" ] ; then
+    #bowtie2 --no-unal -p n -x index_name -1 reads_1.fastq -2 reads_2.fastq -S output.sam
+    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" --no-unal -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}.sam
+  else
+    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" --no-unal -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.sam
+  fi
+fi
+
+if [ "${MAPPER}" = "minimap2" ] ; then
+  REF_INDEX=$(echo $REF | sed 's/.fasta/.mmi/' | sed 's/.fa/.mmi/')
+  if [ "${PAIRED}" = "TRUE" ] ; then
+    minimap2 ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_R1} -2 ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
+  else
+    #minimap2 -x splice:hq -t8 -a $REF $file > ${OUTPUT_DIR}/${SAMPLE}.sam
+    minimap2 ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
+  fi
+fi
+
+#else
+#  echo "The provided mapper is unknown. Implemented mappers are 'bwa-mem2_mem', 'bowtie' and 'minimap2'."
+#fi
 
 
 samtools view -Sb -o ${OUTPUT_DIR}/${SAMPLE}.bam ${OUTPUT_DIR}/${SAMPLE}.sam
 rm ${OUTPUT_DIR}/${SAMPLE}.sam
 
 # Fill in mate information
-samtools fixmate ${OUTPUT_DIR}/${SAMPLE}.bam ${OUTPUT_DIR}/${SAMPLE}.fix.bam
-rm ${OUTPUT_DIR}/${SAMPLE}.bam
+if [ "${MAPPER}" = "bowtie2" ] ; then
+  mv ${OUTPUT_DIR}/${SAMPLE}.bam ${OUTPUT_DIR}/${SAMPLE}.fix.bam
+else
+  samtools fixmate ${OUTPUT_DIR}/${SAMPLE}.bam ${OUTPUT_DIR}/${SAMPLE}.fix.bam
+  rm ${OUTPUT_DIR}/${SAMPLE}.bam
+fi
 
 # Sort
 picard SortSam -I ${OUTPUT_DIR}/${SAMPLE}.fix.bam -O ${OUTPUT_DIR}/${SAMPLE}.sort.bam -SO coordinate -VALIDATION_STRINGENCY SILENT
@@ -142,8 +169,8 @@ rm ${OUTPUT_DIR}/${SAMPLE}.fix.bam
 # Remove duplicates
 if [ "${RM_DUP}" = "True" ] ; then
 	mkdir -p ${REPORTS_DIR}
-  mkdir -p ${REPORTS_DIR}/DUP_INFO
-  picard MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${MARKDUP_PARAMS} -REMOVE_DUPLICATES TRUE -M ${REPORTS_DIR}/DUP_INFO/${SAMPLE}.bam.metrics
+  mkdir -p ${REPORTS_DIR}/DUPLICATES
+  picard MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${MARKDUP_PARAMS} -REMOVE_DUPLICATES TRUE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
   rm ${OUTPUT_DIR}/${SAMPLE}.sort.bam
 else
 	mv ${OUTPUT_DIR}/${SAMPLE}.sort.bam ${OUTPUT_DIR}/${SAMPLE}.bam

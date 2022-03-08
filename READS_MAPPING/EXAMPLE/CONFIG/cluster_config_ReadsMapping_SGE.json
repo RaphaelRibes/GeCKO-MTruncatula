@@ -1,0 +1,39 @@
+{
+    "__default__" :
+    {
+        "partition" : "agap_normal",
+        "job-name" : "RM.{rule}",
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.%j.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.%j.err.txt"
+    },
+    "Mapping_PairedEndFastqs" :
+    {
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+    },
+    "Mapping_SingleEndFastqs" :
+    {
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+    },
+    "CountReads_Bams" :
+    {
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+    },
+    "Stats_Bams" :
+    {
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+    },
+    "Extract_Reads" :
+    {
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+    },
+    "Index_Subbams" :
+    {
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+    }
+}

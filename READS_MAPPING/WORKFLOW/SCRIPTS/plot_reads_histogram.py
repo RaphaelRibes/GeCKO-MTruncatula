@@ -11,7 +11,7 @@ dir=sys.argv[1]
 sns.set(style="darkgrid")
 
 
-df=pd.read_csv(dir+"/summary_flagstat", sep='\t')
+df=pd.read_csv(dir+"/summary_flagstat.tsv", sep='\t')
 
 fig, axs = plt.subplots(2, 1)
 sns.histplot(data=df, x="Reads_mapped", color="skyblue", ax=axs[0])

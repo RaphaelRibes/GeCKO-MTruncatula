@@ -22,7 +22,7 @@ CONDA_CREATE_ENV_ONLY="FALSE"
 DRYRUN="FALSE"
 DIAGRAM="FALSE"
 REPORT="FALSE"
-USE_CONDA="FALSE"
+USE_CONDA="TRUE"
 #USE_CONDA_AND_SINGULARITY="FALSE"
 
 
@@ -55,10 +55,6 @@ do
     --config-file)
     CONFIG="$2"
     shift
-    shift
-    ;;
-    --run-with-conda)
-    USE_CONDA="TRUE"
     shift
     ;;
     --jobs)
@@ -123,6 +119,7 @@ do
 #    shift
 #    ;;
     *)
+    echo -e "\nWARNING: $1 option is unknown and will be ignored.\n"
     POSITIONAL+=("$1")
     shift
     ;;
@@ -147,7 +144,6 @@ absolutePath () {
 # --------------------------------------------------------------------------------------------------------------#
 
 ### WORKFLOW_PATH (needed for next steps)
-WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
 
 if [[ -z "$WORKFLOW_PATH" || "$WORKFLOW_PATH" = --* || "$WORKFLOW_PATH" = -* ]] ; then
 	echo -e "\nERROR: the --workflow-path parameter is missing, please include it in your command."
@@ -164,13 +160,10 @@ if [ ! -d "$WORKFLOW_PATH" ] ; then
 	exit 1
 fi
 
+WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
+
 # --------------------------------------------------------------------------------------------------------------#
 
-## NO ACTION PROVIDED ##
-if ( [ "${UNLOCK}" = "FALSE" ] && [ "${CONDA_CREATE_ENV_ONLY}" = "FALSE" ] && [ "${DRYRUN}" = "FALSE" ] && [ "${DIAGRAM}" = "FALSE" ] && [ "${REPORT}" = "FALSE" ] && [ "${USE_CONDA}" = "FALSE" ] && [ "${HELP}" = "FALSE" ] ) ; then
-  echo -e "\nYou did not specify any action to perform. To print the help run ./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/SMK_DIR\n"
-  exit 0
-fi
 
 ### Check if folder exists
 if [[ ! -d "${WORKFLOW_PATH}/SCRIPTS/" ]] ; then
@@ -220,20 +213,15 @@ source "${WORKFLOW_PATH}/SCRIPTS/launcher_basicCheck.sh"
 
 
 ### RUN APPROPRIATE SNAKEMAKE COMMANDS ###
-
-## UNLOCK ##
-if [ "${UNLOCK}" = "TRUE" ] ; then
-  echo -e "\nCalling Snakemake:"
-  echo -e "snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} --unlock --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}\n"
-  snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} --unlock --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}
-fi
-
+# Always unlock in case the folder is locked
+snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
 
 ## CREATE CONDA ENVIRONMENT ##
 if [ "${CONDA_CREATE_ENV_ONLY}" = "TRUE" ] ; then
+  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --use-conda --conda-create-envs-only --jobs $JOBS --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
-  echo -e "snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --use-conda --conda-create-envs-only --jobs $JOBS --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}\n"
-  snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --use-conda --conda-create-envs-only --jobs $JOBS --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}
+  echo -e $snakemake_command"\n"
+  $snakemake_command
   exit 0
 fi
 
@@ -241,27 +229,31 @@ fi
 ## DRYRUN ##
 if [ "${DRYRUN}" = "TRUE" ] ; then
   source "${WORKFLOW_PATH}/SCRIPTS/launcher_${WORKFLOW}Check.sh"
+
+  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
-  echo -e "snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}\n"
-  snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}
+  echo -e $snakemake_command"\n"
+  $snakemake_command
   exit 0
 fi
 
 
 ## DIAGRAM ##
 if [ "${DIAGRAM}" = "TRUE" ] ; then
+  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
   echo -e "\nCalling Snakemake:"
-  echo -e "snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME\n"
-  snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME
+  echo -e $snakemake_command"\n"
+  $snakemake_command
   exit 0
 fi
 
 
 ## REPORT ##
 if [ "${REPORT}" = "TRUE" ] ; then
+  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
-  echo -e "snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}\n"
-  snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}
+  echo -e $snakemake_command"\n"
+  $snakemake_command
   exit 0
 fi
 
@@ -270,9 +262,11 @@ fi
 if [ "${USE_CONDA}" = "TRUE" ] ; then
   source "${WORKFLOW_PATH}/SCRIPTS/launcher_allWorkflowsCheck.sh"
   source "${WORKFLOW_PATH}/SCRIPTS/launcher_${WORKFLOW}Check.sh"
+
+  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
-  echo -e "snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}\n"
-  snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}
+  echo -e $snakemake_command"\n"
+  $snakemake_command
   exit 0
 fi
 
