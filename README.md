@@ -38,56 +38,43 @@ Either install them on your computer, or if you are working on a cluster, you ma
 &nbsp;
 ### Using the workflow
 
-The following section describes the different workflow actions and parameters. What follows /PATH/TO/SMK_DIR refers to the directory containing the snakemake workflow you wish to use, e.g something like /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/.
+The following section describes the different workflow actions and parameters. The /PATH/TO/WORKFLOW path refers to the directory containing the snakemake workflow you wish to use, e.g  /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW/.
 
 &nbsp;
 #### QUICK START:  
-There are three mandatory options: one specifying the snakemake WORKFLOW directory, another to provide the name of the workflow you want to run, and finally the action you want to perform. To run the workflow, you need to use the '--run-with-conda' action. So to demultiplex and trim your reads simply type:
+There are only two mandatory options: one specifying the snakemake WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --run-with-conda```
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning```
 
 On my computer this will look like:
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning --run-with-conda```
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning```
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.yml in this exemple). The same folder also contains the file cluster_config_DataCleaning.json used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
+The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.yml in this exemple). The same folder also contains the cluster_config_DataCleaning.json file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning --job-scheduler SLURM --jobs 100 --run-with-conda```  
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
 
 &nbsp;
 
 #### POSSIBLE ACTIONS:  
+The launcher's default behavior is to run the workflow, but other actions can be called instead:
 
 **--help**&nbsp;&nbsp;&nbsp;*print the help*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --help```  
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --help```  
 
 **--dryrun**&nbsp;&nbsp;&nbsp;*only dryrun the workflow (and detect potential errors) without actually running it*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow WorkflowName --dryrun```  
-
-**--unlock**&nbsp;&nbsp;&nbsp;*unlock the folder*  
-This must be used in case a previous Snakemake run was ended abruptly, and Snakemake returns an error such as:  
-
-    Error: Directory cannot be locked. Please make sure that no other Snakemake process is trying to create the same files in the following directory:  
-    ...  
-    If you are sure that no other instances of snakemake are running on this directory, the remaining lock was likely caused by a kill signal or a power loss. It can be removed with the --unlock argument.  
-
-It can be combined with other actions. For example, to unlock and then run the workflow:  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --unlock --run-with-conda```  
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow WorkflowName --dryrun```  
 
 **--report**&nbsp;&nbsp;&nbsp;*write an html report of the workflow's last run*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --report```  
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --report```  
 
 **--diagram**&nbsp;&nbsp;&nbsp;*write an svg diagram of the workflow*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --diagram```  
-
-**--run-with-conda**&nbsp;&nbsp;&nbsp;*actually run the workflow*  
-Conda is used to manage the tools used in the different steps, and a conda environment will be built every time you run a new workflow in a new folder.  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --run-with-conda```  
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --diagram```  
 
 **--conda-create-envs-only**&nbsp;&nbsp;&nbsp;*only create the workflow's conda environment without running the workflow*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/SMK_DIR --workflow DataCleaning --conda-create-envs-only```  
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --conda-create-envs-only```  
 
 &nbsp;
 
