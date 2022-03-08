@@ -93,7 +93,7 @@ class Snp:
 			else:
 				GQ= min ( 99, int(round( (-10*math.log10(1.-snp1g.p_val)) - (-10*math.log10(snp1g.p_val)))))
 			AD=",".join(snp1g.get_allele_counts(self.alleles))
-			snps_info.append("\t{}/{}:{}:{}:{}".format(self.encode_allele(snp1g.A1),self.encode_allele(snp1g.A2),snp1g.nbReads,AD,GQ))
+			snps_info.append("{}/{}:{}:{}:{}".format(self.encode_allele(snp1g.A1),self.encode_allele(snp1g.A2),snp1g.nbReads,AD,GQ))
 		return "\t".join(snps_info)
 
 
