@@ -232,7 +232,9 @@ snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --jobs $JOBS --unlock -
 
 ## DRYRUN ##
 if [ "${DRYRUN}" = "TRUE" ] ; then
-  source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
+  if [[ -f "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh" ]] ; then
+    source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
+  fi
 
   snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
@@ -265,8 +267,10 @@ fi
 ## RUN WITH CONDA ##
 if [ "${USE_CONDA}" = "TRUE" ] ; then
   source "${WORKFLOW_PATH}/scripts/launcher_allWorkflowsCheck.sh"
-  source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
-
+  if [[ -f "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh" ]] ; then
+    source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
+  fi
+  
   snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
