@@ -10,8 +10,7 @@ These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/)
 
 To execute one of the workflows, follow the steps:  
 
-1) Clone or copy the WORKFLOW folder (and all its contents) corresponding to the workflow you want to run.  
-e.g. to clone all our workflows folders:  
+1) Clone or copy this repository (and all its contents) to your environment, for example:   
 ```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS.git```  
 
 2) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
@@ -38,23 +37,23 @@ Either install them on your computer, or if you are working on a cluster, you ma
 &nbsp;
 ### Using the workflow
 
-The following section describes the different workflow actions and parameters. The /PATH/TO/WORKFLOW path refers to the directory containing the snakemake workflow you wish to use, e.g  /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW/.
+The following section describes the different workflow actions and parameters. The /PATH/TO/WORKFLOW path refers to the directory you cloned from GitHub, e.g  /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/.
 
 &nbsp;
 #### QUICK START:  
-There are only two mandatory options: one specifying the snakemake WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
+There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
 ```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning```
 
 On my computer this will look like:
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning```
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning```
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.yml in this exemple). The same folder also contains the cluster_config_DataCleaning.json file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
+The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.yml in this exemple). The same folder can also contain the cluster_config_DataCleaning.json file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/DATA_CLEANING/WORKFLOW --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
+```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
 
 &nbsp;
 
@@ -73,14 +72,11 @@ The launcher's default behavior is to run the workflow, but other actions can be
 **--diagram**&nbsp;&nbsp;&nbsp;*write an svg diagram of the workflow*  
 ```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --diagram```  
 
-**--conda-create-envs-only**&nbsp;&nbsp;&nbsp;*only create the workflow's conda environment without running the workflow*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --conda-create-envs-only```  
-
 &nbsp;
 
 #### MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):  
-**--workflow-path [...]**&nbsp;&nbsp;&nbsp;*path to the directory containing the workflow's snakefile (.smk)*  
-If the directory was cloned from GitHub, it should end with /WORKFLOW)  
+**--workflow-path [...]**&nbsp;&nbsp;&nbsp;*the path to the directory you cloned from GitHub*  
+If the directory was cloned from GitHub, it should end with /CAPTURE_SNAKEMAKE_WORKFLOWS)  
 
 **--workflow [...]**&nbsp;&nbsp;&nbsp;*name of the workflow you want to run*  
 Current existing options are 'DataCleaning' and 'ReadsMapping'  
