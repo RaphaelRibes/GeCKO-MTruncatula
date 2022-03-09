@@ -3,11 +3,11 @@
 HERE=$PWD
 
 ### 0/ Variables help
-workflow_help=$(grep -e "^--workflow " ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt)
-config_file_help=$(grep -e "^--config-file " ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt)
+workflow_help=$(grep -e "^--workflow " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
+config_file_help=$(grep -e "^--config-file " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
 
 
-### 1/ WORKFLOW  ###
+### 1/ WORKFLOW FOLDER AND ITS CONTENTS ###
 
 if [[ -z "$WORKFLOW" || "$WORKFLOW" = --* || "$WORKFLOW_PATH" = -* ]] ; then
 	echo -e "\nERROR: the --workflow parameter is missing, please include it in your command."
@@ -17,14 +17,37 @@ if [[ -z "$WORKFLOW" || "$WORKFLOW" = --* || "$WORKFLOW_PATH" = -* ]] ; then
 	exit 1
 fi
 
-available_workflows=$(ls $WORKFLOW_PATH/*smk | xargs -n 1 basename | sed 's/.smk//' | sed 's/_PairedEnd//' | sed 's/_SingleEnd//' | sort | uniq)
-if [[ -z $(echo $available_workflows | grep -w $WORKFLOW) ]] ; then
-	echo -e "\nERROR: The workflow name provided with --workflow is incorrect."
+workflow_folder_name=$(grep -w $WORKFLOW ${WORKFLOW_PATH}/scripts/workflows_list.tsv | cut -f2)
+if [[ -z $workflow_folder_name ]] ; then
+	echo -e "\nERROR: The workflow name provided with --workflow is unknown."
 	echo "As a reminder:"
 	echo $workflow_help
 	echo -e "\nExiting.\n"
 	exit 1
 fi
+
+if [[ ! -d "${WORKFLOW_PATH}/${workflow_folder_name}/" ]] ; then
+  echo -e "\nERROR: No ${workflow_folder_name}/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE containing all sub-directories."
+  echo -e "\nExiting.\n"
+  exit 1
+fi
+
+workflow_folder="${WORKFLOW_PATH}/${workflow_folder_name}/WORKFLOW"
+workflow_scripts_folder="${workflow_folder}/SCRIPTS"
+for script in $(ls "${workflow_scripts_folder}") ; do
+  if [[ -f "${workflow_scripts_folder}/${script}" ]] ; then
+    nb_carriage_returns=$(grep -c $'\r' ${workflow_scripts_folder}/${script})
+    if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+      echo "Removing windows carriage returns in ${script}..."
+      sed -i 's/\r$//g' ${workflow_scripts_folder}/$script
+      sed -i 's/\r/\n/g' ${workflow_scripts_folder}/$script
+    fi
+    if [[ ! -x "${workflow_scripts_folder}/${script}" ]] ; then
+      echo "Making $script executable..."
+      chmod 755 "${workflow_scripts_folder}/${script}"
+    fi
+  fi
+done
 
 
 ### 2/ CONFIG_FILE ###
@@ -101,7 +124,7 @@ if [[ "$WORKFLOW" = "DataCleaning" ]] ; then
 	fi
 fi
 
-if [[ ! -f "${WORKFLOW_PATH}/${WORKFLOW_SMK}" ]] ; then
+if [[ ! -f "${workflow_folder}/${WORKFLOW_SMK}" ]] ; then
 	echo -e "\nERROR: The workflow name provided with --workflow is incorrect."
 	echo "As a reminder:"
 	echo $workflow_help
@@ -109,18 +132,18 @@ if [[ ! -f "${WORKFLOW_PATH}/${WORKFLOW_SMK}" ]] ; then
 	exit 1
 fi
 
-nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/$WORKFLOW_SMK)
+nb_carriage_returns=$(grep -c $'\r' ${workflow_folder}/$WORKFLOW_SMK)
 if [[ "$nb_carriage_returns" -gt 0 ]] ; then
 	echo "Removing windows carriage returns in ${WORKFLOW_SMK}..."
-	sed -i 's/\r$//g' ${WORKFLOW_PATH}/$WORKFLOW_SMK
-	sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/$WORKFLOW_SMK
+	sed -i 's/\r$//g' ${workflow_folder}/$WORKFLOW_SMK
+	sed -i 's/\r/\n/g' ${workflow_folder}/$WORKFLOW_SMK
 fi
 
 ### 4/ Check if Snakemake module is available
 if ! [[ -x "$(command -v snakemake)" ]] ; then
   echo -e "\nERROR: Snakemake is not available. You must install it, or make it available to your working environment (eg: module load it or activate it with conda)."
   echo "As a reminder:"
-  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt
+  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/scripts/launcher_help.txt
   echo -e "\nExiting.\n"
   exit 1
 fi

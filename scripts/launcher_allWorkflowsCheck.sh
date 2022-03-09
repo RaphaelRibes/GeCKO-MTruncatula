@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### Variables help
-cluster_config_help=$(grep -e "^--cluster-config " ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt)
+cluster_config_help=$(grep -e "^--cluster-config " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
 
 
 ## Jobs ##
@@ -18,7 +18,7 @@ elif [[ "$JOB_SCHEDULER" != "SLURM" && "$JOB_SCHEDULER" != "SGE" ]] ; then
   echo -e "\nExiting.\n"
   exit 1
 else
-  PROFILE="--profile ${WORKFLOW_PATH}/PROFILES/$JOB_SCHEDULER"
+  PROFILE="--profile ${workflow_folder}/PROFILES/$JOB_SCHEDULER"
 fi
 
 
@@ -67,7 +67,7 @@ fi
 if ! [[ -x "$(command -v conda)" ]] ; then
   echo -e "\nERROR: Conda is not available. You must install it, or make it available to your working environment (eg: module load it)."
   echo "As a reminder:"
-  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt
+  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/scripts/launcher_help.txt
   echo -e "\nExiting.\n"
   exit 1
 fi

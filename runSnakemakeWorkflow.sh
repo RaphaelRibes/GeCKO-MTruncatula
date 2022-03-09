@@ -17,8 +17,8 @@ LATENCY_WAIT=20
 
 ### DEFAULT ACTION VALUES
 HELP="FALSE"
-UNLOCK="FALSE"
-CONDA_CREATE_ENV_ONLY="FALSE"
+#UNLOCK="FALSE"
+#CONDA_CREATE_ENV_ONLY="FALSE"
 DRYRUN="FALSE"
 DIAGRAM="FALSE"
 REPORT="FALSE"
@@ -79,14 +79,14 @@ do
     DRYRUN="TRUE"
     shift
     ;;
-    --conda-create-envs-only)
-    CONDA_CREATE_ENV_ONLY="TRUE"
-    shift
-    ;;
-    --unlock)
-    UNLOCK="TRUE"
-    shift
-    ;;
+#    --conda-create-envs-only)
+#    CONDA_CREATE_ENV_ONLY="TRUE"
+#    shift
+#    ;;
+#    --unlock)
+#    UNLOCK="TRUE"
+#    shift
+#    ;;
     --report)
     REPORT="TRUE"
     REPORT_NAME="$2"
@@ -118,8 +118,12 @@ do
 #    shift
 #    shift
 #    ;;
-    *)
+    -*)
     echo -e "\nWARNING: $1 option is unknown and will be ignored.\n"
+    POSITIONAL+=("$1")
+    shift
+    ;;
+    *)
     POSITIONAL+=("$1")
     shift
     ;;
@@ -166,71 +170,71 @@ WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
 
 
 ### Check if folder exists
-if [[ ! -d "${WORKFLOW_PATH}/SCRIPTS/" ]] ; then
-  echo -e "\nERROR: No SCRIPTS/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole WORKFLOW folder from GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE containing all sub-directories."
+if [[ ! -d "${WORKFLOW_PATH}/scripts/" ]] ; then
+  echo -e "\nERROR: No scripts/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE containing all sub-directories."
   echo -e "\nExiting.\n"
   exit 1
 fi
 
 
 ### Remove Windows \r from help file
-nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt)
+nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/scripts/launcher_help.txt)
 if [[ "$nb_carriage_returns" -gt 0 ]] ; then
-  sed -i 's/\r$//g' ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt
-  sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt
+  sed -i 's/\r$//g' ${WORKFLOW_PATH}/scripts/launcher_help.txt
+  sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/scripts/launcher_help.txt
 
 fi
 
 
 ### Print the help
 if [ "${HELP}" = "TRUE" ] ; then
-  cat ${WORKFLOW_PATH}/SCRIPTS/launcher_help.txt
+  cat ${WORKFLOW_PATH}/scripts/launcher_help.txt
   exit 0
 fi
 
 
 ### Make scripts executable
-for script in $(ls "${WORKFLOW_PATH}/SCRIPTS/") ; do
-  if [[ -f "${WORKFLOW_PATH}/SCRIPTS/${script}" ]] ; then
-    nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/SCRIPTS/${script})
+for script in $(ls "${WORKFLOW_PATH}/scripts/") ; do
+  if [[ -f "${WORKFLOW_PATH}/scripts/${script}" ]] ; then
+    nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/scripts/${script})
     if [[ "$nb_carriage_returns" -gt 0 ]] ; then
       echo "Removing windows carriage returns in ${script}..."
-      sed -i 's/\r$//g' ${WORKFLOW_PATH}/SCRIPTS/$script
-      sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/SCRIPTS/$script
+      sed -i 's/\r$//g' ${WORKFLOW_PATH}/scripts/$script
+      sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/scripts/$script
     fi
-    if [[ ! -x "${WORKFLOW_PATH}/SCRIPTS/${script}" ]] ; then
+    if [[ ! -x "${WORKFLOW_PATH}/scripts/${script}" ]] ; then
       echo "Making $script executable..."
-      chmod 755 "${WORKFLOW_PATH}/SCRIPTS/${script}"
+      chmod 755 "${WORKFLOW_PATH}/scripts/${script}"
     fi
   fi
 done
 
 
 ### Check variables and paths
-source "${WORKFLOW_PATH}/SCRIPTS/launcher_basicCheck.sh"
+source "${WORKFLOW_PATH}/scripts/launcher_basicCheck.sh"
 
 
 
 
 ### RUN APPROPRIATE SNAKEMAKE COMMANDS ###
 # Always unlock in case the folder is locked
-snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
+snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
 
 ## CREATE CONDA ENVIRONMENT ##
-if [ "${CONDA_CREATE_ENV_ONLY}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --use-conda --conda-create-envs-only --jobs $JOBS --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
-  echo -e "\nCalling Snakemake:"
-  echo -e $snakemake_command"\n"
-  $snakemake_command
-  exit 0
-fi
+#if [ "${CONDA_CREATE_ENV_ONLY}" = "TRUE" ] ; then
+#  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --use-conda --conda-create-envs-only --jobs $JOBS --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
+#  echo -e "\nCalling Snakemake:"
+#  echo -e $snakemake_command"\n"
+#  $snakemake_command
+#  exit 0
+#fi
 
 
 ## DRYRUN ##
 if [ "${DRYRUN}" = "TRUE" ] ; then
-  source "${WORKFLOW_PATH}/SCRIPTS/launcher_${WORKFLOW}Check.sh"
+  source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
 
-  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -240,7 +244,7 @@ fi
 
 ## DIAGRAM ##
 if [ "${DIAGRAM}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -250,7 +254,7 @@ fi
 
 ## REPORT ##
 if [ "${REPORT}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -260,10 +264,10 @@ fi
 
 ## RUN WITH CONDA ##
 if [ "${USE_CONDA}" = "TRUE" ] ; then
-  source "${WORKFLOW_PATH}/SCRIPTS/launcher_allWorkflowsCheck.sh"
-  source "${WORKFLOW_PATH}/SCRIPTS/launcher_${WORKFLOW}Check.sh"
+  source "${WORKFLOW_PATH}/scripts/launcher_allWorkflowsCheck.sh"
+  source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
 
-  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command

@@ -3,10 +3,10 @@
 # Model config file
 if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" ]] ; then
   echo -e "\nINFO: Paired end data is expected (PAIRED_END set to TRUE)\n"
-  model_config="${WORKFLOW_PATH}/SCRIPTS/model_files/config_DataCleaning_PE.yml"
+  model_config="${workflow_folder}/SCRIPTS/model_files/config_DataCleaning_PE.yml"
 else
   echo -e "\nINFO: Single end data is expected (PAIRED_END set to FALSE)\n"
-  model_config="${WORKFLOW_PATH}/SCRIPTS/model_files/config_DataCleaning_SE.yml"
+  model_config="${workflow_folder}/SCRIPTS/model_files/config_DataCleaning_SE.yml"
 fi
 
 

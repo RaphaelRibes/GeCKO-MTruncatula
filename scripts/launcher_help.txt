@@ -3,12 +3,11 @@ This script was made to help you launch our Snakemake workflows.
 
 To do so, follow the steps:
 
-1) Clone or copy the WORKFLOW folder (and all its contents) corresponding to the workflow you want to run.
-e.g. to clone all our workflows folders:
-$ git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git
+1) Clone or copy our GitHub repository (and all its contents):
+$ git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS.git
 
 2) Copy the appropriate config and cluster_config files and adapt them to your data and your cluster.
-For more information on how to fill them out, see the more detailed help available on https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE
+For more information on how to fill them out, see the more detailed help available on https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS
 It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.json
 
 3) Use the launcher script runSnakemakeWorkflow.sh to run the workflow.
@@ -45,12 +44,9 @@ $ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataClean
 --diagram: to write an svg diagram of the workflow
 $ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --diagram
 
---conda-create-envs-only: to only create the workflow's conda environment without running the workflow
-$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --conda-create-envs-only
-
 
 MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):
---workflow-path [...]: the path to the directory containing the workflow's snakefile (.smk). If the directory was cloned from GitHub, it should end with /WORKFLOW)
+--workflow-path [...]: the path to the directory you cloned from GitHub (PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS)
 --workflow [...]: the name of the workflow you want to run. Current existing options are 'DataCleaning' and 'ReadsMapping'
 
 CONFIGURATION PARAMETERS:
