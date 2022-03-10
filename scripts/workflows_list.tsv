@@ -1,4 +1,4 @@
-DataCleaning    DATA_CLEANING
-ReadsMapping    READS_MAPPING
-SNPCalling      SNP_CALLING
-SNPFiltering    SNP_FILTERING
+DataCleaning	DATA_CLEANING
+ReadsMapping	READS_MAPPING
+SNPCalling	SNP_CALLING
+SNPFiltering	SNP_FILTERING
