@@ -4,6 +4,5 @@ channels:
 
 dependencies:
   - gatk4 = 4.2.5.0 
-
-
+  - samtools = 1.15 
   

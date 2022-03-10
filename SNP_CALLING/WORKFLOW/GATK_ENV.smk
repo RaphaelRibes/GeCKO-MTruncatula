@@ -1,7 +1,7 @@
 rule all:
     input:
     output:
-        res.txt
+        "res.txt"
     params:
     conda:
         "ENVS/conda_tools.yml"
