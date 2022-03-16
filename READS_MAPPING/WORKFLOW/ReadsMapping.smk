@@ -16,11 +16,10 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ### Variables from config file
-outputs_dirname = config["OUTPUTS_DIRNAME"]
 paired_end = config["PAIRED_END"]
 trim_dir = config["TRIM_DIR"]
 if (len(trim_dir) == 0):
-    trim_dir = working_directory+"/"+outputs_dirname+"/DATA_CLEANING/DEMULT_TRIM"
+    trim_dir = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"
 
 remove_dup = config["REMOVE_DUP"]
 if remove_dup:
@@ -29,7 +28,11 @@ else:
     rm_dup = False
 
 ref = config["REFERENCE"]
-ref_name = config["REFERENCE_NAME"]
+mapping_subfolder = ""
+if (len(config["MAPPING_SUBFOLDER"]) > 0):
+    mapping_subfolder = "/"+config["MAPPING_SUBFOLDER"]
+
+ref_name = ref.rsplit('/', 1)[1].replace('.fasta','').replace('.fas','').replace('.fa','')
 
 bed = config["BED"]
 if (len(bed) == 0):
@@ -37,12 +40,18 @@ if (len(bed) == 0):
 else:
     count_reads_zones = True
 
-create_sub_bams = config["CREATE_SUB_BAMS"]
+sub_bams = config["CREATE_SUB_BAMS"]
+if sub_bams:
+    create_sub_bams = True
+else:
+    create_sub_bams = False
+
 mapper = config["MAPPER"]
 
 
 ### Samples list
 if paired_end:
+    end="--pairedEnd"
     fastqs_R1_list = [fastq for fastq in os.listdir(trim_dir) if '.R1.fastq.gz' in fastq]
 
     fastqs_R2_list = []
@@ -56,6 +65,7 @@ if paired_end:
         samples.append(sample)
 
 else:
+    end="--singleEnd"
     fastqs_list = [fastq for fastq in os.listdir(trim_dir) if '.fastq.gz' in fastq]
 
     samples = []
@@ -65,13 +75,14 @@ else:
 
 
 ### Define outputs subfolders
-outputs_directory = working_directory+"/"+outputs_dirname+"/READS_MAPPING"
-mapping_dir = outputs_directory+"/MAPPING_TO_"+ref_name
+outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/READS_MAPPING"
+mapping_dir = outputs_directory+mapping_subfolder
 bams_dir = mapping_dir+"/BAMS"
 bams_reports_dir = bams_dir+"/REPORTS"
 bams_stats_reports_dir = bams_reports_dir+"/STATS"
-subref_dir = mapping_dir+"/SUB_REFERENCE"
-subbams_dir = mapping_dir+"/SUB_BAMS"
+zones_stats_dir = mapping_dir+"/ZONES_STATS"
+subref_dir = mapping_dir+"/EXTRACTED_BAMS/REFERENCE_zones"
+subbams_dir = mapping_dir+"/EXTRACTED_BAMS/BAMS_zones"
 subbams_reports_dir = subbams_dir+"/REPORTS"
 subbams_stats_reports_dir = subbams_reports_dir+"/STATS"
 
@@ -104,12 +115,14 @@ def buildExpectedFiles(filesNames, isExpected):
 rule FinalTargets:
     input:
         buildExpectedFiles(
-        [ bams_reports_dir+"/bams_multiqc_report.html",
-        bams_reports_dir+"/mean_depth_per_zone_per_bam_heatmap.pdf",
-        expand("{subbams_dir}/sub_{sample}.bam.bai", sample=samples, subbams_dir=subbams_dir),
-        subbams_reports_dir+"/subBams_multiqc_report.html" ],
-        [ True, count_reads_zones, create_sub_bams, create_sub_bams ])
-
+        [ bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html",
+        bams_reports_dir+"/nb_reads_per_sample.tsv",
+        zones_stats_dir+"/mean_depth_per_zone_per_sample_heatmap.pdf",
+        subref_dir+"/"+ref_name+"_zones.fasta",
+        expand("{subbams_dir}/{sample}_zones.bam.bai", sample=samples, subbams_dir=subbams_dir),
+        subbams_reports_dir+"/nb_reads_per_sample.tsv",
+        subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html" ],
+        [ True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
 
 # ------------------------------------------------------------------------------------------------------------- #
 
@@ -171,45 +184,6 @@ rule Mapping_SingleEndFastqs:
         "--index_params \"{params.index_params}\""
 
 
-#rule CountReads_Bams:
-#    input:
-#        bams_dir+"/{base}.bam"
-#    output:
-#        bams_reports_dir+"/flagstat_{base}"
-#    conda:
-#        "ENVS/conda_tools.yml"
-#    shell:
-#        "samtools flagstat {input} > {output}"
-
-
-#rule Summarize_PairedEndReadsCount:
-#    input:
-#        expand("{bams_reports_dir}/flagstat_{sample}", sample=samples, bams_reports_dir=bams_reports_dir)
-#    output:
-#        buildExpectedFiles([bams_reports_dir+"/summary_flagstat.tsv"],[paired_end])
-#    shell:
-#        "{scripts_dir}/summarize_flagstat.sh --pairedEnd --flagstat_folder {bams_reports_dir}"
-
-
-#rule Summarize_SingleEndReadsCount:
-#    input:
-#        expand("{bams_reports_dir}/flagstat_{sample}", sample=samples, bams_reports_dir=bams_reports_dir)
-#    output:
-#        buildExpectedFiles([bams_reports_dir+"/summary_flagstat.tsv"],[not paired_end])
-#    shell:
-#        "{scripts_dir}/summarize_flagstat.sh --singleEnd --flagstat_folder {bams_reports_dir}"
-
-
-#rule Histogram_ReadsCount:
-#    input:
-#        bams_reports_dir+"/summary_flagstat.tsv"
-#    output:
-#        bams_reports_dir+"/reads_histograms.pdf"
-#    conda:
-#        "ENVS/conda_tools.yml"
-#    shell:
-#        "python3 {scripts_dir}/plot_reads_histogram.py {bams_reports_dir}"
-
 rule Stats_Bams:
     input:
         bams_dir+"/{base}.bam"
@@ -221,38 +195,47 @@ rule Stats_Bams:
         "samtools stats {input} > {output}"
 
 
+rule Summarize_BamsReadsCount:
+    input:
+        expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir)
+    output:
+        bams_reports_dir+"/nb_reads_per_sample.tsv"
+    shell:
+        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {bams_stats_reports_dir} --output {output}"
+
+
 rule MultiQC_Bams:
     input:
         expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir)
     output:
-        bams_reports_dir+"/bams_multiqc_report.html"
+        bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -n {output}"
+        "multiqc {input} -n {output} -c {scripts_dir}/config_multiQC_clean_names.yaml"
 
 
 rule CountReadsZones_Bams:
     input:
         expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir)
     output:
-        buildExpectedFiles([bams_reports_dir+"/mean_depth_per_zone_per_bam.tsv"], [count_reads_zones])
+        zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "echo ZONE {samples} | sed 's/ /\t/g' > {bams_reports_dir}/mean_depth_per_zone_per_bam.tsv ;"
-        "samtools bedcov {bed} {input} | awk '{{l=$3-$2+1; printf $1\"_\"$2\"_\"$3\"\t\"; for (i=4;i<=NF;i++)printf $i/l\"\t\"; print \"\"}}' >> {bams_reports_dir}/mean_depth_per_zone_per_bam.tsv"
-
+        "echo ZONE {samples} | sed 's/ /\t/g' > {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv ;"
+        "samtools bedcov {bed} {input} | awk '{{l=$3-$2+1; printf $1\"_\"$2\"_\"$3\"\t\"; for (i=4;i<NF;i++) printf $i/l\"\t\"; printf $NF/l\"\\n\"}}' >> {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv"
+# /!\ vérifier ordre des samples entre header et tableau
 
 rule Heatmap_ZonesReadsCount:
     input:
-        bams_reports_dir+"/mean_depth_per_zone_per_bam.tsv"
+        zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv"
     output:
-        bams_reports_dir+"/mean_depth_per_zone_per_bam_heatmap.pdf"
+        zones_stats_dir+"/mean_depth_per_zone_per_sample_heatmap.pdf"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "python3 {scripts_dir}/plot_reads_heatmap.py {bams_reports_dir}"
+        "python3 {scripts_dir}/plot_reads_heatmap.py {zones_stats_dir}"
 
 
 rule Create_SubReference:
@@ -260,38 +243,29 @@ rule Create_SubReference:
         ref = ref,
         bed = bed
     output:
-        subref = subref_dir+"/sub_"+ref_name+".fasta",
+        subref = subref_dir+"/"+ref_name+"_zones.fasta",
         tmp_bed = temp(subref_dir+"/regions.bed"),
-        dict = subref_dir+"/sub_"+ref_name+".dict"
     conda:
         "ENVS/conda_tools.yml"
     shell:
         "awk '{{print $1\":\"$2\"-\"$3}}' {input.bed} > {output.tmp_bed} ;"
         "samtools faidx {input.ref} --region-file {subref_dir}/regions.bed > {output.subref};"
-        "picard CreateSequenceDictionary R={output.subref} O={output.dict}"
+        "sed -i 's/:/_/g ; s/-/_/g' {output.subref}"
+
 
 
 rule Extract_Reads:
     input:
-        dict = subref_dir+"/sub_"+ref_name+".dict",
         bams = bams_dir+"/{base}.bam"
     output:
-        subbams_dir+"/sub_{base}.bam"
+        subbams_dir+"/{base}_zones.bam",
+        subbams_dir+"/{base}_zones.bam.bai"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "picard ReorderSam INPUT={input.bams} OUTPUT={output} SEQUENCE_DICTIONARY={input.dict} S=true VERBOSITY=WARNING"
-
-
-rule Index_Subbams:
-    input:
-        subbams_dir+"/{base}.bam"
-    output:
-        buildExpectedFiles([subbams_dir+"/{base}.bam.bai"],[create_sub_bams])
-    conda:
-        "ENVS/conda_tools.yml"
-    shell:
-        "samtools index {input}"
+        "CrossMap.py bam -a test.chain {input.bams} {subbams_dir}/{wildcards.base}_zones;"
+        "mv {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.bam;"
+        "mv {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai {subbams_dir}/{wildcards.base}_zones.bam.bai"
 
 
 rule Stats_Subbams:
@@ -305,18 +279,30 @@ rule Stats_Subbams:
         "samtools stats {input} > {output}"
 
 
+rule Summarize_SubbamsReadsCount:
+    input:
+        expand("{subbams_stats_reports_dir}/stats_{sample}_zones", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir)
+    output:
+        subbams_reports_dir+"/nb_reads_per_sample.tsv"
+    shell:
+        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {subbams_stats_reports_dir} --output {output}"
+
+
 rule MultiQC_Subbams:
     input:
-        expand("{subbams_stats_reports_dir}/stats_sub_{sample}", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir)
+        expand("{subbams_stats_reports_dir}/stats_{sample}_zones", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir)
     output:
-        buildExpectedFiles([subbams_reports_dir+"/subBams_multiqc_report.html"],[create_sub_bams])
+        subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -n {output}"
+        "multiqc {input} -n {output} -c {scripts_dir}/config_multiQC_clean_names.yaml"
 
 
 ## + Créer liste des bams pour appel des SNPs
+
+
+
 
 #front.migale.inrae.fr
 #muse-login.hpc-lr.univ-montp2.fr

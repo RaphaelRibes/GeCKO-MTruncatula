@@ -1,0 +1,27 @@
+### GENERAL VARIABLES ###
+PAIRED_END: TRUE
+CREATE_SUB_BAMS: TRUE
+MAPPING_SUBFOLDER: ""
+
+
+### INPUT FILES ###
+# Provide the directory containing the trimmed fastq files to be mapped
+TRIM_DIR: ""
+
+# Reference genome
+REFERENCE: ""
+
+# Targeted zones bed file (optionnal)
+BED: ""
+
+
+### MAPPING PARAMETERS ###
+MAPPER: ""
+REMOVE_DUP: TRUE
+SEQUENCING_TECHNOLOGY: ""
+EXTRA_MAPPER_PARAMS: ""
+
+MARKDUP_PARAMS: "" #"-MAX_FILE_HANDLES_FOR_READ_ENDS_MAP 1000"
+
+INDEX_PARAMS: "" #besoin de "-c" quand mapping sur Svevo entier
+

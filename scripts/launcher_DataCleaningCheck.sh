@@ -66,18 +66,23 @@ if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" ]] ; then # if paired end da
       echo -e "\nExiting.\n"
       exit 1
     else
-      nb_fastq=$(ls ${DEMULT_DIR}/*fastq.gz 2>/dev/null | wc -l)
+      nb_fastq=$(ls ${DEMULT_DIR}/*.fastq.gz 2>/dev/null | wc -l)
       if [[ "$nb_fastq" = 0 ]] ; then
         echo -e "\nERROR: The provided DEMULT_DIR (${DEMULT_DIR}) is either empty or the fastq files it contains are not properly named. Input demultiplexed fastq files must end with '.fastq.gz'."
         echo -e "\nExiting.\n"
         exit 1
       else
-        fastq_R1_list=$(ls -1 ${DEMULT_DIR}/*R1.fastq.gz 2>/dev/null | xargs -n1 basename)
-        nb_fastq_R2_obs=$(ls ${DEMULT_DIR}/*R2.fastq.gz 2>/dev/null | wc -l)
+        fastq_R1_list=$(ls -1 ${DEMULT_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null)
+        nb_fastq_R2_obs=$(ls ${DEMULT_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
         fastq_R2_list_exp=$(echo $fastq_R1_list | sed 's/.R1./.R2./g')
         nb_fastq_R2_exp=$(echo $fastq_R2_list_exp | wc -w)
+        if [[ $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then
+          echo -e "\nERROR: R1 and R2 fastq files provided in the config file do not seem to match. A set of matching *.R1.fastq.gz and *.R2.fastq.gz are expected in the DEMULT folder you provided (${DEMULT_DIR})."
+          echo -e "\nExiting.\n"
+          exit 1
+        fi
         for fastq_r2 in $fastq_R2_list_exp ; do
-          if [[ ! -f ${DEMULT_DIR}/$fastq_r2 || $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then
+          if [[ ! -f ${DEMULT_DIR}/$fastq_r2 ]] ; then
             echo -e "\nERROR: R1 and R2 fastq files provided in the config file do not seem to match. A set of matching *.R1.fastq.gz and *.R2.fastq.gz are expected in the DEMULT folder you provided (${DEMULT_DIR})."
             echo -e "\nExiting.\n"
             exit 1
@@ -119,7 +124,7 @@ else # if single end data is expected
       echo -e "\nExiting.\n"
       exit 1
     else
-      nb_fastq=$(ls ${DEMULT_DIR}/*fastq.gz 2>/dev/null | wc -l)
+      nb_fastq=$(ls ${DEMULT_DIR}/*.fastq.gz 2>/dev/null | wc -l)
       if [[ "$nb_fastq" = 0 ]] ; then
         echo -e "\nERROR: The provided DEMULT_DIR (${DEMULT_DIR}) is either empty or the fastq files it contains are not properly named. Input demultiplexed fastq files must end with '.fastq.gz'."
         echo -e "\nExiting.\n"

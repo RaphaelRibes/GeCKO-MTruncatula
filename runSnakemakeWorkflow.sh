@@ -6,10 +6,11 @@
 # module purge
 # module load snakemake/5.13.0
 # module load anaconda/python3.8
-#   (module load singularity/3.6.3)
 
 
 ### ^ WRITE YOUR MODULE LOADS HERE ^ ###
+
+
 
 ### DEFAULT OPTIONS
 JOBS=1
@@ -17,13 +18,10 @@ LATENCY_WAIT=20
 
 ### DEFAULT ACTION VALUES
 HELP="FALSE"
-#UNLOCK="FALSE"
-#CONDA_CREATE_ENV_ONLY="FALSE"
 DRYRUN="FALSE"
 DIAGRAM="FALSE"
 REPORT="FALSE"
 USE_CONDA="TRUE"
-#USE_CONDA_AND_SINGULARITY="FALSE"
 
 
 ### ARGUMENTS
@@ -79,14 +77,6 @@ do
     DRYRUN="TRUE"
     shift
     ;;
-#    --conda-create-envs-only)
-#    CONDA_CREATE_ENV_ONLY="TRUE"
-#    shift
-#    ;;
-#    --unlock)
-#    UNLOCK="TRUE"
-#    shift
-#    ;;
     --report)
     REPORT="TRUE"
     REPORT_NAME="$2"
@@ -109,15 +99,6 @@ do
     shift
     shift
     ;;
-#    --use-conda-and-singularity)
-#    USE_CONDA_AND_SINGULARITY="TRUE"
-#    shift
-#    ;;
-#    --singularity-args)
-#    SINGULARITY_ARGS="--singularity-args \"$2\""
-#    shift
-#    shift
-#    ;;
     -*)
     echo -e "\nWARNING: $1 option is unknown and will be ignored.\n"
     POSITIONAL+=("$1")
@@ -211,31 +192,19 @@ done
 
 
 ### Check variables and paths
-source "${WORKFLOW_PATH}/scripts/launcher_basicCheck.sh"
-
-
+source "${WORKFLOW_PATH}/scripts/launcher_allWorkflowsCheck.sh"
+if [[ -f "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh" ]] ; then
+  source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
+fi
 
 
 ### RUN APPROPRIATE SNAKEMAKE COMMANDS ###
 # Always unlock in case the folder is locked
 snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
 
-## CREATE CONDA ENVIRONMENT ##
-#if [ "${CONDA_CREATE_ENV_ONLY}" = "TRUE" ] ; then
-#  snakemake_command="snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS --use-conda --conda-create-envs-only --jobs $JOBS --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
-#  echo -e "\nCalling Snakemake:"
-#  echo -e $snakemake_command"\n"
-#  $snakemake_command
-#  exit 0
-#fi
-
 
 ## DRYRUN ##
 if [ "${DRYRUN}" = "TRUE" ] ; then
-  if [[ -f "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh" ]] ; then
-    source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
-  fi
-
   snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
@@ -266,26 +235,11 @@ fi
 
 ## RUN WITH CONDA ##
 if [ "${USE_CONDA}" = "TRUE" ] ; then
-  source "${WORKFLOW_PATH}/scripts/launcher_allWorkflowsCheck.sh"
-  if [[ -f "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh" ]] ; then
-    source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
-  fi
-  
+  mkdir -p Logs_${WORKFLOW}Workflow
+
   snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
   exit 0
 fi
-
-
-## RUN WITH CONDA + SINGULARITY ##
-#if [ "${USE_CONDA_AND_SINGULARITY}" = "TRUE" ] ; then
-
-#  echo "This does not work yet sorry :("
-#  exit 0
-
-#  source "${WORKFLOW_PATH}/SCRIPTS/launcher_allWorkflowsCheck.sh"
-#  source "${WORKFLOW_PATH}/SCRIPTS/launcher_${WORKFLOW}Check.sh"
-#  snakemake --snakefile ${WORKFLOW_PATH}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL $LATENCY_WAIT $JOBS --use-conda --use-singularity ${SINGULARITY_ARGS} --cluster-config ${CLUSTER_CONFIG} --configfile ${CONFIG} ${PROFILE}
-#fi

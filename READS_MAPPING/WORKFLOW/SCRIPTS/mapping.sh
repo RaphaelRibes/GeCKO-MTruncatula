@@ -130,9 +130,9 @@ if [ "${MAPPER}" = "bowtie2" ] ; then
   REF_INDEX=$(echo $REF | sed 's/.fasta//' | sed 's/.fa//')
   if [ "${PAIRED}" = "TRUE" ] ; then
     #bowtie2 --no-unal -p n -x index_name -1 reads_1.fastq -2 reads_2.fastq -S output.sam
-    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" --no-unal -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}.sam
+    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}.sam
   else
-    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" --no-unal -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.sam
+    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.sam
   fi
 fi
 

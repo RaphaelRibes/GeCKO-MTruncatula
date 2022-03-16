@@ -12,8 +12,7 @@ dir=sys.argv[1]
 sns.set(style="darkgrid")
 
 # Input file
-df=pd.read_csv(dir+"/mean_depth_per_zone_per_bam.tsv", sep='\t')
-
+df=pd.read_csv(dir+"/mean_depth_per_zone_per_sample.tsv", sep='\t')
 
 ## Heatmap 1: sorted by depth
 # Compute columns and rows mean values and reorder the dataframe
@@ -24,7 +23,7 @@ df_reindexed=df_reindexedRows.reindex(df_reindexedRows.mean(axis=0).sort_values(
 # Plot heatmap
 sns.heatmap(df_reindexed, yticklabels=False, xticklabels=False, cmap="BuPu").set(xlabel='Samples', ylabel='Genomic zones')
 plt.title("Mean depth per base", fontsize =20)
-plt.savefig(dir+"/mean_depth_per_zone_per_bam_heatmap.pdf")
+plt.savefig(dir+"/mean_depth_per_zone_per_sample_heatmap.pdf")
 
 ## Heatmap 2: showing groups
 #if (len(samples_groups)):
