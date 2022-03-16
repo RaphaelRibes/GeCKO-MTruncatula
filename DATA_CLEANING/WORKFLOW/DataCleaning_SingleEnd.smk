@@ -12,7 +12,7 @@ from itertools import compress
 ### Variables from config file
 samples = pd.read_csv(config["ADAPT_FILE"], sep='\t', header=None).iloc[:, 0]
 fastq_raw = config["FASTQ"]
-outputs_dirname = config["OUTPUTS_DIRNAME"]
+#outputs_dirname = config["OUTPUTS_DIRNAME"]
 user_demult_dir = config["DEMULT_DIR"]
 
 if (len(user_demult_dir) == 0):
@@ -33,7 +33,7 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ### Define outputs subfolders
-outputs_directory = working_directory+"/"+outputs_dirname+"/DATA_CLEANING"
+outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING"
 rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 
 if performDemultiplexing:
