@@ -30,15 +30,6 @@ done
 
 ### Config file variables values
 
-# OUTPUTS_DIRNAME
-OUTPUTS_DIRNAME=$(grep "^OUTPUTS_DIRNAME:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-if [[ -z $OUTPUTS_DIRNAME ]] ; then
-  echo -e "\nERROR: You must provide the OUTPUTS_DIRNAME in the config_file."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
-
-
 # FASTQ, FASTQ_R1, FASTQ_R2 and DEMULT_DIR
 FASTQ_R1=$(grep "^FASTQ_R1:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 FASTQ_R2=$(grep "^FASTQ_R2:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
@@ -66,14 +57,14 @@ if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" ]] ; then # if paired end da
       echo -e "\nExiting.\n"
       exit 1
     else
-      nb_fastq=$(ls ${DEMULT_DIR}/*.fastq.gz 2>/dev/null | wc -l)
-      if [[ "$nb_fastq" = 0 ]] ; then
-        echo -e "\nERROR: The provided DEMULT_DIR (${DEMULT_DIR}) is either empty or the fastq files it contains are not properly named. Input demultiplexed fastq files must end with '.fastq.gz'."
+      nb_fastq_R1_obs=$(ls ${DEMULT_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
+      nb_fastq_R2_obs=$(ls ${DEMULT_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
+      if [[ $nb_fastq_R1_obs -eq 0 || $nb_fastq_R2_obs -eq 0 ]] ; then
+        echo -e "\nERROR: The provided DEMULT_DIR (${DEMULT_DIR}) is either empty or the fastq files it contains are not properly named. Input demultiplexed fastq files must end with '.R1.fastq.gz' and '.R2.fastq.gz'."
         echo -e "\nExiting.\n"
         exit 1
       else
         fastq_R1_list=$(ls -1 ${DEMULT_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null)
-        nb_fastq_R2_obs=$(ls ${DEMULT_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
         fastq_R2_list_exp=$(echo $fastq_R1_list | sed 's/.R1./.R2./g')
         nb_fastq_R2_exp=$(echo $fastq_R2_list_exp | wc -w)
         if [[ $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then

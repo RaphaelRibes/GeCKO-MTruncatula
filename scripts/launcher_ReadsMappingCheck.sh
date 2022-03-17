@@ -25,7 +25,7 @@ done
 
                           ### CONFIG FILE VARIABLES VALUES ###
 
-## General variables (PAIRED_END, OUTPUTS_DIRNAME) ##
+## General variables (PAIRED_END) ##
 PAIRED_END=$(grep "^PAIRED_END:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 
@@ -70,14 +70,14 @@ elif [[ ! -d "$TRIM_DIR" ]] ; then
 fi
 
 if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
-  nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null | wc -l)
-  if [[ "$nb_fastq" = 0 ]] ; then
-    echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}/) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.fastq.gz'."
+  nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
+  nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
+  if [[ $nb_fastq_R1_obs -eq 0 || $nb_fastq_R2_obs -eq 0 ]] ; then
+    echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}/) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.R1.fastq.gz' and '.R2.fastq.gz'."
     echo -e "\nExiting.\n"
     exit 1
   else
     fastq_R1_list=$(ls -1 ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null)
-    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
     fastq_R2_list_exp=$(echo $fastq_R1_list | sed 's/.R1./.R2./g')
     nb_fastq_R2_exp=$(echo $fastq_R2_list_exp | wc -w)
     if [[ $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then
@@ -126,7 +126,7 @@ if [[ "$REFERENCE" != *.fasta && "$REFERENCE" != *.fas && "$REFERENCE" != *.fa ]
   exit 1
 fi
 
-## Zones and extraction (BED, CREATE_SUB_BAMS, )
+## Zones and extraction (BED, CREATE_SUB_BAMS)
 BED=$(grep "^BED:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 CREATE_SUB_BAMS=$(grep "^CREATE_SUB_BAMS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
