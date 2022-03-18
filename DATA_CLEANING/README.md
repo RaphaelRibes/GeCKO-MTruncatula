@@ -104,7 +104,6 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 This file is used to pass all the information and tools parameters that will be used by the DATA_CLEANING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **GENERAL VARIABLES**  
-*OUTPUTS_DIRNAME:*&nbsp;&nbsp;&nbsp;Name of the directory that the workflow will create, where to store its outputs (example: "WOKFLOW_OUTPUTS")  
 *PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end [TRUE or FALSE]  
 
 **INPUT FILES**  
