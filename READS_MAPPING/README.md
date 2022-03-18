@@ -141,16 +141,16 @@ pkgs_dirs:
 
 ## Tools
 This workflow uses the following tools: 
-- [bwa-mem2 v2.2.1]()
-- [bwa v0.7.17]()
-- [bowtie2 v2.4.5]()
-- [minimap2 v2.24]()
-- [samtools v1.14]()
-- [picard v2.26.10]()
-- [seaborn v0.11.2]()
-- [matplotlib v3.5.1]()
+- [bwa-mem2 v2.2.1](https://github.com/bwa-mem2/bwa-mem2)
+- [bwa v0.7.17](https://github.com/lh3/bwa)
+- [bowtie2 v2.4.5](https://github.com/BenLangmead/bowtie2)
+- [minimap2 v2.24](https://github.com/lh3/minimap2)
+- [samtools v1.14](http://www.htslib.org/)
+- [picard v2.26.10](https://broadinstitute.github.io/picard/)
+- [seaborn v0.11.2](https://seaborn.pydata.org/)
+- [matplotlib v3.5.1](https://matplotlib.org/)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
-- [crossmap v0.6.3]()
+- [crossmap v0.6.3](http://crossmap.sourceforge.net/)
 
  
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
