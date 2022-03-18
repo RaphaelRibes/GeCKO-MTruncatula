@@ -79,7 +79,6 @@ This file will be needed if you run the workflow on a computer cluster and want 
 
 Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-config files for both in the EXAMPLE/CONFIG folder</ins>.  
 
-&nbsp;
 
 #### *config_ReadsMapping.yml file:*  
 This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
