@@ -1,0 +1,4 @@
+
+sbatch --partition=agap_normal --job-name=SC --wrap="/home/ardissonm/scratch/TEST_WORKFLOW/runSnakemakeWorkflow.sh --workflow SnpCalling --config-file /home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/CONFIG/config_SnpCalling.yml --cluster-config /home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/CONFIG/cluster_config_SnpCalling.json --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --jobs 200 --job-scheduler SLURM"
+
+

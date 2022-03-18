@@ -1,7 +1,7 @@
 OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
 BAM_DIR: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/MAPPING"
 
-REFERENCE: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/REFERENCES/Svevo_baits_04_20_2019_0pident_40nident_0length.fasta"
+REFERENCE: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING_MINI/REFERENCES/Svevo_baits_04_20_2019_0pident_40nident_0length_mini.fasta"
 
 
 GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS: "-Xmx4g"
