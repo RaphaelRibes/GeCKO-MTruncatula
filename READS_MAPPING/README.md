@@ -25,9 +25,10 @@ Needed files:
 - the full CAPTURE_SNAKEMAKE_WORKFLOWS/ folder  
 - the runSnakemakeWorkflow.sh launcher  
 - your demultiplexed and trimmed fastq.gz files
-- a reference in fasta format to map your reads unto
+- a reference file in fasta format to map your reads unto
 - the cluster_config_ReadsMapping.yml (in case you work on a cluster) and config_ReadsMapping.yml files in a CONFIG folder  
 - a bed file listing genomic regions of interest
+- (only for Morgane ;), temporary): the region.chain file that I sent you, placed in the folder where you run the workflow (in the future this file will be created automatically from the bed file)
 
 &nbsp;
 
