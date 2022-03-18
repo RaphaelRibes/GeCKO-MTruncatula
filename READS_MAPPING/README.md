@@ -85,22 +85,22 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **GENERAL VARIABLES**  
-*PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end [TRUE or FALSE]  
-*CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest and to create corresponding sub-bams [TRUE or FALSE]  
-*MAPPING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different mapping parameters (different reference, mapping options...), provide a name for an extra folder to create in the READS_MAPPING output folder. Otherwise leave blank ("").
+*PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end. [TRUE or FALSE]  
+*CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. Cannot be set to TRUE if the BED variable is left blank. [TRUE or FALSE]  
+*MAPPING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different mapping parameters (different reference, mapping options...), provide a name for an extra folder to create in the READS_MAPPING output folder. Otherwise leave blank ("").  
 
-**INPUT FILES**
-*TRIM_DIR:*&nbsp;&nbsp;&nbsp;The path to the directory containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files.
-*REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format 
-*BED:*&nbsp;&nbsp;&nbsp;test.bed  Targeted zones bed file (optionnal)
+**INPUT FILES**  
+*TRIM_DIR:*&nbsp;&nbsp;&nbsp;The path to the directory containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files.  
+*REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
+*BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optionnal: can be left blank : "".  
 
-**MAPPING PARAMETERS**
-*MAPPER:*&nbsp;&nbsp;&nbsp;"bwa-mem2_mem"
-*REMOVE_DUP:*&nbsp;&nbsp;&nbsp;TRUE
-*SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;"ILLUMINA"
-*EXTRA_MAPPER_PARAMS:*&nbsp;&nbsp;&nbsp;""
-*MARKDUP_PARAMS:*&nbsp;&nbsp;&nbsp;"" #"-MAX_FILE_HANDLES_FOR_READ_ENDS_MAP 1000"
-*INDEX_PARAMS:*&nbsp;&nbsp;&nbsp;"" #besoin de "-c" quand mapping sur Svevo entier
+**MAPPING PARAMETERS**  
+*MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
+*REMOVE_DUP:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after mapping. [TRUE or FALSE]  
+*SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
+*EXTRA_MAPPER_PARAMS:*&nbsp;&nbsp;&nbsp;""  
+*MARKDUP_PARAMS:*&nbsp;&nbsp;&nbsp;"" #"-MAX_FILE_HANDLES_FOR_READ_ENDS_MAP 1000"  
+*INDEX_PARAMS:*&nbsp;&nbsp;&nbsp;"" #besoin de "-c" quand mapping sur Svevo entier  
 
 
 
@@ -110,17 +110,17 @@ This file is used to pass all the information and tools parameters that will be 
 You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
 
 **Launching**  
-To launch the DATA_CLEANING workflow, you can use our launching script runSnakemakeWorkflow.sh with the option --workflow DataCleaning:  
-```./runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS```  
+To launch the READS_MAPPING workflow, you can use our launching script runSnakemakeWorkflow.sh with the option --workflow ReadsMapping:  
+```./runSnakemakeWorkflow.sh --workflow ReadsMapping --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS```  
 
 For more help on how to use it, see our GitHub's general README file or run:  
 ```./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS```  
 
 **Notes on Conda**  
 The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
-When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again.  
+When called for the first time, the READS_MAPPING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again.  
 
-The pkgs_dirs folder however is common to your whole system or cluster personnal environment. Conda's default behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path you want Conda to store the packages, following this example:  
+The pkgs_dirs folder however is common to your whole system or cluster personnal environment. Conda's default behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
 ```
 envs_dirs:  
     - /home/username/path/to/appropriate/folder/env  
