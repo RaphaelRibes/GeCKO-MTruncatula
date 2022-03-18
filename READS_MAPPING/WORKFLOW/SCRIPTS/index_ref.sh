@@ -15,11 +15,11 @@ if [[ "$MAPPER" == "bwa_mem" ]] ; then
 fi
 
 if [[ "$MAPPER" == "bowtie2" ]] ; then
-  REF_INDEX=$(echo $REF | sed 's/.fasta//' | sed 's/.fa//')
+  REF_INDEX=$(echo $REF | sed 's/.fasta//' | sed 's/.fas//' | sed 's/.fa//')
   bowtie2-build $REF $REF_INDEX
 fi
 
 if [[ "$MAPPER" == "minimap2" ]] ; then
-  REF_INDEX=$(echo $REF | sed 's/.fasta/.mmi/' | sed 's/.fa/.mmi/')
+  REF_INDEX=$(echo $REF | sed 's/.fasta/.mmi/' | sed 's/.fas//' | sed 's/.fa/.mmi/')
   minimap2 -d $REF_INDEX $REF
 fi

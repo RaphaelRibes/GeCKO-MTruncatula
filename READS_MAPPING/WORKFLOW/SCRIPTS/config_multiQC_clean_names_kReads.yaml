@@ -1,0 +1,32 @@
+# These are removed after the above, only if sample names
+# start or end with this string. Again, removed in order.
+fn_clean_trim:
+  - "."
+  - ":"
+  - "_"
+  - "-"
+  - ".r"
+  - "_val"
+  - ".idxstats"
+  - "_zones"
+  - "_trimmed"
+  - ".trimmed"
+  - ".csv"
+  - ".yaml"
+  - ".yml"
+  - ".json"
+  - "_mqc"
+  - "short_summary_"
+  - "_summary"
+  - ".summary"
+  - ".align"
+  - ".h5"
+  - "_matrix"
+  - ".stats"
+  - ".hist"
+  - ".phased"
+  - "stats_"
+  
+read_count_multiplier: 0.001
+read_count_prefix: "K"
+read_count_desc: "thousands"

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-#import pandas as pd
+import pandas as pd
 import os,sys
 from itertools import compress
+import gzip
 
 #singularity: "docker://condaforge/mambaforge"
 
@@ -21,8 +22,11 @@ trim_dir = config["TRIM_DIR"]
 if (len(trim_dir) == 0):
     trim_dir = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"
 
-remove_dup = config["REMOVE_DUP"]
-if remove_dup:
+
+if (len(config["REMOVE_DUP"]) == 0):
+    rm_dup = False
+
+if config["REMOVE_DUP"]:
     rm_dup = True
 else:
     rm_dup = False
@@ -40,8 +44,7 @@ if (len(bed) == 0):
 else:
     count_reads_zones = True
 
-sub_bams = config["CREATE_SUB_BAMS"]
-if sub_bams:
+if config["CREATE_SUB_BAMS"]:
     create_sub_bams = True
 else:
     create_sub_bams = False
@@ -49,10 +52,14 @@ else:
 mapper = config["MAPPER"]
 
 
+
+
 ### Samples list
 if paired_end:
     end="--pairedEnd"
     fastqs_R1_list = [fastq for fastq in os.listdir(trim_dir) if '.R1.fastq.gz' in fastq]
+
+    #ex_fastq = fastqs_R1_list[0]
 
     fastqs_R2_list = []
     for fastq_R1 in fastqs_R1_list:
@@ -67,6 +74,8 @@ if paired_end:
 else:
     end="--singleEnd"
     fastqs_list = [fastq for fastq in os.listdir(trim_dir) if '.fastq.gz' in fastq]
+
+    #ex_fastq = fastqs_list[0]
 
     samples = []
     for fastq in fastqs_list:
@@ -94,11 +103,11 @@ if (mapper == "bwa_mem"):
     ref_index=ref+".bwt"
 
 if (mapper == "bowtie2"):
-    ref_base=ref.replace(".fasta","").replace(".fa","")
+    ref_base=ref.replace(".fasta","").replace(".fas","").replace(".fa","")
     ref_index=ref_base+".1.bt2"
 
 if mapper == "minimap2":
-    ref_base=ref.replace(".fasta","").replace(".fa","")
+    ref_base=ref.replace(".fasta","").replace(".fas","").replace(".fa","")
     ref_index=ref_base+".mmi"
 
 
@@ -108,6 +117,17 @@ def buildExpectedFiles(filesNames, isExpected):
     expectedFiles = list(compress(filesNames, isExpected))
     return(expectedFiles)
 
+def getMultiQCconfigFile(reads_file, config_base):
+    nb_reads_file=pd.read_csv(reads_file, sep='\t')
+    mean_nb_reads=nb_reads_file['Reads_mapped'].mean()
+    if (mean_nb_reads < 1000000):
+        config=config_base+"_kReads.yaml"
+    else:
+        config=config_base+".yaml"
+    return(config)
+
+#"mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//') ;"
+#"if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi"
 
 
 ### PIPELINE ###
@@ -204,16 +224,22 @@ rule Summarize_BamsReadsCount:
         "{scripts_dir}/summarize_stats.sh {end} --stats_folder {bams_stats_reports_dir} --output {output}"
 
 
+
 rule MultiQC_Bams:
     input:
-        expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir)
+        stats_files = expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir),
+        nb_reads = bams_reports_dir+"/nb_reads_per_sample.tsv",
     output:
         bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
+    params:
+        #config_file = getMultiQCconfigFile(bams_reports_dir+"/nb_reads_per_sample.tsv", "config_multiQC_clean_names")
     shell:
-        "multiqc {input} -n {output} -c {scripts_dir}/config_multiQC_clean_names.yaml"
-
+        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
+        "if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi ;"
+        "multiqc {input.stats_files} -n {output} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml"
+        #"multiqc {input.stats_files} -n {output} -c {scripts_dir}/{params.config_file}"
 
 rule CountReadsZones_Bams:
     input:
@@ -263,7 +289,7 @@ rule Extract_Reads:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "CrossMap.py bam -a test.chain {input.bams} {subbams_dir}/{wildcards.base}_zones;"
+        "CrossMap.py bam -a regions.chain {input.bams} {subbams_dir}/{wildcards.base}_zones;"
         "mv {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.bam;"
         "mv {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai {subbams_dir}/{wildcards.base}_zones.bam.bai"
 
@@ -290,13 +316,19 @@ rule Summarize_SubbamsReadsCount:
 
 rule MultiQC_Subbams:
     input:
-        expand("{subbams_stats_reports_dir}/stats_{sample}_zones", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir)
+        stats_files = expand("{subbams_stats_reports_dir}/stats_{sample}_zones", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir),
+        nb_reads = subbams_reports_dir+"/nb_reads_per_sample.tsv"
     output:
         subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
+    params:
+        #config_file = getMultiQCconfigFile(subbams_reports_dir+"/nb_reads_per_sample.tsv", "config_multiQC_clean_names")
     shell:
-        "multiqc {input} -n {output} -c {scripts_dir}/config_multiQC_clean_names.yaml"
+        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
+        "if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi ;"
+        "multiqc {input.stats_files} -n {output} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml"
+        #"multiqc {input.stats_files} -n {output} -c {scripts_dir}/{params.config_file}"
 
 
 ## + Créer liste des bams pour appel des SNPs

@@ -127,7 +127,7 @@ if [ "${MAPPER}" = "bwa_mem" ] ; then
 fi
 
 if [ "${MAPPER}" = "bowtie2" ] ; then
-  REF_INDEX=$(echo $REF | sed 's/.fasta//' | sed 's/.fa//')
+  REF_INDEX=$(echo $REF | sed 's/.fasta//' | sed 's/.fas//' | sed 's/.fa//')
   if [ "${PAIRED}" = "TRUE" ] ; then
     #bowtie2 --no-unal -p n -x index_name -1 reads_1.fastq -2 reads_2.fastq -S output.sam
     bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}.sam
@@ -137,7 +137,7 @@ if [ "${MAPPER}" = "bowtie2" ] ; then
 fi
 
 if [ "${MAPPER}" = "minimap2" ] ; then
-  REF_INDEX=$(echo $REF | sed 's/.fasta/.mmi/' | sed 's/.fa/.mmi/')
+  REF_INDEX=$(echo $REF | sed 's/.fasta/.mmi/' | sed 's/.fas/.mmi/' | sed 's/.fa/.mmi/')
   if [ "${PAIRED}" = "TRUE" ] ; then
     minimap2 ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_R1} -2 ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
   else
