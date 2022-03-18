@@ -36,3 +36,50 @@ For example, if you need to launch the workflow on our ... dataset on a Slurm jo
 
 
 &nbsp;
+
+
+## How to use the READS_MAPPING workflow
+ 
+1) [Prepare your input data](#1-prepare-your-input-data)  
+2) [Clone our GitHub repository](#2-clone-our-github-repository)  
+3) [Prepare the CONFIG files](#3-prepare-the-config-files)  
+4) [Launch the analysis](#4-launch-the-analysis)  
+5) [Expected outputs](#5-expected-outputs)
+
+
+### 1/ Prepare your input data
+
+The input data must be sequences from an Illumina sequencer (Miseq / Hiseq).  
+
+Input sequences can be:  
+- single-end sequences (SE): you must provide fastq files named in the format \*name\*.fastq.gz  
+- paired-end sequences (PE): you must provide pairs of fastq files named in the format \*name\*.R1.fastq.gz and \*name\*.R2.fastq.gz  
+
+
+### 2/ Clone our GitHub repository
+
+The CAPTURE_SNAKEMAKE_WORKFLOWS folder must be fully copied in a workspace/storage of your choice.  
+For example, you can clone the our repository with:  
+```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```   
+
+
+### 3/ Prepare the config files
+
+The READS_MAPPING workflow will need information about the dataset and the analysis parameters to perform its different steps.  
+These information are provided through two files: *cluster_config_ReadsMapping.json* and *config_ReadsMapping.yml*.  
+If you name them exactly as written above and place them in a folder named 'CONFIG', the bash launching script will detect them automatically. Otherwise, you will have to pass them as arguments with --config and --cluster-config (see [below](#4-launch-the-analysis) for details).
+
+#### *cluster_config_ReadsMapping.json file:*
+This file will be needed if you run the workflow on a computer cluster and want Snakemake to submit jobs. You <ins>only need to modify the partitions or queues names</ins> to match those of your cluster. The first section of the file gives the default values for the job-scheduler's parameters that Snakemake should use for all its steps (or rules). The following sections correspond to specific Snakemake steps, with new parameters values to overwrite the defaults. If you want to assign a different partition/queue for a specific step that does not yet have its own section, you can create a new section for it, preceded by a comma:  
+
+	"specificStepName" : {
+	"q" or "partition"         : "{partitionNameForSpecificStep}"
+	}  
+
+Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-config files for both in the EXAMPLE/CONFIG folder</ins>.  
+
+&nbsp;
+
+#### *config_ReadsMapping.yml file:*  
+This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
+
