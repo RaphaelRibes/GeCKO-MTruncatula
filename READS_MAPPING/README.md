@@ -85,24 +85,28 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **GENERAL VARIABLES**  
-*PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end. [TRUE or FALSE]  
-*CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. Cannot be set to TRUE if the BED variable is left blank. [TRUE or FALSE]  
-*MAPPING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different mapping parameters (different reference, mapping options...), provide a name for an extra folder to create in the READS_MAPPING output folder. Otherwise leave blank ("").  
+- *PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end. [TRUE or FALSE]  
+- *CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. Cannot be set to TRUE if the BED variable is left blank. [TRUE or FALSE]  
+- *MAPPING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different mapping parameters (different reference, mapping options...), provide a name for an extra folder to create in the READS_MAPPING output folder. Otherwise leave blank ("").  
 
 **INPUT FILES**  
-*TRIM_DIR:*&nbsp;&nbsp;&nbsp;The path to the directory containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files.  
-*REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
-*BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optionnal: can be left blank : "".  
+- *TRIM_DIR:*&nbsp;&nbsp;&nbsp;The path to the directory containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files.  
+- *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
+- *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optionnal: can be left blank ("").  
 
 **MAPPING PARAMETERS**  
-*MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
-*REMOVE_DUP:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after mapping. [TRUE or FALSE]  
-*SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
-*EXTRA_MAPPER_PARAMS:*&nbsp;&nbsp;&nbsp;""  
-*MARKDUP_PARAMS:*&nbsp;&nbsp;&nbsp;"" #"-MAX_FILE_HANDLES_FOR_READ_ENDS_MAP 1000"  
-*INDEX_PARAMS:*&nbsp;&nbsp;&nbsp;"" #besoin de "-c" quand mapping sur Svevo entier  
+- *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
+- *REMOVE_DUP:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after mapping. [TRUE or FALSE]  
+- *SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
+- *EXTRA_MAPPER_PARAMS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the mapper command. Be careful to provide them between quotes.   
+- *MARKDUP_PARAMS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'picard MarkDuplicates' command, if REMOVE_DUP is set to TRUE. Be careful to provide them between quotes.  
+- *INDEX_PARAMS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'samtools index' command. Be careful to provide them between quotes. For example, you may need to pass the "-c" option if you need to map your reads to a very big reference file.  
 
+&nbsp;
 
+<ins>An example of config_ReadsMapping.yml file can be found in the EXAMPLE/CONFIG folder</ins>.  
+
+&nbsp;
 
 ### 4/ Launch the analysis
 
@@ -137,9 +141,17 @@ pkgs_dirs:
 
 ## Tools
 This workflow uses the following tools: 
-- [Cutadapt v3.5 ](https://cutadapt.readthedocs.io/en/v3.5/)
-- [FastQC v11.9](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
-- [MultiQC v1.11](https://github.com/ewels/MultiQC/releases)
+- [bwa-mem2 v2.2.1]()
+- [bwa v0.7.17]()
+- [bowtie2 v2.4.5]()
+- [minimap2 v2.24]()
+- [samtools v1.14]()
+- [picard v2.26.10]()
+- [seaborn v0.11.2]()
+- [matplotlib v3.5.1]()
+- [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
+- [crossmap v0.6.3]()
+
  
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
