@@ -15,13 +15,13 @@ Besides, input sequences can be :
 ### The DATA_CLEANING workflow's steps
 Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise. 
 1) Quality analysis of raw sequences/reads from sequencing (FASTQC)  
-2) Counting the number of reads in one (SE) or two (PE) fastq.gz files  
-3) Demultiplex in one (SE) or two (PE) fastq.gz files into individual fastq files based on the barcode or tag specifci to each samples (CUTADAPT)  
-4) Counting the number of reads in one (SE) or two (PE) fastq.gz files by samples  
-5) Trimming in one (SE) or two (PE) fastq.gz files by samples to remove adapters sequences, low quality sequences et short sequences (CUTADAPT)  
-6) Counting the number of reads in one (SE) or two (PE) fastq.gz files by samples  
-7) Quality analysis of reads in fastq.gz file(s) par samples, after demultiplexing and trimming (FASTQC)  
-8) Creation of two reports (MultiQC) allowing to visualise the impact of the trimming step on the quality of the sequences (observation by samples), and the impact of the whole workflow (merged obervations).  
+2) Counting the number of reads in one (SE) or two (PE) fastq.gz input files  
+3) Demultiplex one (SE) or two (PE) fastq.gz files into individual fastq files based on the barcode or tag specific to each sample (CUTADAPT)  
+4) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
+5) Trimming one (SE) or two (PE) fastq.gz files per sample to remove adapters sequences, low quality sequences et short sequences (CUTADAPT)  
+6) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
+7) Quality analysis of each sample's reads, after demultiplexing and trimming (FASTQC)  
+8) Creation of two reports (MultiQC) allowing to visualise the impact of the trimming step on the quality of the sequences (for each individual sample), and the impact of the whole workflow (for all samples merged together).  
 
 ![DataCleaning_Workflow](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true)
 
@@ -238,7 +238,7 @@ pkgs_dirs:
 
 ## Tools
 This workflow uses the following tools: 
-- [Cutadapt v3.5 ](https://cutadapt.readthedocs.io/en/v3.5/)
+- [Cutadapt v3.5](https://cutadapt.readthedocs.io/en/v3.5/)
 - [FastQC v11.9](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
 - [MultiQC v1.11](https://github.com/ewels/MultiQC/releases)
  
