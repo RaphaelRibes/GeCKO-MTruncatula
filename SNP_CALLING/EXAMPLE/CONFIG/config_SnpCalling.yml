@@ -1,9 +1,19 @@
-OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
-BAM_DIR: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/MAPPING"
+### GENERAL VARIABLES ###
 
-REFERENCE: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING_MINI/REFERENCES/Svevo_baits_04_20_2019_0pident_40nident_0length_mini.fasta"
+OUTPUTS_DIRNAME: "WORKFLOWS_OUTPUTS"
+
+### INPUT FILES ###
+
+# Provide the directory containing the .bam files from the mapping. for each genotype, the .bam file and the index file in .bam.bai format
+BAM_DIR: "MAPPING"
+
+# Reference genome for the SNP_CALLING. The reference must be identical to that of the mapping.
+REFERENCE: "REFERENCES/Svevo_baits_04_20_2019_0pident_40nident_0length_mini.fasta"
 
 
+### SNP_CALLING PARAMETERS ###
+
+# Complete these two fields if the raw fastq files is multiplexed, if not leave blank: ""
 GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS: "-Xmx4g"
 GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS: ""
 
