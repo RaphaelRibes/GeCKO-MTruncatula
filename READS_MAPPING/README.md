@@ -38,6 +38,9 @@ For example, if you need to launch the workflow on our ... dataset on a Slurm jo
 
 &nbsp;
 
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE\_PIPELINES\_SNAKEMAKE/blob/main/readme\_img/DataCleaning\_4elements.png?raw=true)
+
+
 
 ## How to use the READS_MAPPING workflow
  
