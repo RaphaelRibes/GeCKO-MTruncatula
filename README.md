@@ -4,7 +4,8 @@ This repository provides several workflows to clean sequenced reads, map them to
 You will find the different workflows in the corresponding folders:
 - DATA_CLEANING
 - READS_MAPPING
-- SNP_CALLING  
+- SNP_CALLING 
+- VCF_FILTERING 
 
 These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each workflow produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runSnakemakeWorkflow.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
 
