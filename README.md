@@ -1,5 +1,5 @@
 ### Project overview  
-This repository provides several workflows to clean sequenced reads, map them to the reference of your choice and call SNPs. They are especially appropriate for data sequenced after target enrichment capture, but can be used for other types of sequenced reads.
+This repository provides several workflows to clean sequenced reads, map them to the reference of your choice, call SNPs and filter VCF file with polymorphism data. They are especially appropriate for data sequenced after target enrichment capture, but can be used for other types of sequenced reads.
 
 You will find the different workflows in the corresponding folders:
 - DATA_CLEANING
