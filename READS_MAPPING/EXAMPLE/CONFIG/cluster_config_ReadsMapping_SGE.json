@@ -1,39 +1,39 @@
 {
     "__default__" :
     {
-        "partition" : "agap_normal",
-        "job-name" : "RM.{rule}",
-        "output" : "Logs_ReadsMappingWorkflow/{rule}.%j.out.txt",
-        "error" : "Logs_ReadsMappingWorkflow/{rule}.%j.err.txt"
+        "q" : "short.q",
+        "N" : "RM.{rule}",
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.$JOB_ID.err.txt"
     },
     "Mapping_PairedEndFastqs" :
     {
-        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
-        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt"
     },
     "Mapping_SingleEndFastqs" :
     {
-        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
-        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt"
     },
     "CountReads_Bams" :
     {
-        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
-        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+        "o" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt",
+        "e" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt"
     },
     "Stats_Bams" :
     {
-        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
-        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%JOB_ID.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%JOB_ID.err.txt"
     },
     "Extract_Reads" :
     {
-        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
-        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%JOB_ID.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%JOB_ID.err.txt"
     },
     "Index_Subbams" :
     {
-        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
-        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
+        "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%JOB_ID.out.txt",
+        "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%JOB_ID.err.txt"
     }
 }
