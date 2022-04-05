@@ -1,27 +1,37 @@
 ### GENERAL VARIABLES ###
-OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
-PAIRED_END: FALSE
+#OUTPUTS_DIRNAME: "WORKFLOW_OUTPUTS"
+PAIRED_END: TRUE
+CREATE_SUB_BAMS: TRUE
+MAPPING_SUBFOLDER: "MAPPING_TO_SVEVO"
 
 
 ### INPUT FILES ###
-
 # Provide the directory containing the trimmed fastq files to be mapped
-# This directory should contain two fastq files per sample X (sampleX.R1.fastq.gz and sampleX.R2.fastq.gz)
 TRIM_DIR: ""
-#TRIM_DIR: "/home/jogirodolle/work/DATA_TEST/MEL_R19/FAKE_SINGLE_FASTQ"
 
-# Reference genome and a short corresponding name
+# Reference genome
 REFERENCE: "/home/jogirodolle/work/REFERENCES/Mini_ref/Svevo_baits_04_20_2019_0pident_40nident_0length_mini.fasta"
-REFERENCE_NAME: "MINI_SVEVO_BAITS"
 
+# Targeted zones bed file (optionnal)
+BED: test.bed
 
 
 ### MAPPING PARAMETERS ###
 MAPPER: "bwa-mem2_mem"
-EXTRA_MAPPER_PARAMS: "-t 4"
-SEQUENCING_TECHNOLOGY: "ILLUMINA"
 REMOVE_DUP: TRUE
+SEQUENCING_TECHNOLOGY: "ILLUMINA"
+EXTRA_MAPPER_PARAMS: ""
 
 MARKDUP_PARAMS: "" #"-MAX_FILE_HANDLES_FOR_READ_ENDS_MAP 1000"
 
-INDEX_PARAMS: "" #essayer -c pour Svevo entier
+INDEX_PARAMS: "" #besoin de "-c" quand mapping sur Svevo entier
+
+
+
+
+#REFERENCE_NAME: "MINI_SVEVO_BAITS"
+# Targeted zones group file (optionnal)
+#ZONES_GROUPS: zones_groups.tsv
+
+# Samples group file (optionnal)
+#SAMPLES_GROUPS: samples_groups.tsv
