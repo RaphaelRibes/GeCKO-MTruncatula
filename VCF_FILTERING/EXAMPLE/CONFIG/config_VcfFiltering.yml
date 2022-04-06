@@ -1,0 +1,32 @@
+### GENERAL VARIABLES ###
+
+
+
+#### INPUT FILES ###
+
+## Provide the VCF file to be filtered. The vcf need to be gzipped
+VCF_FILE: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/WORKFLOWS_OUTPUTS/SNP_CALLING/GENOTPYE_GVCFS/variants.vcf.gz"
+
+### FILTERING PARAMETERS ###
+
+# https://gatk.broadinstitute.org/hc/en-us/articles/360035531692-VCF-Variant-Call-Format
+# http://vcftools.sourceforge.net/man_latest.html
+# --minGQ 15.0 (sample level) The Genotype Quality represents the Phred-scaled confidence that the genotype assignment (GT) is correct, derived from the genotype PLs. Specifically, the GQ is the difference between the PL of the second most likely genotype, and the PL of the most likely genotype. 
+# --minDP 5 (sample level) The number of filtered reads that support each of the reported alleles. 
+# --minQ 30 (site level) The Phred-scaled probability that a REF/ALT polymorphism exists at this site given sequencing data.
+# --max-missing 0.5 keep variants that have been successfully genotyped in 50% of individuals
+
+## VCFTOOL options to remove locus by poorly quality/coverage > Filters_Locus
+# READS2SNP (no Q available)
+# LOCUS_FILTERS: "--minGQ 15.0 --minDP 6 --max-missing 0.5"
+#GATK
+LOCUS_FILTERS: "--minGQ 15.0 --minDP 5 --minQ 30 --max-missing 0.5"
+
+## home made filter to remove samples having too much missing data > Filter_Samples
+MAX_RATIO_NA_PER_SAMPLE: "1"
+
+## BCFTOOL options to keep (include -i) relevant SNPs (-i POPGENSTATS_FILTERS) > Filters_PopGenStats
+#POPGENSTATS_FILTERS: 'INFO/type=="snp" & INFO/F>0.8 & INFO/A1A1>0 & INFO/A2A2>0'
+POPGENSTATS_FILTERS: "INFO/F>=0.8 & INFO/A1A1>0 & INFO/A2A2>0 & INFO/pcNA<0.5"
+
+

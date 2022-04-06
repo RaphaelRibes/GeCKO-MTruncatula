@@ -5,4 +5,5 @@ channels:
 dependencies:
   - vcftools = 0.1.16
   - bcftools = 1.15
+  - multiqc = 1.11
   
