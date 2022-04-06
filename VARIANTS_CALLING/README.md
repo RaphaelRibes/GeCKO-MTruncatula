@@ -32,7 +32,7 @@ For example, if you need to launch the workflow on our ... dataset on a Slurm jo
 
 &nbsp;
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE\_PIPELINES\_SNAKEMAKE/blob/main/readme\_img/Variants_calling\_4elements.png)
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE\_PIPELINES\_SNAKEMAKE/blob/main/readme\_img/VariantsCalling\_4elements.png)
 
 
 ## How to use the VARIANTS_CALLING workflow
