@@ -1,0 +1,5 @@
+
+sbatch --partition=agap_normal --job-name=VC --wrap="/home/ardissonm/scratch/TEST_WORKFLOW/runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --jobs 200 --job-scheduler SLURM"
+
+# --config-file /home/ardissonm/scratch/TEST_WORKFLOW/VARIANTS_CALLING/CONFIG/config_VariantsCalling.yml 
+# --cluster-config /home/ardissonm/scratch/TEST_WORKFLOW/VARIANTS_CALLING/CONFIG/cluster_config_VariantsCalling.json

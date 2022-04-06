@@ -28,10 +28,10 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ## Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/SNP_CALLING"
+outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VARIANTS_CALLING"
 HaplotypeCaller_dir = outputs_directory+"/HAPLOTYPE_CALLER"
 GenomicsDBImport_dir = outputs_directory+"/GENOMICS_DB_IMPORT"
-GenotypeGVCFs_dir = outputs_directory+"/GENOTPYE_GVCFS"
+GenotypeGVCFs_dir = outputs_directory+"/GENOTYPE_GVCFS"
 
  # ----------------------------------------------------------------------------------------------- #
 
@@ -39,7 +39,7 @@ GenotypeGVCFs_dir = outputs_directory+"/GENOTPYE_GVCFS"
 
 rule FinalTargets:
     input:
-        GenotypeGVCFs_dir+"/variants.vcf.gz"
+        GenotypeGVCFs_dir+"/variants_calling.vcf.gz"
 
 
 
@@ -136,7 +136,7 @@ rule GenotypeGVCFs:
         reference = reference,
         DB = GenomicsDBImport_dir
     output:
-        GVCF = GenotypeGVCFs_dir+"/variants.vcf.gz",
+        GVCF = GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
         tmp_GVCF = temp(directory(GenotypeGVCFs_dir+"/tmp_dir_GVCF"))
     params:
         java_options = config["GATK_GENOTYPE_GVCFS_JAVA_OPTIONS"],

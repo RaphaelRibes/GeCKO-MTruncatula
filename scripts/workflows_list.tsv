@@ -1,4 +1,4 @@
 DataCleaning	DATA_CLEANING
 ReadsMapping	READS_MAPPING
-SnpCalling	SNP_CALLING
+VariantsCalling	VARIANTS_CALLING
 VcfFiltering	VCF_FILTERING

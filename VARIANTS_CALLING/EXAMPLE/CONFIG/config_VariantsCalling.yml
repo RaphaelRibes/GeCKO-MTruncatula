@@ -1,6 +1,5 @@
 ### GENERAL VARIABLES ###
 
-OUTPUTS_DIRNAME: "WORKFLOWS_OUTPUTS"
 
 ### INPUT FILES ###
 
@@ -21,4 +20,4 @@ GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS: "-Xmx30g"
 GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS: " --merge-contigs-into-num-partitions 20 --batch-size 50 --reader-threads 20"
 
 GATK_GENOTYPE_GVCFS_JAVA_OPTIONS: "-Xmx30g"
-GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS: "--heterozygosity 0.001"
+GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS: "--include-non-variant-sites --heterozygosity 0.001"
