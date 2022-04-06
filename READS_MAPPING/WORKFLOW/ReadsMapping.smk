@@ -23,9 +23,6 @@ if (len(trim_dir) == 0):
     trim_dir = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"
 
 
-if (len(config["REMOVE_DUP"]) == 0):
-    rm_dup = False
-
 if config["REMOVE_DUP"]:
     rm_dup = True
 else:
