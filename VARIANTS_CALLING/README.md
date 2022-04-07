@@ -27,7 +27,7 @@ Needed files:
 &nbsp;
 
 For example, if you need to launch the workflow on our ... dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/... directory:  
-```./runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VariantsCalling.yml --cluster-config CONFIG/cluster_config_variantsCalling.json --jobs 20 --job-scheduler SLURM```  
+```./runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VariantsCalling.yml --cluster-config CONFIG/cluster_config_VariantsCalling.json --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
@@ -121,9 +121,6 @@ envs_dirs:
 pkgs_dirs:  
     - /home/username/path/to/appropriate/folder/pkgs  
 ```
-
-
-
 
 ### 5/ Expected outputs  
 the workflow create a directory "VARIANTS_CALLING" in the "WORKFLOWS_OUTPUTS" directory. 
