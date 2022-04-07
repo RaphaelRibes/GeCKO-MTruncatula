@@ -42,9 +42,6 @@ rule FinalTargets:
         GenotypeGVCFs_dir+"/variants_calling.vcf.gz"
 
 
-
-# création de l'index de la référence si besoin
-
 rule Index_Reference:
     input:
         reference
@@ -55,8 +52,6 @@ rule Index_Reference:
     shell:
         "samtools faidx {input};"
 
-
-# création du dictionnaire pour la DB
 
 rule Dictionary_Reference:
     input:
@@ -69,8 +64,6 @@ rule Dictionary_Reference:
         "gatk CreateSequenceDictionary REFERENCE={input} OUTPUT={output}"
 
 
-# création d'une liste de contigs pour la DB
-
 rule ListIntervalsReference_Dictionary:
     input:
         reference_base+".dict"
@@ -79,8 +72,6 @@ rule ListIntervalsReference_Dictionary:
     shell:
         "grep '@SQ' {input} | cut -f2,3 | sed 's/SN://' | sed 's/LN://' | awk '{{print $1\":1-\"$2}}' > {output}"
 
-
-### HaplotypeCaller
 
 rule HaplotypeCaller:
     input:
