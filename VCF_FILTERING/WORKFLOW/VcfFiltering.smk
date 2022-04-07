@@ -11,7 +11,6 @@ from itertools import compress
 
 ### Variables from config file
 vcf_raw = config["VCF_FILE"]
-MAX_RATIO_NA_PER_SAMPLE = config["MAX_RATIO_NA_PER_SAMPLE"]
 
 ### Define paths
 path_to_snakefile = workflow.snakefile
@@ -41,7 +40,7 @@ rule Filters_Locus:
     conda:
         "ENVS/conda_tools.yml"
     params:
-        config["LOCUS_FILTERS"]
+        config["VCFTOOLS_LOCUS_FILTERING_OPTIONS"]
     shell:
         "vcftools --gzvcf {input} {params} --recode --recode-INFO-all --out {outputs_directory}/01_Locus_Filtered"
 
@@ -80,7 +79,7 @@ rule Filters_PopGenStat:
     conda:
         "ENVS/conda_tools.yml"
     params:
-        config["POPGENSTATS_FILTERS"]
+        config["POPGENSTATS_FILTERING_OPTIONS"]
     shell:
         "bgzip {input};"
         "tabix {input}.gz;"
