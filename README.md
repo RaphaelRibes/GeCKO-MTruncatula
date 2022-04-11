@@ -50,7 +50,7 @@ On my computer this will look like:
 
 ```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning```
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml  (/home/vranwez/WORKING_DIRECTORY/CONFIG/config_DataCleaning.yml in this exemple). The same folder can also contain the cluster_config_DataCleaning.json file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
+The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml. The same folder can also contain the cluster_config_WorkflowName.json file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
