@@ -1,6 +1,6 @@
 # VCF FILTERING
 
-this VCF_FILTERING workflow allows to filter the vcf obtained after the variants calling. Different types of filters are applied: locus-based filters, a sample-based filter and filters based on population genetics statistics. 
+this VCF_FILTERING workflow allows to filter the raw vcf obtained after the variants calling. Different types of filters are applied: locus-based filters, a sample-based filter and filters based on population genetics statistics. 
 
 
 ### The VCF_FILTERING workflow's steps
