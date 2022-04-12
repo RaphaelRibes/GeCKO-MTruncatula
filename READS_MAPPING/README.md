@@ -99,7 +99,8 @@ This file is used to pass all the information and tools parameters that will be 
 - *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
 - *REMOVE_DUP:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after mapping. [TRUE or FALSE]  
 - *SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
-- *EXTRA_MAPPER_PARAMS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the mapper command. Be careful to provide them between quotes.   
+- *EXTRA_MAPPER_PARAMS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the mapper command. Be careful to provide them between quotes. 
+- *MAPPING_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for each mapping task. Set to 1 if you are not working on a computing cluster.  
 - *MARKDUP_PARAMS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'picard MarkDuplicates' command, if REMOVE_DUP is set to TRUE. Be careful to provide them between quotes.  
 - *INDEX_PARAMS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'samtools index' command. Be careful to provide them between quotes. For example, you may need to pass the "-c" option if you need to map your reads to a very big reference file.  
 
