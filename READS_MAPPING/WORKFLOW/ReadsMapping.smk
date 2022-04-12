@@ -157,7 +157,7 @@ rule Mapping_PairedEndFastqs:
         buildExpectedFiles([bams_dir+"/{base}.bam"],[paired_end])
     conda:
         "ENVS/conda_tools.yml"
-    threads: 12
+    threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],

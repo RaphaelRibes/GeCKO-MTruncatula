@@ -8,11 +8,13 @@
     },
     "Mapping_PairedEndFastqs" :
     {
+        "cpus-per-task" : "{threads}",
         "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
         "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
     },
     "Mapping_SingleEndFastqs" :
     {
+        "cpus-per-task" : "{threads}",
         "output" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt",
         "error" : "Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt"
     },
