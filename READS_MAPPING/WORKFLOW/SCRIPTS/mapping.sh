@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_params {mapper_params} --technology {technology} --output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --markdup_params {} --index_params {}
+#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {} --samtools_index_options {}
 #ou
-#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_params {mapper_params} --technology {technology} --output_dir {bams_dir} -reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --markdup_params {markdup_params} --index_params {index_params}
+#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} -reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {picard_markduplicates_options} --samtools_index_options {samtools_index_options}
 
 
 #### ARGUMENTS:
@@ -45,8 +45,8 @@ do
     shift # past argument
     shift # past value
     ;;
-    --mapper_params)
-    MAPPER_PARAMS="$2"
+    --mapper_options)
+    MAPPER_OPTIONS="$2"
     shift # past argument
     shift # past value
     ;;
@@ -75,13 +75,13 @@ do
     shift # past argument
     shift # past value
     ;;
-    --markdup_params)
-    MARKDUP_PARAMS="$2"
+    --picard_markduplicates_options)
+    PICARD_MARKDUPLICATES_OPTIONS="$2"
     shift # past argument
     shift # past value
     ;;
-    --index_params)
-    INDEX_PARAMS="$2"
+    --samtools_index_options)
+    SAMTOOLS_INDEX_OPTIONS="$2"
     shift # past argument
     shift # past value
     ;;
@@ -112,43 +112,38 @@ fi
 
 if [ "${MAPPER}" = "bwa-mem2_mem" ] ; then
   if [ "${PAIRED}" = "TRUE" ] ; then
-    bwa-mem2 mem ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
+    bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
   else
-    bwa-mem2 mem ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
+    bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
   fi
 fi
 
 if [ "${MAPPER}" = "bwa_mem" ] ; then
   if [ "${PAIRED}" = "TRUE" ] ; then
-    bwa mem ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
+    bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
   else
-    bwa mem ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
+    bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
   fi
 fi
 
 if [ "${MAPPER}" = "bowtie2" ] ; then
   REF_INDEX=$(echo $REF | sed 's/.fasta//' | sed 's/.fas//' | sed 's/.fa//')
   if [ "${PAIRED}" = "TRUE" ] ; then
-    #bowtie2 --no-unal -p n -x index_name -1 reads_1.fastq -2 reads_2.fastq -S output.sam
-    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}.sam
+    bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}.sam
   else
-    bowtie2 ${MAPPER_PARAMS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.sam
+    bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.sam
   fi
 fi
 
 if [ "${MAPPER}" = "minimap2" ] ; then
   REF_INDEX=$(echo $REF | sed 's/.fasta/.mmi/' | sed 's/.fas/.mmi/' | sed 's/.fa/.mmi/')
   if [ "${PAIRED}" = "TRUE" ] ; then
-    minimap2 ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_R1} -2 ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
+    minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_R1} -2 ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}.sam
   else
-    #minimap2 -x splice:hq -t8 -a $REF $file > ${OUTPUT_DIR}/${SAMPLE}.sam
-    minimap2 ${MAPPER_PARAMS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
+    minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam
   fi
 fi
 
-#else
-#  echo "The provided mapper is unknown. Implemented mappers are 'bwa-mem2_mem', 'bowtie' and 'minimap2'."
-#fi
 
 
 samtools view -Sb -o ${OUTPUT_DIR}/${SAMPLE}.bam ${OUTPUT_DIR}/${SAMPLE}.sam
@@ -170,7 +165,7 @@ rm ${OUTPUT_DIR}/${SAMPLE}.fix.bam
 if [ "${RM_DUP}" = "True" ] ; then
 	mkdir -p ${REPORTS_DIR}
   mkdir -p ${REPORTS_DIR}/DUPLICATES
-  picard MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${MARKDUP_PARAMS} -REMOVE_DUPLICATES TRUE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
+  picard MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${PICARD_MARKDUPLICATES_OPTIONS} -REMOVE_DUPLICATES TRUE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
   rm ${OUTPUT_DIR}/${SAMPLE}.sort.bam
 else
 	mv ${OUTPUT_DIR}/${SAMPLE}.sort.bam ${OUTPUT_DIR}/${SAMPLE}.bam
@@ -178,4 +173,4 @@ fi
 
 
 # Create index
-samtools index ${INDEX_PARAMS} ${OUTPUT_DIR}/${SAMPLE}.bam
+samtools index ${SAMTOOLS_INDEX_OPTIONS} ${OUTPUT_DIR}/${SAMPLE}.bam

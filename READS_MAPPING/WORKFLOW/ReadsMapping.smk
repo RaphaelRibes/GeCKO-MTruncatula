@@ -114,17 +114,6 @@ def buildExpectedFiles(filesNames, isExpected):
     expectedFiles = list(compress(filesNames, isExpected))
     return(expectedFiles)
 
-def getMultiQCconfigFile(reads_file, config_base):
-    nb_reads_file=pd.read_csv(reads_file, sep='\t')
-    mean_nb_reads=nb_reads_file['Reads_mapped'].mean()
-    if (mean_nb_reads < 1000000):
-        config=config_base+"_kReads.yaml"
-    else:
-        config=config_base+".yaml"
-    return(config)
-
-#"mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//') ;"
-#"if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi"
 
 
 ### PIPELINE ###
@@ -134,12 +123,14 @@ rule FinalTargets:
         buildExpectedFiles(
         [ bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html",
         bams_reports_dir+"/nb_reads_per_sample.tsv",
+        mapping_dir+"/bams_list.txt",
         zones_stats_dir+"/mean_depth_per_zone_per_sample_heatmap.pdf",
         subref_dir+"/"+ref_name+"_zones.fasta",
         expand("{subbams_dir}/{sample}_zones.bam.bai", sample=samples, subbams_dir=subbams_dir),
         subbams_reports_dir+"/nb_reads_per_sample.tsv",
-        subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html" ],
-        [ True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
+        subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html",
+        mapping_dir+"/subbams_list.txt" ],
+        [ True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
 
 # ------------------------------------------------------------------------------------------------------------- #
 
@@ -166,17 +157,18 @@ rule Mapping_PairedEndFastqs:
         buildExpectedFiles([bams_dir+"/{base}.bam"],[paired_end])
     conda:
         "ENVS/conda_tools.yml"
+    threads: 12
     params:
         mapper = mapper,
-        extra_mapper_params = config["EXTRA_MAPPER_PARAMS"],
+        extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
         technology = config["SEQUENCING_TECHNOLOGY"],
-        markdup_params = config["MARKDUP_PARAMS"],
-        index_params = config["INDEX_PARAMS"]
+        picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
+        samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" "
-        "--ref {input.ref} --mapper {params.mapper} --mapper_params \"{params.extra_mapper_params}\" --technology \"{params.technology}\" "
-        "--output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --markdup_params \"{params.markdup_params}\" "
-        "--index_params \"{params.index_params}\""
+        "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
+        "--output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options \"{params.picard_markduplicates_options}\" "
+        "--samtools_index_options \"{params.samtools_index_options}\""
 
 
 rule Mapping_SingleEndFastqs:
@@ -190,15 +182,15 @@ rule Mapping_SingleEndFastqs:
         "ENVS/conda_tools.yml"
     params:
         mapper = config["MAPPER"],
-        extra_mapper_params = config["EXTRA_MAPPER_PARAMS"],
+        extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
         technology = config["SEQUENCING_TECHNOLOGY"],
-        markdup_params = config["MARKDUP_PARAMS"],
-        index_params = config["INDEX_PARAMS"]
+        picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
+        samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
-        "--ref {input.ref} --mapper {params.mapper} --mapper_params \"{params.extra_mapper_params}\" --technology \"{params.technology}\" "
-        "--output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --markdup_params \"{params.markdup_params}\" "
-        "--index_params \"{params.index_params}\""
+        "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
+        "--output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options \"{params.picard_markduplicates_options}\" "
+        "--samtools_index_options \"{params.samtools_index_options}\""
 
 
 rule Stats_Bams:
@@ -230,13 +222,20 @@ rule MultiQC_Bams:
         bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
-    params:
-        #config_file = getMultiQCconfigFile(bams_reports_dir+"/nb_reads_per_sample.tsv", "config_multiQC_clean_names")
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
         "if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi ;"
         "multiqc {input.stats_files} -n {output} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml"
-        #"multiqc {input.stats_files} -n {output} -c {scripts_dir}/{params.config_file}"
+
+
+rule Create_BamsList:
+    input:
+        expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir)
+    output:
+        mapping_dir+"/bams_list.txt"
+    shell:
+        "ls -d {bams_dir}/*.bam > {output}"
+
 
 rule CountReadsZones_Bams:
     input:
@@ -248,7 +247,7 @@ rule CountReadsZones_Bams:
     shell:
         "echo ZONE {samples} | sed 's/ /\t/g' > {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv ;"
         "samtools bedcov {bed} {input} | awk '{{l=$3-$2+1; printf $1\"_\"$2\"_\"$3\"\t\"; for (i=4;i<NF;i++) printf $i/l\"\t\"; printf $NF/l\"\\n\"}}' >> {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv"
-# /!\ vérifier ordre des samples entre header et tableau
+
 
 rule Heatmap_ZonesReadsCount:
     input:
@@ -319,16 +318,18 @@ rule MultiQC_Subbams:
         subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
-    params:
-        #config_file = getMultiQCconfigFile(subbams_reports_dir+"/nb_reads_per_sample.tsv", "config_multiQC_clean_names")
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
         "if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi ;"
         "multiqc {input.stats_files} -n {output} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml"
-        #"multiqc {input.stats_files} -n {output} -c {scripts_dir}/{params.config_file}"
 
-
-## + Créer liste des bams pour appel des SNPs
+rule Create_SubbamsList:
+    input:
+        expand("{subbams_dir}/{sample}_zones.bam", sample=samples, subbams_dir=subbams_dir)
+    output:
+        mapping_dir+"/subbams_list.txt"
+    shell:
+        "ls -d {subbams_dir}/*.bam > {output}"
 
 
 
