@@ -26,7 +26,7 @@ VCF_reports_dir = outputs_directory+"/REPORTS"
 
 rule FinalTargets:
     input:
-        VCF_reports_dir+"/VCF_filtering_report.html"
+        VCF_reports_dir+"/multiQC_VcfFiltering_report.html"
 
 
  # ----------------------------------------------------------------------------------------------- #
@@ -112,8 +112,8 @@ rule BuildReport:
         VCF_reports_dir+"/02_SamplesLocus_Filtered_vcf.stats",
         VCF_reports_dir+"/03_PopGenStatsSamplesLocus_Filtered_vcf.stats"
     output:
-        VCF_reports_dir+"/VCF_filtering_report.html"
+        VCF_reports_dir+"/multiQC_VcfFiltering_report.html"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -c {scripts_dir}/config_multiQC_deleteRecode.yaml -o {VCF_reports_dir} -n VCF_filtering_report"
+        "multiqc {input} -c {scripts_dir}/config_multiQC_deleteRecode.yaml -o {VCF_reports_dir} -n multiQC_VcfFiltering_report"

@@ -127,7 +127,7 @@ And REPORTS directory cotained:
 - 01_Locus_Filtered_vcf.stats: bcftools statistics after filtering by **locus**
 - 02_SamplesLocus_Filtered_vcf.stats: bcftools statistics after filtering by **sample**
 - 03_PopGenStatsSamplesLocus_Filtered_vcf.stats: bcftools statistics after filtering by **population genetics statistics**
-- VCF_filtering_report.html (and associted directory VCF_filtering_report_data): html file allowing to visualize informations/statistics variants after each filtering steps.
+- multiQC_VcfFiltering_report.html allowing to visualize informations/statistics variants after each filtering steps.
 
 ## Tools
 This workflow uses the following tools: 
