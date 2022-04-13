@@ -229,12 +229,27 @@ pkgs_dirs:
     - /home/username/path/to/appropriate/folder/pkgs  
 ```
 
-
-
-
 ### 5/ Expected outputs  
-...work in progress...
-
+the workflow create a directory "DATA_CLEANING" in the "WORKFLOWS_OUTPUTS" directory. This directory contained:
+- RAWDATA directory
+    - REPORTS directory 
+        - html file(s) allowing to visualize the quality of the raw reads before cleanning (fastQC)
+        - Reads_Count_RawData.txt containing the number of reads per initial fastq.gz file (illumina sequencer)
+- DEMULT directory (if the data is multiplexed using barcode)
+     - fastq.gz files by samples after demultiplexing (sample1.R1.fastq.gz + sample1.R2.fastq.gz ) and unassigned reads in "unknown" files.
+     - REPORTS directory
+         - Reads_Count_Demult.txt containing the number of reads per sample contains fastq.gz files after demultiplexing.
+         - CUTADAPT_INFOS directory 
+             - demultiplexing_cutadapt.info containing cutadapt demultiplexing informations, for each barcode.
+- DEMULT_TRIM directory
+     - fastq.gz files by samples after trimming (sample1_trimmed.R1.fastq.gz + sample1_trimmed.R2.fastq.gz) 
+     - REPORTS directory
+         - Reads_Count_DemultTrim.txt containing the number of reads per sample contains fastq.gz files after trimming.
+         - CUTADAPT_INFOS directory containing a cutadapt trimming report by sample
+         - FASTQC directory containing a html file (and the .zip file) by sample, to visualize the quality of reads after trimming (fastQC).
+         - multiQC_Trimming_Report.html (and the directory associated) graphic report based on fastQC and cutadapt reports to visualize the quality of reads after trimming.
+- multiQC_DataCleaning_Overall_Report.html (and the directory associated) graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING. 
+     
 
 ## Tools
 This workflow uses the following tools: 
