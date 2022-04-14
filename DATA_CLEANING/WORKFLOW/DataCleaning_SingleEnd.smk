@@ -66,7 +66,7 @@ rule FinalTargets:
         demult_reports_dir+"/Reads_Count_Demult.txt",
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt",
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
-        outputs_directory+"/multiQC_DataCleaning_Overall_Report.html"],
+        outputs_directory+"/multiQC_DataCleaning_Report.html"],
 
         [performDemultiplexing, True, True, True, True]
         )
@@ -208,11 +208,11 @@ rule MultiQC_Global:
         )
 
     output:
-        outputs_directory+"/multiQC_DataCleaning_Overall_Report.html"
+        outputs_directory+"/multiQC_DataCleaning_Report.html"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Overall_Report -c {scripts_dir}/config_multiQC_keepTrim.yaml"
+        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report -c {scripts_dir}/config_multiQC_keepTrim.yaml"
 
 
 
