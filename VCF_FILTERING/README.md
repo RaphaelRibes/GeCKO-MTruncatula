@@ -137,3 +137,15 @@ This workflow uses the following tools:
 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
+##  Snakemake
+Name, description and tools used for each of the snakemake workflow rules :
+
+| **Rule name**        | **Description**                                                                                            | **Tools**       |
+|:--------------------:|:----------------------------------------------------------------------------------------------------------:|:---------------:|
+| Filters_Locus        | Filtering of variants by locus. Applied either at the genotype level (locusXsamples) or at the locus level | vcftools        |
+| Filter_samples       | Filtering of variants by samples. Remove samples that have too many locus with missing data.               | vcftools        |
+| Calculate_PopGenStat | Calculating population genetics statistics (e.g. FIS, He)                                                  |                 |
+| Filters_PopGenStat   | Filtering of variants by population genetics statistics (e.g. FIS, He)                                     | bcftools filter |
+| BuildStatReport      | Building statistics reports of unfiltering variants and each filtering step                                | bcftools stats  |
+| BuildReport          | Runing MultiQC on unfiltering variants and each filtering steps                                            | MultiQC         |
+

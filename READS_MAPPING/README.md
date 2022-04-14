@@ -154,6 +154,30 @@ This workflow uses the following tools:
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
 - [crossmap v0.6.3](http://crossmap.sourceforge.net/)
 
- 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
+
+
+##  Snakemake
+Name, description and tools used for each of the snakemake workflow rules :
+
+| **Rule name**               | **Description**                                                                                                                | **Tools**                                                                                                                              |
+|:---------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|
+| Index_Reference             | Creating the reference index if needed                                                                                         | bwa index // bwa-mem2 index // bowtie2-build // minimap2 -d                                                                            |
+| Mapping_PairedEndFastqs     | Mapping the input fastq files onto the reference (paired end reads), sort bams, remove duplicates if needed, create bams index | bwa mem // bwa-mem2 mem // bowtie2 // minimap2; samtools view; samtools fixmate; picard SortSam; picard MarkDuplicates; samtools index |
+| Mapping_SingleEndFastqs     | Mapping the input fastq files onto the reference (single end reads), sort bams, remove duplicates if needed, create bams index | bwa mem // bwa-mem2 mem // bowtie2 // minimap2; samtools view; samtools fixmate; picard SortSam; picard MarkDuplicates; samtools index |
+| Stats_Bams                  | Computing mapping stats                                                                                                        | samtools stats                                                                                                                         |
+| Summarize_BamsReadsCount    | Summarizing reads count in bams from samtools stats output                                                                     |                                                                                                                                        |
+| MultiQC_Bams                | Runing MultiQC on samtools stats output                                                                                        | MultiQC                                                                                                                                |
+| Create_BamsList             | Writing list of bams files                                                                                                     |                                                                                                                                        |
+| CountReadsZones_Bams        | Counting reads in each zone provided in the bed file for each sample                                                           | samtools bedcov                                                                                                                        |
+| Heatmap_ZonesReadsCount     | Plotting the heatmap showing the number of reads per zone per sample                                                           | seaborn                                                                                                                                |
+| Create_SubReference         | Generating the reduced reference corresponding to the genomic zones provided in the bed file                                   | samtools faidx                                                                                                                         |
+| Extract_Reads               | Extracting reads that mapped to the zones provided in the bed file, thus creating subbams                                      | crossmap                                                                                                                               |
+| Stats_Subbams               | Computing mapping stats for subbams                                                                                            | samtools stats                                                                                                                         |
+| Summarize_SubbamsReadsCount | Summarizing reads count in subbams from samtools stats output                                                                  |                                                                                                                                        |
+| MultiQC_Subbams             | Runing MultiQC on samtools stats output                                                                                        | MultiQC                                                                                                                                |
+| Create_SubbamsList          | Writing list of subbams files                                                                                                  |                                                                                                                                        |
+
+
+
 

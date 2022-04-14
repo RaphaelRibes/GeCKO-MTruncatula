@@ -137,3 +137,16 @@ This workflow uses the following tools:
 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
+##  Snakemake
+Name, description and tools used for each of the snakemake workflow rules :
+
+| **Rule name**                     | **Description**                                                                 | **Tools**                     |
+|:---------------------------------:|:-------------------------------------------------------------------------------:|:-----------------------------:|
+| Index_Reference                   | Creating the reference index if needed                                          | samtools faidx                |
+| Dictionary_Reference              | Creating the reference dictionnary for gatk if needed                           | gatk CreateSequenceDictionary |
+| ListIntervalsReference_Dictionary | Listing chromosomes/contigs in the dictionnary for gatk GenomicsDBImport        |                               |
+| HaplotypeCaller                   | Calling variants by sample                                                      | gatk HaplotypeCaller          |
+| List_Haplotype                    | Listing sample files (g.vcf.gz) from HaplotypeCaller for gatk GenomicsDBImport  |                               |
+| GenomicsDBImport                  | Creating data base from variants calling by sample and the intervals list       | gatk GenomicsDBImport         |
+| GenotypeGVCFs                     | Calling variants for all samples (population) from GenomicsDBImport to vcf file | gatk GenotypeGVCFs            |
+
