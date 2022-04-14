@@ -90,8 +90,6 @@ rule HaplotypeCaller:
         "gatk --java-options \"{params.java_options}\" HaplotypeCaller --reference {input.reference} --input {input.bams} --output {output.vcf} {params.extra_options} -ERC GVCF"
 
 
-# créer une liste des vcf
-
 rule List_Haplotype:
     input:
         expand("{HaplotypeCaller_dir}/{sample}.g.vcf.gz", sample=samples, HaplotypeCaller_dir=HaplotypeCaller_dir)
@@ -100,8 +98,6 @@ rule List_Haplotype:
     shell:
         "for vcf in {input} ; do sample=$(basename ${{vcf}} .g.vcf.gz) ; echo ${{sample}}\"\t\"${{vcf}} ; done > {HaplotypeCaller_dir}/vcf.list.txt"
 
-
-### GenomicsDBImport
 
 rule GenomicsDBImport:
     input:
@@ -119,8 +115,6 @@ rule GenomicsDBImport:
         "mkdir -p {output.tmp_DB};"
         "gatk --java-options \"{params.java_options}\" GenomicsDBImport --sample-name-map {input.vcf_list} --intervals {input.intervals} {params.extra_options} --genomicsdb-workspace-path {output.DB} --tmp-dir {output.tmp_DB}"
 
-
-### GenotypeGVCFs
 
 rule GenotypeGVCFs:
     input:
