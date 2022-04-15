@@ -8,15 +8,18 @@ from itertools import compress
 
 
 ### Variables from config file
-bam_dir = config["BAM_DIR"]
 reference = config["REFERENCE"]
 
 ### Samples list
-bams_list = [bam for bam in os.listdir(bam_dir) if bam.endswith(".bam")]
+bams_list = pd.read_csv(config["BAMS_LIST"], header=None).iloc[:, 0]
+bams_list_dict = {}
 samples = []
-for bam in bams_list:
-    sample = bam.replace(".bam", "")
-    samples.append(sample)
+for f in bams_list:
+    sample_name = f.rsplit('/', 1)[1].replace('.bam', '')
+    bams_list_dict[sample_name] = str(f)
+    samples.append(sample_name)
+
+
 
 ### remove .fa .fas .fasta file extension
 reference_base = reference.rsplit('.fa', 1)[0]
@@ -77,7 +80,7 @@ rule HaplotypeCaller:
     input:
         reference = reference,
         fai = reference+".fai",
-        bams = bam_dir+"/{base}.bam"
+        bams = lambda wildcards: bams_list_dict[wildcards.base]
     output:
         vcf = HaplotypeCaller_dir+"/{base}.g.vcf.gz",
         tbi = HaplotypeCaller_dir+"/{base}.g.vcf.gz.tbi"

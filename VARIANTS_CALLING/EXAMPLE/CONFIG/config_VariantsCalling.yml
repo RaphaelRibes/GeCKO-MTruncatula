@@ -4,7 +4,7 @@
 ### INPUT FILES ###
 
 # Provide the directory containing the .bam files from the mapping. for each genotype, the .bam file and the index file in .bam.bai format
-BAM_DIR: "/home/ardissonm/scratch/TEST_WORKFLOW/WORKFLOWS_OUTPUTS/READS_MAPPING/MAPPING_TO_ZAVITAN/BAMS"
+BAMS_LIST: "/home/girodollej/scratch/DATA_TEST/MEL_R19/WORKFLOWS_OUTPUTS/READS_MAPPING/subbams_list.txt"
 
 # Reference genome for the VARIANTS_CALLING. The reference must be identical to that of the mapping.
 REFERENCE: "/home/ardissonm/projects/GE2POP/TRITICUM/REFERENCES/ZAVITAN/Triticum_dicoccoides.WEWSeq_v.2.0.dna_20210617.fasta""
@@ -16,7 +16,7 @@ REFERENCE: "/home/ardissonm/projects/GE2POP/TRITICUM/REFERENCES/ZAVITAN/Triticum
 GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS: "-Xmx4g"
 GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS: ""
 
-GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS: "-Xmx30g" 
+GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS: "-Xmx30g"
 GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS: " --merge-contigs-into-num-partitions 20 --batch-size 50 --reader-threads 20"
 
 GATK_GENOTYPE_GVCFS_JAVA_OPTIONS: "-Xmx30g"
