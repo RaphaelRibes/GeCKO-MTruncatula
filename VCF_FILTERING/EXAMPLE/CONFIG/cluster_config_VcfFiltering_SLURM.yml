@@ -1,0 +1,7 @@
+__default__:
+    cpus-per-task: 1
+    partition: agap_normal
+    job-name: VF.{rule}
+    output: Logs_VcfFilteringWorkflow/{rule}.%j.out.txt
+    error: Logs_VcfFilteringWorkflow/{rule}.%j.err.txt
+

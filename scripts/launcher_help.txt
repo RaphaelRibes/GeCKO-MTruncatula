@@ -51,8 +51,8 @@ MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):
 
 CONFIGURATION PARAMETERS:
 --job-scheduler [...]: name of the job scheduler that is installed on your cluster. Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will run without submitting any job and any parallelization.
---cluster-config [...]: path to the cluster config file. If omitted, this script will look for a cluster_config_WorkflowName.json file (eg: cluster_config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).
---config-file [...]: path to the workflow's config file. If omitted, this script will look for a config_WorkflowName.json file (eg: config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from.
+--cluster-config [...]: path to the cluster config file. If omitted, this script will look for a cluster_config_WorkflowName.yml file (eg: cluster_config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).
+--config-file [...]: path to the workflow's config file. If omitted, this script will look for a config_WorkflowName.yml file (eg: config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from.
 
 EXTRA OPTIONS FOR --run-with-conda:
 --jobs [int]: the maximum number of jobs that can be run in parallel (default: 1)

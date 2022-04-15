@@ -175,12 +175,12 @@ fi
 ### 6/ CLUSTER_CONFIG
 
 if [[ (-z "$CLUSTER_CONFIG" || "$CLUSTER_CONFIG" = --* || "$CLUSTER_CONFIG" = -*) && ! -z "$JOB_SCHEDULER" ]] ; then
-  if [[ -f "CONFIG/cluster_config_${WORKFLOW}.json" ]] ; then
-    CLUSTER_CONFIG=CONFIG/cluster_config_${WORKFLOW}.json
-    echo -e "\nINFO: The cluster_config_${WORKFLOW}.json file was automatically found in ${HERE}/CONFIG and will be used as the cluster_config file for this workflow."
+  if [[ -f "CONFIG/cluster_config_${WORKFLOW}.yml" ]] ; then
+    CLUSTER_CONFIG=CONFIG/cluster_config_${WORKFLOW}.yml
+    echo -e "\nINFO: The cluster_config_${WORKFLOW}.yml file was automatically found in ${HERE}/CONFIG and will be used as the cluster_config file for this workflow."
     echo -e "If you would rather use another cluster_config file, please provide it with --cluster-config\n"
 	else
-    echo -e "\nERROR: You provided a job scheduler, but your cluster config file cannot be found. Please provide your cluster config file with --cluster-config or place it in a CONFIG folder under the name cluster_config_${WORKFLOW}.json."
+    echo -e "\nERROR: You provided a job scheduler, but your cluster config file cannot be found. Please provide your cluster config file with --cluster-config or place it in a CONFIG folder under the name cluster_config_${WORKFLOW}.yml."
 		echo "As a reminder:"
 		echo $cluster_config_help
 		echo -e "\nExiting.\n"
