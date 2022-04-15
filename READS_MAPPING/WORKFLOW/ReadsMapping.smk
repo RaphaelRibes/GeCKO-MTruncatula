@@ -180,6 +180,7 @@ rule Mapping_SingleEndFastqs:
         buildExpectedFiles([bams_dir+"/{base}.bam"],[not paired_end])
     conda:
         "ENVS/conda_tools.yml"
+    threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = config["MAPPER"],
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
@@ -322,6 +323,7 @@ rule MultiQC_Subbams:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
         "if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi ;"
         "multiqc {input.stats_files} -n {output} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml"
+
 
 rule Create_SubbamsList:
     input:
