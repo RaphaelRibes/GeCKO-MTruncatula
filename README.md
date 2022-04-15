@@ -16,7 +16,7 @@ To execute one of the workflows, follow the steps:
 
 2) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
-It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.json  
+It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.yml  
 
 3) Use the launcher script runSnakemakeWorkflow.sh to run the workflow.  
 
@@ -50,7 +50,7 @@ On my computer this will look like:
 
 ```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning```
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml. The same folder can also contain the cluster_config_WorkflowName.json file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
+The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml. The same folder can also contain the cluster_config_WorkflowName.yml file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
@@ -89,7 +89,7 @@ Current existing options are 'DataCleaning' and 'ReadsMapping'
 Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will run without submitting any job and any parallelization.  
 
 **--cluster-config [...]**&nbsp;&nbsp;&nbsp;*path to the cluster config file*  
-If omitted, this script will look for a cluster_config_WorkflowName.json file (eg: cluster_config_DataCleaning.json) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).  
+If omitted, this script will look for a cluster_config_WorkflowName.yml file (eg: cluster_config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).  
 
 **--config-file [...]**&nbsp;&nbsp;&nbsp;*path to the workflow's config file*  
 If omitted, this script will look for a config_WorkflowName.yml file (eg: config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from.  
