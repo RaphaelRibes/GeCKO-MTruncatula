@@ -6,7 +6,7 @@ __default__:
     error: Logs_ReadsMappingWorkflow/{rule}.%j.err.txt
 
 Mapping_PairedEndFastqs:
-    cpus-per-task: {threads}
+    cpus-per-task: "{threads}"
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
@@ -24,7 +24,7 @@ Extract_Reads:
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Stats_Subbams:
-     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 
