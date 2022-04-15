@@ -95,7 +95,7 @@ This file will be needed if you run the workflow on a computer cluster and want 
 	specificStepName:
     	q or partition: {partitionNameForSpecificStep}
 
-
+You will find [the list of the steps names](#list-of-the-snakefile-rules) along with what they do and the tools they use at the end of this page.  
 Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-config files for both in the EXAMPLE/CONFIG folder</ins>.  
 
 &nbsp;
@@ -259,7 +259,7 @@ This workflow uses the following tools:
  
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
-##  Snakemake
+##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules :
 
 | **Rule name**              | **Description**                                                            | **Tools** |
