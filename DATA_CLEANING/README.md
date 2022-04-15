@@ -260,7 +260,7 @@ This workflow uses the following tools:
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
 ##  List of the snakefile rules
-Name, description and tools used for each of the snakemake workflow rules :
+Name, description and tools used for each of the snakemake workflow rules:
 
 | **Rule name**              | **Description**                                                            | **Tools** |
 |:--------------------------:|:--------------------------------------------------------------------------:|:---------:|
