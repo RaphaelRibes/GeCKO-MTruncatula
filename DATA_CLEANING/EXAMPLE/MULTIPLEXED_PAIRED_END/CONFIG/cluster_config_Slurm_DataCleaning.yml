@@ -5,6 +5,10 @@ __default__:
     output: Logs_DataCleaningWorkflow/{rule}.%j.out.txt
     error: Logs_DataCleaningWorkflow/{rule}.%j.err.txt
 
+Demultiplex_RawFastqs:
+    cpus-per-task: "{threads}"
+
 Trimming_DemultFastqs:
+    cpus-per-task: "{threads}"
     output: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.err.txt
