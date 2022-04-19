@@ -114,6 +114,7 @@ rule GenomicsDBImport:
         extra_options = config["GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS"]
     conda:
         "ENVS/conda_tools.yml"
+    threads: config["GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK"]
     shell:
         "mkdir -p {output.tmp_DB};"
         "gatk --java-options \"{params.java_options}\" GenomicsDBImport --sample-name-map {input.vcf_list} --intervals {input.intervals} {params.extra_options} --genomicsdb-workspace-path {output.DB} --tmp-dir {output.tmp_DB}"

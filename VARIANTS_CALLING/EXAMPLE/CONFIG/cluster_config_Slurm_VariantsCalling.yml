@@ -5,18 +5,10 @@ __default__:
     output: Logs_VariantsCallingWorkflow/{rule}.%j.out.txt
     error: Logs_VariantsCallingWorkflow/{rule}.%j.err.txt
     
-Dictionary_Reference:
-    mem: 10G
-
 HaplotypeCaller:
-    mem: 10G
     output: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 GenomicsDBImport:
-    cpus-per-task: 20
-    mem-per-cpu: 3G
+    cpus-per-task: "{threads}" 
 
-GenotypeGVCFs:
-    cpus-per-task: 20
-    mem-per-cpu: 3G
