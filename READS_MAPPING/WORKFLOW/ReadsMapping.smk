@@ -226,7 +226,7 @@ rule MultiQC_Bams:
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
         "if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi ;"
-        "multiqc {input.stats_files} -n {output} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml"
+        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml -o {bams_reports_dir} -n multiQC_ReadsMapping_Bams_Report"
 
 
 rule Create_BamsList:
@@ -322,7 +322,7 @@ rule MultiQC_Subbams:
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
         "if [[ $mean_nb_reads -lt 1000000 ]] ; then kReads=\"_kReads\" ; else kReads=\"\" ; fi ;"
-        "multiqc {input.stats_files} -n {output} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml"
+        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names${{kReads}}.yaml -o {subbams_reports_dir} -n multiQC_ReadsMapping_SubBams_Report"
 
 
 rule Create_SubbamsList:
