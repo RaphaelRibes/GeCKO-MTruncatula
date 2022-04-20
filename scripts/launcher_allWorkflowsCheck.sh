@@ -35,7 +35,14 @@ if [[ ! -d "${WORKFLOW_PATH}/${workflow_folder_name}/" ]] ; then
 fi
 
 workflow_folder="${WORKFLOW_PATH}/${workflow_folder_name}/WORKFLOW"
+if [[ ! -d "${WORKFLOW_PATH}/${workflow_folder_name}/WORKFLOW" ]] ; then
+  echo -e "\nERROR: No ${workflow_folder_name}/WORKFLOW folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE containing all sub-directories."
+  echo -e "\nExiting.\n"
+  exit 1
+fi
+
 workflow_scripts_folder="${workflow_folder}/SCRIPTS"
+workflow_model_files_folder="${workflow_folder}/SCRIPTS/model_files"
 if [[ -d ${workflow_scripts_folder} ]] ; then
 	for script in $(ls "${workflow_scripts_folder}") ; do
 	  if [[ -f "${workflow_scripts_folder}/${script}" ]] ; then
@@ -51,10 +58,49 @@ if [[ -d ${workflow_scripts_folder} ]] ; then
 	    fi
 	  fi
 	done
+	if [[ -d ${workflow_model_files_folder} ]] ; then
+		for config_file in $(ls ${workflow_model_files_folder}) ; do
+			nb_carriage_returns=$(grep -c $'\r' ${workflow_model_files_folder}/${config_file})
+			if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+	      		echo "Removing windows carriage returns in ${config_file}..."
+	      		sed -i 's/\r$//g' ${workflow_model_files_folder}/$config_file
+	      		sed -i 's/\r/\n/g' ${workflow_model_files_folder}/$config_file
+	    	fi
+		done
+	fi
 fi
 
+workflow_envs_folder="${workflow_folder}/ENVS"
+if [[ -d ${workflow_envs_folder} ]] ; then
+	for yaml in $(ls "${workflow_envs_folder}") ; do
+		nb_carriage_returns=$(grep -c $'\r' ${workflow_envs_folder}/${yaml})
+	    if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+	      echo "Removing windows carriage returns in ${yaml}..."
+	      sed -i 's/\r$//g' ${workflow_envs_folder}/$yaml
+	      sed -i 's/\r/\n/g' ${workflow_envs_folder}/$yaml
+	    fi
+	done
+else
+	echo -e "\nERROR: No ${workflow_folder_name}/WORKFLOW/ENVS folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE containing all sub-directories."
+  	echo -e "\nExiting.\n"
+	exit 1
+fi
 
-
+workflow_profiles_folder="${workflow_folder}/PROFILES"
+if [[ -d ${workflow_profiles_folder} ]] ; then
+	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SGE/config.yaml)
+	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SGE/config.yaml..."
+	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SGE/config.yaml
+	    sed -i 's/\r/\n/g' ${workflow_profiles_folder}/SGE/config.yaml
+	fi
+	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SLURM/config.yaml)
+	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SLURM/config.yaml..."
+	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SLURM/config.yaml
+	    sed -i 's/\r/\n/g' ${workflow_profiles_folder}/SLURM/config.yaml
+	fi
+fi
 
 ### 2/ CONFIG_FILE ###
 
