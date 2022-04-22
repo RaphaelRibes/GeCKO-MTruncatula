@@ -36,13 +36,17 @@ rule Filters_Locus:
     input:
         vcf_raw
     output:
-        outputs_directory+"/01_Locus_Filtered.recode.vcf"
+        outputs_directory+"/01_Locus_Filtered.recode.vcf",
+        temp(outputs_directory+"/tmp_Locus_Filtered.recode.vcf")
     conda:
         "ENVS/conda_tools.yml"
     params:
         config["VCFTOOLS_LOCUS_FILTERING_OPTIONS"]
     shell:
-        "vcftools --gzvcf {input} {params} --recode --recode-INFO-all --out {outputs_directory}/01_Locus_Filtered"
+        "vcftools --gzvcf {input} {params} --recode --recode-INFO-all --out {outputs_directory}/tmp_Locus_Filtered;"
+        "grep '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf > {outputs_directory}/01_Locus_Filtered.recode.vcf;"
+        "grep -v '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf | sort -k1,1 -k2,2n >> {outputs_directory}/01_Locus_Filtered.recode.vcf"
+
 
 rule Filter_samples:
     input:
