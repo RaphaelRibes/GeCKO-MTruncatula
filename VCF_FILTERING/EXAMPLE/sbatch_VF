@@ -1,2 +1,3 @@
 
 sbatch --partition=agap_normal --job-name=VF --wrap="/home/ardissonm/scratch/TEST_WORKFLOW/runSnakemakeWorkflow.sh --workflow VcfFiltering --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --jobs 200 --job-scheduler SLURM"
+

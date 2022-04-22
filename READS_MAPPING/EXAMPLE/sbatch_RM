@@ -4,5 +4,4 @@ sbatch --partition=agap_long --job-name=RM --wrap="/home/ardissonm/scratch/TEST_
 
 
 
-# --config-file /home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/CONFIG/config_SnpCalling.yml 
-# --cluster-config /home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/CONFIG/cluster_config_SnpCalling.json
+
