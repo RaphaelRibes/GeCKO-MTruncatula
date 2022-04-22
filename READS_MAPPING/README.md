@@ -15,6 +15,8 @@ It can be used to process:
 6) Two MultiQC reports are created, showing the reads numbers and quality after mapping, both before and after extracting reads from regions of interest.
 
 
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/ReadsMapping_Workflow.jpg?raw=true)
+
 
 ## QUICK START
 
