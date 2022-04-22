@@ -6,6 +6,8 @@ __default__:
     error: Logs_VariantsCallingWorkflow/{rule}.%j.err.txt
     
 HaplotypeCaller:
+    cpus-per-task: "{threads}" 
+    partition: agap_bigmem 
     output: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 

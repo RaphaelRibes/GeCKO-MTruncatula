@@ -80,15 +80,17 @@ rule HaplotypeCaller:
     input:
         reference = reference,
         fai = reference+".fai",
-        bams = lambda wildcards: bams_list_dict[wildcards.base]
+        bams = lambda wildcards: bams_list_dict[wildcards.base],
+        dict = reference_base+".dict"
     output:
         vcf = HaplotypeCaller_dir+"/{base}.g.vcf.gz",
-        tbi = HaplotypeCaller_dir+"/{base}.g.vcf.gz.tbi"
+#        tbi = HaplotypeCaller_dir+"/{base}.g.vcf.gz.tbi"
     params:
         java_options = config["GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS"],
         extra_options = config["GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS"]
     conda:
         "ENVS/conda_tools.yml"
+    threads: config["GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK"]
     shell:
         "gatk --java-options \"{params.java_options}\" HaplotypeCaller --reference {input.reference} --input {input.bams} --output {output.vcf} {params.extra_options} -ERC GVCF"
 

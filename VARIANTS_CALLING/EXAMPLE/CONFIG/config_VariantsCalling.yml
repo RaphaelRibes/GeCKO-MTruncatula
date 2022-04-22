@@ -4,17 +4,18 @@
 ### INPUT FILES ###
 
 # Provide the directory containing the .bam files from the mapping. for each genotype, the .bam file and the index file in .bam.bai format
-BAMS_LIST: "/home/girodollej/scratch/DATA_TEST/MEL_R19/WORKFLOWS_OUTPUTS/READS_MAPPING/subbams_list.txt"
+BAMS_LIST: "/home/ardissonm/scratch/TEST_WORKFLOW/READS_MAPPING/WORKFLOWS_OUTPUTS/READS_MAPPING/MAPPING_TO_ZAVITAN/bams_list.txt"
 
 # Reference genome for the VARIANTS_CALLING. The reference must be identical to that of the mapping.
-REFERENCE: "/home/ardissonm/projects/GE2POP/TRITICUM/REFERENCES/ZAVITAN/Triticum_dicoccoides.WEWSeq_v.2.0.dna_20210617.fasta""
+REFERENCE: "/home/ardissonm/projects/GE2POP/TRITICUM/REFERENCES/ZAVITAN/Triticum_dicoccoides.WEWSeq_v.2.0.dna_20210617.fasta"
 
 
 ### VARIANTS_CALLING PARAMETERS ###
 
 # For each of the three GATK steps, two options fields are available: options related to the use of JAVA and step-specific options , if not leave blank: ""
-GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS: "-Xmx4g"
-GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS: ""
+GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS: "-Xmx30g"
+GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK: 20
+GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS: "--create-output-variant-index false --native-pair-hmm-threads 10"
 
 GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS: "-Xmx30g"
 GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK: 20
