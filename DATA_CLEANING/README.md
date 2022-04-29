@@ -80,7 +80,7 @@ The demultiplexed sequences must be placed together in a folder to be specified 
 ### 2/ Clone our GitHub repository
 
 The CAPTURE_SNAKEMAKE_WORKFLOWS folder must be fully copied in a workspace/storage of your choice.  
-For example, you can clone the our repository with:  
+For example, you can clone the repository with:  
 ```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```   
 
     
