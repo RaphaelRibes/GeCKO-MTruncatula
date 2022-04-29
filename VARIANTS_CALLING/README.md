@@ -79,6 +79,7 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **GENERAL VARIABLES**  
+- *VARIANTS_CALLING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different variants calling parameters (different reference, mapping options...), provide a name for an extra folder to create in the VARIANTS_CALLING output folder. Otherwise leave blank ("").  
 
 **INPUT FILES**  
 - *BAM_DIR:*&nbsp;&nbsp;&nbsp;The path to the directory containing the mapped bam files and the index file in .bam.bai format.
