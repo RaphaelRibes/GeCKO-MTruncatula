@@ -9,6 +9,9 @@ from itertools import compress
 
 ### Variables from config file
 reference = config["REFERENCE"]
+vc_subfolder = ""
+if (len(config["VARIANT_CALLING_SUBFOLDER"]) > 0):
+    vc_subfolder = "/"+config["VARIANT_CALLING_SUBFOLDER"]
 
 ### Samples list
 bams_list = pd.read_csv(config["BAMS_LIST"], header=None).iloc[:, 0]
@@ -32,9 +35,10 @@ working_directory = os.getcwd()
 
 ## Define outputs subfolders
 outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VARIANTS_CALLING"
-HaplotypeCaller_dir = outputs_directory+"/HAPLOTYPE_CALLER"
-GenomicsDBImport_dir = outputs_directory+"/GENOMICS_DB_IMPORT"
-GenotypeGVCFs_dir = outputs_directory+"/GENOTYPE_GVCFS"
+vc_dir = outputs_directory+vc_subfolder
+HaplotypeCaller_dir = vc_dir+"/HAPLOTYPE_CALLER"
+GenomicsDBImport_dir = vc_dir+"/GENOMICS_DB_IMPORT"
+GenotypeGVCFs_dir = vc_dir+"/GENOTYPE_GVCFS"
 
  # ----------------------------------------------------------------------------------------------- #
 
