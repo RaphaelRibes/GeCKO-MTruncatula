@@ -29,12 +29,11 @@ Needed files:
 - your demultiplexed and trimmed fastq.gz files
 - a reference file in fasta format to map your reads to
 - the cluster_config_ReadsMapping.yml (in case you work on a cluster) and config_ReadsMapping.yml files in a CONFIG folder  
-- a bed file listing genomic regions of interest
-- (only for Morgane ;), temporary): the region.chain file that I sent you, placed in the folder where you run the workflow (in the future this file will be created automatically from the bed file)
+- a bed file listing genomic regions of interest  
 
 &nbsp;
 
-For example, if you need to launch the workflow on our ... dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/... directory:  
+For example, if you need to launch the workflow on our example PAIRED_END DEMULT_TRIM dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/... directory:  
 ```./runSnakemakeWorkflow.sh --workflow ReadsMapping --workflow-path /home/jogirodolle/save/CAPTURE_PIPELINES_SNAKEMAKE --config-file CONFIG/config_ReadsMapping.yml --cluster-config CONFIG/cluster_config_Slurm_ReadsMapping.yml --jobs 20 --job-scheduler SLURM```  
 
 
@@ -64,7 +63,7 @@ Input sequences can be:
 ### 2/ Clone our GitHub repository
 
 The CAPTURE_SNAKEMAKE_WORKFLOWS folder must be fully copied in a workspace/storage of your choice.  
-For example, you can clone the our repository with:  
+For example, you can clone the repository with:  
 ```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```   
 
 
