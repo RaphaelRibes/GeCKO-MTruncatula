@@ -11,6 +11,8 @@ This VARIANTS_CALLING workflow generates a vcf file from bam files obtained afte
 5) Create data base from Variants calling by sample and the list of chromosomes or contigs in the reference > with GATK - GenomicsDBImport
 6) Variants calling for all samples ( population) from GENOMICSDBImport to vcf file >  with GATK - GenotypeGVCFs
 
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VariantsCalling_Workflow.jpg?raw=true)
+
 
 ## QUICK START
 
