@@ -1,15 +1,15 @@
 # VARIANTS CALLING
 
-This VARIANTS_CALLING workflow generates a vcf file from bam files obtained after mapping the cleaned sequences. This workflow use GATK for call the variants.
+This VARIANTS_CALLING workflow generates a vcf file from bam files obtained after mapping the cleaned sequences to a reference genome. This workflow uses GATK to call variants.
 
 
 ### The VARIANTS_CALLING workflow's steps
 1) An index of the provided reference is created if it does not exist yet.
 2) A dictionary of the provided reference is created if it does not exist yet.
 3) The list of chromosomes or contigs in the reference is created for the GenomicsDBImport step 
-4) Variants calling by sample > with GATK - HaplotypeCaller
-5) Create data base from Variants calling by sample and the list of chromosomes or contigs in the reference > with GATK - GenomicsDBImport
-6) Variants calling for all samples ( population) from GENOMICSDBImport to vcf file >  with GATK - GenotypeGVCFs
+4) Variants calling by sample is performed with the GATK HaplotypeCaller function
+5) A data base from variants calling by sample is generated with the GATK GenomicsDBImport function, and a list of the reference's chromosomes or contigs is created
+6) Variants calling for all samples (population) if performed with the GATK GenotypeGVCFs function, creating a single vcf file
 
 ![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VariantsCalling_Workflow.jpg?raw=true)
 
@@ -48,7 +48,7 @@ For example, if you need to launch the workflow on our BAMS example dataset on a
 
 ### 1/ Prepare your input data
 
-the input data are the mapped .bam files and the associated index files (.bam.bai). 
+The input data are the mapped .bam files and the associated index files (.bam.bai). 
 To do the variants calling, it is necessary to fill in the reference used for the mapping.
 
 
