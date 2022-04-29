@@ -28,7 +28,7 @@ Needed files:
 
 &nbsp;
 
-For example, if you need to launch the workflow on our ... dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/... directory:  
+For example, if you need to launch the workflow on our example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
 ```./runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VariantsCalling.yml --cluster-config CONFIG/cluster_config_VariantsCalling.yml --jobs 20 --job-scheduler SLURM```  
 
 
@@ -55,7 +55,7 @@ To do the variants calling, it is necessary to fill in the reference used for th
 ### 2/ Clone our GitHub repository
 
 The CAPTURE_SNAKEMAKE_WORKFLOWS folder must be fully copied in a workspace/storage of your choice.  
-For example, you can clone the our repository with:  
+For example, you can clone the repository with:  
 ```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```   
 
 
