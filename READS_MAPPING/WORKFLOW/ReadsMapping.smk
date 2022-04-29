@@ -287,8 +287,13 @@ rule Extract_Reads:
         "ENVS/conda_tools.yml"
     shell:
         "CrossMap.py bam -a regions.chain {input.bams} {subbams_dir}/{wildcards.base}_zones;"
-        "mv {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.bam;"
-        "mv {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai {subbams_dir}/{wildcards.base}_zones.bam.bai"
+        "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai;"
+        "picard SortSam -I {subbams_dir}/{wildcards.base}_zones.sorted.bam -O {subbams_dir}/{wildcards.base}_zones.sortname.bam -SO queryname -VALIDATION_STRINGENCY SILENT;"
+        "samtools fixmate {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam ;"
+        "picard SortSam -I {subbams_dir}/{wildcards.base}_zones.fix.bam -O {subbams_dir}/{wildcards.base}_zones.bam -SO coordinate -VALIDATION_STRINGENCY SILENT;"
+        "samtools index {subbams_dir}/{wildcards.base}_zones.bam;"
+        "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam"
+
 
 
 rule Stats_Subbams:
