@@ -107,7 +107,7 @@ This file is used to pass all the information and tools parameters that will be 
 
 &nbsp;
 
-<ins>An example of config_ReadsMapping.yml file can be found in the EXAMPLE/CONFIG folder</ins>.  
+<ins>Examples of config_ReadsMapping.yml files can be found in the EXAMPLE/.../CONFIG folders</ins>.  
 
 &nbsp;
 
