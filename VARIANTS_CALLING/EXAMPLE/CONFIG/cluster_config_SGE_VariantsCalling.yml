@@ -4,3 +4,13 @@ __default__:
     N: DC.{rule}
     o: Logs_VariantsCallingWorkflow/{rule}.$JOB_ID.out.txt
     e: Logs_VariantsCallingWorkflow/{rule}.$JOB_ID.err.txt
+   
+HaplotypeCaller:
+    pe: smp {threads}
+    q: bigmem.q
+    o: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
+    e: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
+
+GenomicsDBImport:
+    pe: smp {threads}
+
