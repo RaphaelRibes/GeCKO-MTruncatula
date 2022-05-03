@@ -6,13 +6,13 @@ MAPPING_SUBFOLDER: ""
 
 ### INPUT FILES ###
 # Provide the directory containing the trimmed fastq files to be mapped
-TRIM_DIR: "/home/jogirodolle/work/EXAMPLE_DATA/SINGLE_END/DEMULT_TRIM"
+TRIM_DIR: "DEMULT_TRIM"
 
 # Reference genome
-REFERENCE: "/home/jogirodolle/work/REFERENCE/Reference.fasta"
+REFERENCE: "../REFERENCE/Reference.fasta"
 
 # Targeted zones bed file (optionnal)
-BED: "/home/jogirodolle/work/TARGET_ZONES/Reference_targeted_zones.bed"
+BED: "../REFERENCE/Reference_targeted_zones.bed"
 
 
 ### MAPPING PARAMETERS ###

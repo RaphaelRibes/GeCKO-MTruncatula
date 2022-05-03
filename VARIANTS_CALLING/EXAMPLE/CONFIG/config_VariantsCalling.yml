@@ -4,11 +4,11 @@
 ### INPUT FILES ###
 
 # Provide the directory containing the .bam files from the mapping. for each genotype, the .bam file and the index file in .bam.bai format
-BAMS_LIST: "/home/jogirodolle/work/BAMS/bams_list.txt"
+BAMS_LIST: "BAMS/bams_list.txt"
 VARIANT_CALLING_SUBFOLDER: ""
 
 # Reference genome for the VARIANTS_CALLING. The reference must be identical to that of the mapping.
-REFERENCE: "/home/jogirodolle/work/REFERENCE/Reference.fasta"
+REFERENCE: "REFERENCE/Reference_zones.fasta"
 
 
 ### VARIANTS_CALLING PARAMETERS ###
