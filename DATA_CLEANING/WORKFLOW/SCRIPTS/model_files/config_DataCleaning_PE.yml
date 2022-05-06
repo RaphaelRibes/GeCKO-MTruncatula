@@ -22,11 +22,11 @@ ADAPT_FILE: ""
 ### DEMULTIPLEXING PARAMETERS ###
 
 # Complete these two fields if the raw fastq files is multiplexed, if not leave blank: ""
-DEMULT_THREADS: ""
+DEMULT_CPUS_PER_TASK: ""
 DEMULT_SUBSTITUTIONS: ""
 
 
 ### TRIMMING PARAMETERS ###
-TRIMMING_THREADS: ""
+TRIMMING_CPUS_PER_TASK: ""
 TRIMMING_QUAL: ""
 TRIMMING_MIN_LENGTH: ""

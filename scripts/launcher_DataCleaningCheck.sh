@@ -133,11 +133,11 @@ else # if single end data is expected
   fi
 fi
 
-# DEMULT_THREADS and DEMULT_SUBSTITUTIONS
-DEMULT_THREADS=$(grep "^DEMULT_THREADS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+# DEMULT_CPUS_PER_TASK and DEMULT_SUBSTITUTIONS
+DEMULT_CPUS_PER_TASK=$(grep "^DEMULT_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 DEMULT_SUBSTITUTIONS=$(grep "^DEMULT_SUBSTITUTIONS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-if [[ -z "$DEMULT_DIR" && -z "$DEMULT_THREADS" ]] ; then
-  echo -e "\nERROR: A DEMULT_THREADS value must be provided in the config file."
+if [[ -z "$DEMULT_DIR" && -z "$DEMULT_CPUS_PER_TASK" ]] ; then
+  echo -e "\nERROR: A DEMULT_CPUS_PER_TASK value must be provided in the config file."
   echo -e "\nExiting.\n"
   exit 1
 fi
@@ -215,10 +215,10 @@ elif [[ "$WORKFLOW_SMK" = "${WORKFLOW}_SingleEnd.smk" && $nb_col_adapt_file != 2
   exit 1
 fi
 
-# TRIMMING_THREADS, TRIMMING_QUAL and TRIMMING_MIN_LENGTH
-TRIMMING_THREADS=$(grep "^TRIMMING_THREADS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-if [[ -z $TRIMMING_THREADS ]] ; then
-  echo -e "\nERROR: You must provide the TRIMMING_THREADS in the config_file."
+# TRIMMING_CPUS_PER_TASK, TRIMMING_QUAL and TRIMMING_MIN_LENGTH
+TRIMMING_CPUS_PER_TASK=$(grep "^TRIMMING_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+if [[ -z $TRIMMING_CPUS_PER_TASK ]] ; then
+  echo -e "\nERROR: You must provide the TRIMMING_CPUS_PER_TASK in the config_file."
   echo -e "\nExiting.\n"
   exit 1
 fi
