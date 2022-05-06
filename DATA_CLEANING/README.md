@@ -23,8 +23,6 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 7) Quality analysis of each sample's reads, after demultiplexing and trimming (FASTQC)  
 8) Creation of two reports (MultiQC) allowing to visualise the impact of the trimming step on the quality of the sequences (for each individual sample), and the impact of the whole workflow (for all samples merged together).  
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true)
-
 
 &nbsp;
 
@@ -279,4 +277,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Fastqc_ConcatTrimmedFastqs | Runing FastQC on concatenated trimmed fastq files                          | FastQC    |
 | MultiQC_Global             | Runing MultiQC on raw and concatenated trimmed fastq files                 | MultiQC   |
 
+
+
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true)
 
