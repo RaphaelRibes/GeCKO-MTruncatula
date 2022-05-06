@@ -109,13 +109,14 @@ rule Demultiplex_RawFastqs:
         expand("{demult_dir}/{sample}.R2.fastq.gz", sample=samples, demult_dir=demult_dir),
         demult_cutadapt_reports_dir+"/demultiplexing_cutadapt.info"
     params:
-        substitutions = config["DEMULT_SUBSTITUTIONS"]
+        substitutions = config["DEMULT_SUBSTITUTIONS"],
+        cores = config["DEMULT_CORES"]
     conda:
         "ENVS/conda_tools.yml"
     threads: config["DEMULT_CPUS_PER_TASK"]
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_PE.sh --demultdir {demult_dir} --R1 {input.fastq_R1_raw} "
-        "--R2 {input.fastq_R2_raw} --barcode_file {input.barcode_file} --nodes {threads} "
+        "--R2 {input.fastq_R2_raw} --barcode_file {input.barcode_file} --cores {params.cores} "
         "--substitutions {params.substitutions};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 
@@ -141,14 +142,15 @@ rule Trimming_DemultFastqs:
         temp(demult_trim_cutadapt_reports_dir+"/tmp_trimming_cutadapt_{base}.info")
     params:
         quality_cutoff = config["TRIMMING_QUAL"],
-        minimum_length = config["TRIMMING_MIN_LENGTH"]
+        minimum_length = config["TRIMMING_MIN_LENGTH"],
+        cores = config["TRIMMING_CORES"]
     conda:
         "ENVS/conda_tools.yml"
     threads: config["TRIMMING_CPUS_PER_TASK"]
     shell:
         "{scripts_dir}/trimming_with_cutadapt_PE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapt_file {input.adapt_file} "
-        "--nodes {threads} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
+        "--cores {params.cores} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
         "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info;"
         "sed 's/R1//g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_cutadapt_reports_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
 

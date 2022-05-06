@@ -15,12 +15,12 @@
 # Trimming a pair of fastq files (R1 + R2 ) to remove adapters sequences, low quality sequences et short sequences
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R1 sampleX.R1.fastq.gz --R2 sampleX.R2.fastq.gz --adapt_file adapter_file_DEV.txt --nodes 1 --quality_cutoff 30 --minimum_length 36
+#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R1 sampleX.R1.fastq.gz --R2 sampleX.R2.fastq.gz --adapt_file adapter_file_DEV.txt --cores 1 --quality_cutoff 30 --minimum_length 36
 
 #--trimdir
 	# storage space created by the workflow for the outputs of the trimming step: >>> {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
 #--sample
-	# sample name 
+	# sample name
 #--R1
 	# path to fastq.gz files corresponding to the R1 sequences by sample (after demultiplexing)
 #--R2
@@ -31,13 +31,13 @@
 	#Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
 	#Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GCTGAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
 	#Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GATCTAAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
-#--nodes
-	# number of nodes to be allocated on cluster 
+#--cores
+	# number of cores to be allocated on cluster
 #--quality_cutoff
 	# parameter can be used to trim low-quality ends from reads. exemple: --quality_cutoff 30 > replacement of nucleotides by N if the quality is lower than Q30 (1 chance out of 30 that the base is wrong)
 #--minimum_length
-	# parameter to indicate the minimum size of the sequences to be kept. 
-# this script launches cutapdat with one option by default: --no-indels 
+	# parameter to indicate the minimum size of the sequences to be kept.
+# this script launches cutapdat with one option by default: --no-indels
 
 # >>> OUTPUTS
 # two files by sample contain sequences demultiplexed : sample_trimmed.R1.fastq.gz and sample_trimmed.R2.fastq.gz >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
@@ -77,8 +77,8 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --nodes)
-  NODES="$2"
+  --cores)
+  CORES="$2"
   shift # past argument
   shift # past value
   ;;
@@ -123,9 +123,9 @@ fi
 
 #### SCRIPT
 
-## 1/ RETRIEVE FILES AND SEQUENCES 
+## 1/ RETRIEVE FILES AND SEQUENCES
 R1_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f2)
 R2_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f3)
 
 ## 2/ RUN CUTADAPT - TRIMMING
-cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels -j ${NODES} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}_trimmed.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info
+cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}_trimmed.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

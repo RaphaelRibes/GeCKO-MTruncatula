@@ -16,20 +16,20 @@
 # Assignment of sequences to each of the genotypes according to the barcode or tag, which were assigned to them during the construction of the libraries.
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R DEV.fastq.gz --barcode_file barcode_file_DEV.txt --nodes 1 --substitutions 0.15
+#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R DEV.fastq.gz --barcode_file barcode_file_DEV.txt --cores 1 --substitutions 0.15
 
 #--demultdir
 	# folders that will contain the demultiplexing output files
 #--R
-	# path to the fastq.gz file corresponding to the sequences 
+	# path to the fastq.gz file corresponding to the sequences
 #--barcode_file
 	# path to the barcode_file.txt containing the list of samples names (column 1) , sequences of barcode (column 2)
 	# example (no header, tab-separated):
 	#Tc2208a	AGCGCA
 	#Tc2235a	CTCAGC
-	#Tc2249a	TAGATC	
-#--nodes
-	# number of nodes to be allocated on cluster 
+	#Tc2249a	TAGATC
+#--cores
+	# number of cores to be allocated on cluster
 #--substitutions
 	# percentage of substitution by barcode (tag). Example: 1 substitution on a barcode of 8pb, note 0.15
 # this script launches cutapdat with two options by default: --no-indels --pair-adapters
@@ -62,8 +62,8 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --nodes)
-  NODES="$2"
+  --cores)
+  CORES="$2"
   shift # past argument
   shift # past value
   ;;
@@ -101,7 +101,7 @@ mkdir ${DEMULT_DIR}/Cutadapt_tmp
 awk '{print ">"$1"\n^"$2}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta
 
 ## 2/ RUN CUTADAPT - DEMULTIPLEXING
-cutadapt -e ${SUBSTITUTIONS} --no-indels -j ${NODES} -g file:${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.fastq.gz  ${R} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
+cutadapt -e ${SUBSTITUTIONS} --no-indels --cores ${CORES} -g file:${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.fastq.gz  ${R} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
 
 ## 3/ REMOVE TMP FILES
 rm -r ${DEMULT_DIR}/Cutadapt_tmp

@@ -1,0 +1,26 @@
+### GENERAL VARIABLES ###
+
+
+### INPUT FILES ###
+
+# Provide the directory containing the .bam files from the mapping. for each genotype, the .bam file and the index file in .bam.bai format
+BAMS_LIST: ""
+VARIANT_CALLING_SUBFOLDER: ""
+
+# Reference genome for the VARIANTS_CALLING. The reference must be identical to that of the mapping.
+REFERENCE: ""
+
+
+### VARIANTS_CALLING PARAMETERS ###
+
+# For each of the three GATK steps, two options fields are available: options related to the use of JAVA and step-specific options , if not leave blank: ""
+GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS: ""
+GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK: ""
+GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS: ""
+
+GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS: ""
+GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK: ""
+GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS: ""
+
+GATK_GENOTYPE_GVCFS_JAVA_OPTIONS: ""
+GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS: ""

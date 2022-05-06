@@ -15,12 +15,12 @@
 # Trimming fastq file to remove adapters sequences, low quality sequences et short sequences
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R sampleX.fastq.gz --adapt_file adapter_file_DEV.txt --nodes 1 --quality_cutoff 30 --minimum_length 36
+#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R sampleX.fastq.gz --adapt_file adapter_file_DEV.txt --cores 1 --quality_cutoff 30 --minimum_length 36
 
 #--trimdir
 	# storage space created by the workflow for the outputs of the trimming step: >>> {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
 #--sample
-	# sample name 
+	# sample name
 #--R
 	# path to fastq.gz file corresponding to the sequences by sample (after demultiplexing)
 
@@ -30,13 +30,13 @@
 	#Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA
 	#Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA
 	#Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA
-#--nodes
-	# number of nodes to be allocated on cluster 
+#--cores
+	# number of cores to be allocated on cluster
 #--quality_cutoff
 	# parameter can be used to trim low-quality ends from reads. exemple: --quality_cutoff 30 > replacement of nucleotides by N if the quality is lower than Q30 (1 chance out of 30 that the base is wrong)
 #--minimum_length
-	# parameter to indicate the minimum size of the sequences to be kept. 
-# this script launches cutapdat with one option by default: --no-indels 
+	# parameter to indicate the minimum size of the sequences to be kept.
+# this script launches cutapdat with one option by default: --no-indels
 
 # >>> OUTPUTS
 # one file by sample contain sequences demultiplexed : sample_trimmed.fastq.gz >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
@@ -70,8 +70,8 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --nodes)
-  NODES="$2"
+  --cores)
+  CORES="$2"
   shift # past argument
   shift # past value
   ;;
@@ -112,8 +112,8 @@ fi
 
 #### SCRIPT
 
-## 1/ RETRIEVE FILES AND SEQUENCES 
+## 1/ RETRIEVE FILES AND SEQUENCES
 R_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f2)
 
 ## 2/ RUN CUTADAPT - TRIMMING
-cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels -j ${NODES} -a ${R_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.fastq.gz ${R_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info
+cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.fastq.gz ${R_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

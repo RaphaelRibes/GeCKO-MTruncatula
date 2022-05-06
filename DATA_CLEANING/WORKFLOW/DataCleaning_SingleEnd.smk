@@ -103,13 +103,14 @@ rule Demultiplex_RawFastqs:
         expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir),
         demult_cutadapt_reports_dir+"/demultiplexing_cutadapt.info"
     params:
-        substitutions = config["DEMULT_SUBSTITUTIONS"]
+        substitutions = config["DEMULT_SUBSTITUTIONS"],
+        cores = config["DEMULT_CORES"]
     conda:
         "ENVS/conda_tools.yml"
     threads: config["DEMULT_CPUS_PER_TASK"]
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_SE.sh --demultdir {demult_dir} --R {input.fastq_raw} "
-        "--barcode_file {input.barcode_file} --nodes {threads} "
+        "--barcode_file {input.barcode_file} --cores {params.cores} "
         "--substitutions {params.substitutions};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 
@@ -133,14 +134,15 @@ rule Trimming_DemultFastqs:
         demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info"
     params:
         quality_cutoff = config["TRIMMING_QUAL"],
-        minimum_length = config["TRIMMING_MIN_LENGTH"]
+        minimum_length = config["TRIMMING_MIN_LENGTH"],
+        cores = config["TRIMMING_CORES"]
     conda:
         "ENVS/conda_tools.yml"
     threads: config["TRIMMING_CPUS_PER_TASK"]
     shell:
         "{scripts_dir}/trimming_with_cutadapt_SE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
         "--R {input.fastqs_demult} --adapt_file {input.adapt_file} "
-        "--nodes {threads} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
+        "--cores {params.cores} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
         "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info"
 
 
