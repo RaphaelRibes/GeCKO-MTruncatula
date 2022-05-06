@@ -15,8 +15,6 @@ It can be used to process:
 6) Two MultiQC reports are created, showing the reads numbers and quality after mapping, both before and after extracting reads from regions of interest.
 
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/ReadsMapping_Workflow.jpg?raw=true)
-
 
 ## QUICK START
 
@@ -180,5 +178,6 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Create_SubbamsList          | Writing list of subbams files                                                                                                  |                                                                                                                                        |
 
 
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/ReadsMapping_Workflow.jpg?raw=true)
 
 
