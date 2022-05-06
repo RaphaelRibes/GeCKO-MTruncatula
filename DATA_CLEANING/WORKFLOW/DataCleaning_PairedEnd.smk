@@ -69,9 +69,10 @@ rule FinalTargets:
         demult_reports_dir+"/Reads_Count_Demult.txt",
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt",
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
-        outputs_directory+"/multiQC_DataCleaning_Report.html"],
+        outputs_directory+"/multiQC_DataCleaning_Report.html",
+        outputs_directory+"/workflow_info.txt"],
 
-        [performDemultiplexing, True, True, True, True]
+        [performDemultiplexing, True, True, True, True, True]
         )
 
 
@@ -231,6 +232,19 @@ rule MultiQC_Global:
     shell:
         "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report"
 
+
+rule Metadata:
+    output:
+        outputs_directory+"/workflow_info.txt"
+    shell:
+        "echo -e \"Date and time:\" > {outputs_directory}/workflow_info.txt;"
+        "Date=$(date);"
+        "echo -e \"${{Date}}\\n\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"Workflow:\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/DATA_CLEANING\\n\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt;"
+        "cd {snakefile_dir};"
+        "git rev-parse HEAD >> {outputs_directory}/workflow_info.txt"
 
 
 #front.migale.inrae.fr

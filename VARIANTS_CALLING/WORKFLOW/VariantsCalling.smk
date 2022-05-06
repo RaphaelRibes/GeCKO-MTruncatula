@@ -46,7 +46,8 @@ GenotypeGVCFs_dir = vc_dir+"/GENOTYPE_GVCFS"
 
 rule FinalTargets:
     input:
-        GenotypeGVCFs_dir+"/variants_calling.vcf.gz"
+        GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
+        vc_dir+"/workflow_info.txt"
 
 
 rule Index_Reference:
@@ -141,3 +142,17 @@ rule GenotypeGVCFs:
     shell:
         "mkdir -p {output.tmp_GVCF};"
         "gatk --java-options \"{params.java_options}\" GenotypeGVCFs --reference {input.reference} --variant gendb://{input.DB} {params.extra_options} --output {output.GVCF} --tmp-dir {output.tmp_GVCF}"
+
+
+rule Metadata:
+    output:
+        vc_dir+"/workflow_info.txt"
+    shell:
+        "echo -e \"Date and time:\" > {vc_dir}/workflow_info.txt;"
+        "Date=$(date);"
+        "echo -e \"${{Date}}\\n\" >> {vc_dir}/workflow_info.txt;"
+        "echo -e \"Workflow:\" >> {vc_dir}/workflow_info.txt;"
+        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VARIANTS_CALLING\\n\" >> {vc_dir}/workflow_info.txt;"
+        "echo -e \"Commit ID:\" >> {vc_dir}/workflow_info.txt;"
+        "cd {snakefile_dir};"
+        "git rev-parse HEAD >> {vc_dir}/workflow_info.txt"

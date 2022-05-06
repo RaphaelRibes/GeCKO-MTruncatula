@@ -26,7 +26,8 @@ VCF_reports_dir = outputs_directory+"/REPORTS"
 
 rule FinalTargets:
     input:
-        VCF_reports_dir+"/multiQC_VcfFiltering_report.html"
+        VCF_reports_dir+"/multiQC_VcfFiltering_report.html",
+        outputs_directory+"/workflow_info.txt"
 
 
  # ----------------------------------------------------------------------------------------------- #
@@ -121,3 +122,16 @@ rule BuildReport:
         "ENVS/conda_tools.yml"
     shell:
         "multiqc {input} -c {scripts_dir}/config_multiQC_deleteRecode.yaml -o {VCF_reports_dir} -n multiQC_VcfFiltering_report"
+
+rule Metadata:
+    output:
+        outputs_directory+"/workflow_info.txt"
+    shell:
+        "echo -e \"Date and time:\" > {outputs_directory}/workflow_info.txt;"
+        "Date=$(date);"
+        "echo -e \"${{Date}}\\n\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"Workflow:\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VCF_FILTERING\\n\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt;"
+        "cd {snakefile_dir};"
+        "git rev-parse HEAD >> {outputs_directory}/workflow_info.txt"

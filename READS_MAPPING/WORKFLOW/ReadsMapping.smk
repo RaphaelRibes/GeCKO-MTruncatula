@@ -121,7 +121,8 @@ def buildExpectedFiles(filesNames, isExpected):
 rule FinalTargets:
     input:
         buildExpectedFiles(
-        [ bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html",
+        [ mapping_dir+"/workflow_info.txt",
+        bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html",
         bams_reports_dir+"/nb_reads_per_sample.tsv",
         mapping_dir+"/bams_list.txt",
         zones_stats_dir+"/mean_depth_per_zone_per_sample_heatmap.pdf",
@@ -130,7 +131,7 @@ rule FinalTargets:
         subbams_reports_dir+"/nb_reads_per_sample.tsv",
         subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html",
         mapping_dir+"/subbams_list.txt" ],
-        [ True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
+        [ True, True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
 
 # ------------------------------------------------------------------------------------------------------------- #
 
@@ -338,6 +339,19 @@ rule Create_SubbamsList:
     shell:
         "ls -d {subbams_dir}/*.bam > {output}"
 
+
+rule Metadata:
+    output:
+        mapping_dir+"/workflow_info.txt"
+    shell:
+        "echo -e \"Date and time:\" > {mapping_dir}/workflow_info.txt;"
+        "Date=$(date);"
+        "echo -e \"${{Date}}\\n\" >> {mapping_dir}/workflow_info.txt;"
+        "echo -e \"Workflow:\" >> {mapping_dir}/workflow_info.txt;"
+        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/READS_MAPPING\\n\" >> {mapping_dir}/workflow_info.txt;"
+        "echo -e \"Commit ID:\" >> {mapping_dir}/workflow_info.txt;"
+        "cd {snakefile_dir};"
+        "git rev-parse HEAD >> {mapping_dir}/workflow_info.txt"
 
 
 
