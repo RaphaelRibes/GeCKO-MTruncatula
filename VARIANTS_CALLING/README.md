@@ -11,8 +11,6 @@ This VARIANTS_CALLING workflow generates a vcf file from bam files obtained afte
 5) A data base from variants calling by sample is generated with the GATK GenomicsDBImport function, and a list of the reference's chromosomes or contigs is created
 6) Variants calling for all samples (population) if performed with the GATK GenotypeGVCFs function, creating a single vcf file
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VariantsCalling_Workflow.jpg?raw=true)
-
 
 ## QUICK START
 
@@ -153,3 +151,6 @@ Name, description and tools used for each of the snakemake workflow rules:
 | GenomicsDBImport                  | Creating data base from variants calling by sample and the intervals list       | gatk GenomicsDBImport         |
 | GenotypeGVCFs                     | Calling variants for all samples (population) from GenomicsDBImport to vcf file | gatk GenotypeGVCFs            |
 
+
+
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VariantsCalling_Workflow.jpg?raw=true)
