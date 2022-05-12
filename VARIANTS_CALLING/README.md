@@ -1,6 +1,6 @@
 # VARIANTS CALLING
 
-This VARIANTS_CALLING workflow generates a vcf file from bam files obtained after mapping the cleaned sequences to a reference genome. This workflow uses GATK to call variants.
+This VARIANTS_CALLING workflow generates a vcf file from bam files obtained after mapping your reads to a reference genome. This workflow uses GATK to call variants.
 
 
 ### The VARIANTS_CALLING workflow's steps
@@ -9,7 +9,7 @@ This VARIANTS_CALLING workflow generates a vcf file from bam files obtained afte
 3) The list of chromosomes or contigs in the reference is created for the GenomicsDBImport step 
 4) Variants calling by sample is performed with the GATK HaplotypeCaller function
 5) A data base from variants calling by sample is generated with the GATK GenomicsDBImport function, and a list of the reference's chromosomes or contigs is created
-6) Variants calling for all samples (population) if performed with the GATK GenotypeGVCFs function, creating a single vcf file
+6) Variants calling for all samples (population) is performed with the GATK GenotypeGVCFs function, creating a single vcf file
 
 
 ## QUICK START
@@ -21,7 +21,7 @@ Needed files:
 - the full CAPTURE_SNAKEMAKE_WORKFLOWS/ folder  
 - the runSnakemakeWorkflow.sh launcher  
 - your mapped .bam files
-- a reference file in fasta format to call variants
+- the reference file in fasta format that was used to map your reads
 - the cluster_config_VariantsCalling.yml (in case you work on a cluster) and config_VariantsCalling.yml files in a CONFIG folder  
 
 &nbsp;
@@ -46,8 +46,7 @@ For example, if you need to launch the workflow on our BAMS example dataset on a
 
 ### 1/ Prepare your input data
 
-The input data are the mapped .bam files and the associated index files (.bam.bai). 
-To do the variants calling, it is necessary to fill in the reference used for the mapping.
+The expected input data are .bam files and their associated index files (.bam.bai), along with the reference that was used for the mapping.  
 
 
 ### 2/ Clone our GitHub repository
@@ -124,11 +123,11 @@ pkgs_dirs:
 ```
 
 ### 5/ Expected outputs  
-the workflow create a directory "VARIANTS_CALLING" in the "WORKFLOWS_OUTPUTS" directory. 
-In this directory there are 3 folders corresponding to the output of the 3 steps of variants calling with GATK:
-HAPLOTYPE_CALLER : two files by sample, the vcf.gz file ( sample.g.vcf.gz) and the index file associated (sample.g.vcf.gz.tbi). there is also a list of vcf files contained in this folder (vcf.list.txt).
-GENOMICS_DB_IMPORT: several directories containing the data base and associated files (.json, .vcf and . tdb)
-GENOTYPE_GVCFS: the variants_calling.vcf.gz file and the index associated (variants_calling.vcf.gz.tbi)
+This workflow will create a "VARIANTS_CALLING" folder, placed in the "WORKFLOWS_OUTPUTS" folder. 
+In VARIANTS_CALLING/ you will find 3 folders corresponding to the outputs of the 3 variants calling steps performed with GATK:
+HAPLOTYPE_CALLER : It should contain two files by sample, the vcf.gz file (sample.g.vcf.gz) and the index file associated (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).
+GENOMICS_DB_IMPORT: It should contain several directories containing the GATK data base and associated files (.json, .vcf and . tdb)
+GENOTYPE_GVCFS: It should contain the final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)
 
 
 ## Tools
