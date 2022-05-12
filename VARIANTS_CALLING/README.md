@@ -85,14 +85,14 @@ This file is used to pass all the information and tools parameters that will be 
 **VARIANTS CALLING PARAMETERS**  
 For each of the three GATK steps, two options fields are available: options related to the use of java (JAVA_OPTIONS) and step-specific options (EXTRA_OPTIONS) , if not leave blank: ""
 
-- *GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;java options for the GATK HaplotypeCaller function (eg: "-Xmx4g").
-- *GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;options to pass to the GATK Haplotypecaller function
-- *GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;
-- *GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;java options for the GATK GenomicsDBImport function (eg: "-Xmx30g").
-- *GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;options to pass to the GATK GenomicsDBImport function (eg: "--merge-contigs-into-num-partitions 20 --batch-size 50 --reader-threads 20").
-- *GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;
-- *GATK_GENOTYPE_GVCFS_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;java options for the GATK GenotypeGVCFs function (eg: "-Xmx30g").
-- *GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;options to pass to the GATK GenotypeGVCFs function (eg: "--include-non-variant-sites --heterozygosity 0.001)
+- *GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK HaplotypeCaller function (eg: "-Xmx4g"). Be careful to provide them between quotes.
+- *GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'GATK Haplotypecaller' command. Be careful to provide them between quotes.
+- *GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for each Haplotypecaller task. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.
+- *GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK GenomicsDBImport function (eg: "-Xmx30g"). Be careful to provide them between quotes.
+- *GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'GATK GenomicsDBImport' command (eg: "--merge-contigs-into-num-partitions 20 --batch-size 50 --reader-threads 20"). Be careful to provide them between quotes.
+- *GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for the GenomicsDBImport step. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.
+- *GATK_GENOTYPE_GVCFS_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK GenotypeGVCFs function (eg: "-Xmx30g"). Be careful to provide them between quotes.
+- *GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'GATK GenotypeGVCFs' command (eg: "--include-non-variant-sites --heterozygosity 0.001). Be careful to provide them between quotes.
 
 
 <ins>An example of config_VariantsCalling.yml file can be found in the EXAMPLE/CONFIG folder</ins>.  
