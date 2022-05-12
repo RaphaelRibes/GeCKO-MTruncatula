@@ -24,8 +24,8 @@ else:
 ### Raw fastq files path and base names
 fastq_R1_raw_base = fastq_R2_raw_base = raw_data_dir = fastq_raw_base = ""
 if performDemultiplexing:
-    fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
-    fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[1].replace('.fastq','').replace('.fq','').replace('.gz','')
+    fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[::-1][0].replace('.fastq','').replace('.fq','').replace('.gz','')
+    fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[::-1][0].replace('.fastq','').replace('.fq','').replace('.gz','')
     raw_data_dir = fastq_R1_raw.rsplit('/', 1)[0]
     fastq_raw_base = fastq_R1_raw_base.replace('_R1','')
 
