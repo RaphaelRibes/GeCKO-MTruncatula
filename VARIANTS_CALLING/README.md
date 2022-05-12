@@ -85,18 +85,19 @@ This file is used to pass all the information and tools parameters that will be 
 **VARIANTS CALLING PARAMETERS**  
 For each of the three GATK steps, two options fields are available: options related to the use of java (JAVA_OPTIONS) and step-specific options (EXTRA_OPTIONS) , if not leave blank: ""
 
-- *GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp; options for using java at the step HaplotypeCaller by GATK (eg: "-Xmx4g").
-- *GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp; options for the step GATK - Haplotypecaller
-- *GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp; options for using java at the step GenomicsDBImport by GATK (eg: "-Xmx30g").
-- *GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp; options for the step GATK - GenomicsDBImport (eg: "--merge-contigs-into-num-partitions 20 --batch-size 50 --reader-threads 20").
-- *GATK_GENOTYPE_GVCFS_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;options for using java at the step GenotypeGVCFs by GATK (eg: "-Xmx30g").
-- *GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp; options for the step GATK - GenotypeGVCFs (eg: "--include-non-variant-sites --heterozygosity 0.001)
-- 
-&nbsp;
+- *GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;java options for the GATK HaplotypeCaller function (eg: "-Xmx4g").
+- *GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;options to pass to the GATK Haplotypecaller function
+- *GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;
+- *GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;java options for the GATK GenomicsDBImport function (eg: "-Xmx30g").
+- *GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;options to pass to the GATK GenomicsDBImport function (eg: "--merge-contigs-into-num-partitions 20 --batch-size 50 --reader-threads 20").
+- *GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;
+- *GATK_GENOTYPE_GVCFS_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;java options for the GATK GenotypeGVCFs function (eg: "-Xmx30g").
+- *GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;options to pass to the GATK GenotypeGVCFs function (eg: "--include-non-variant-sites --heterozygosity 0.001)
+
 
 <ins>An example of config_VariantsCalling.yml file can be found in the EXAMPLE/CONFIG folder</ins>.  
 
-&nbsp;
+
 
 ### 4/ Launch the analysis
 
