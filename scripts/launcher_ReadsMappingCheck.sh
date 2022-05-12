@@ -51,64 +51,66 @@ fi
 
 
 ## Input data (TRIM_DIR, fastq files, REFERENCE) ##
-TRIM_DIR=$(grep "^TRIM_DIR:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+TRIM_DIRS=$(grep "^TRIM_DIRS:" $CONFIG | sed 's/#.*$//' | cut -d '"' -f2)
 REFERENCE=$(grep "^REFERENCE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 
 # **TRIM_DIR**
-if [[ -z "$TRIM_DIR" ]] ; then
-  TRIM_DIR="${HERE}/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"
-  if [[ ! -d "$TRIM_DIR" ]] ; then
-    echo -e "\nERROR: You did not specify any TRIM_DIR folder in your config file (${CONFIG}), but the default TRIM_DIR folder (${TRIM_DIR}) does not exist. Please specify your TRIM_DIR path in the config_file."
-    echo -e "\nExiting.\n"
-    exit 1
-  fi
-elif [[ ! -d "$TRIM_DIR" ]] ; then
-  echo -e "\nERROR: The TRIM_DIR parameter (${TRIM_DIR}/) provided in your config file (${CONFIG}) is not valid. Please make sure the directory exists and the path is correctly written."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
-
-if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
-  nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
-  nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
-  if [[ $nb_fastq_R1_obs -eq 0 || $nb_fastq_R2_obs -eq 0 ]] ; then
-    echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}/) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.R1.fastq.gz' and '.R2.fastq.gz'."
-    echo -e "\nExiting.\n"
-    exit 1
-  else
-    fastq_R1_list=$(ls -1 ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null)
-    fastq_R2_list_exp=$(echo $fastq_R1_list | sed 's/.R1./.R2./g')
-    nb_fastq_R2_exp=$(echo $fastq_R2_list_exp | wc -w)
-    if [[ $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then
-      echo -e "\nERROR: Input R1 and R2 fastq files do not seem to match. A set of matching *.R1.fastq.gz and *.R2.fastq.gz are expected in the TRIM_DIR folder (${TRIM_DIR})."
+for TRIM_DIR in $TRIM_DIRS ; do
+  if [[ -z "$TRIM_DIR" ]] ; then
+    TRIM_DIR="${HERE}/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"
+    if [[ ! -d "$TRIM_DIR" ]] ; then
+      echo -e "\nERROR: You did not specify any TRIM_DIR folder in your config file (${CONFIG}), but the default TRIM_DIR folder (${TRIM_DIR}) does not exist. Please specify your TRIM_DIR path in the config_file."
       echo -e "\nExiting.\n"
       exit 1
     fi
-    for fastq_r2 in $fastq_R2_list_exp ; do
-      if [[ ! -f ${TRIM_DIR}/$fastq_r2 ]] ; then
+  elif [[ ! -d "$TRIM_DIR" ]] ; then
+    echo -e "\nERROR: The TRIM_DIR parameter (${TRIM_DIR}/) provided in your config file (${CONFIG}) is not valid. Please make sure the directory exists and the path is correctly written."
+    echo -e "\nExiting.\n"
+    exit 1
+  fi
+
+  if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
+    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
+    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
+    if [[ $nb_fastq_R1_obs -eq 0 || $nb_fastq_R2_obs -eq 0 ]] ; then
+      echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}/) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.R1.fastq.gz' and '.R2.fastq.gz'."
+      echo -e "\nExiting.\n"
+      exit 1
+    else
+      fastq_R1_list=$(ls -1 ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null)
+      fastq_R2_list_exp=$(echo $fastq_R1_list | sed 's/.R1./.R2./g')
+      nb_fastq_R2_exp=$(echo $fastq_R2_list_exp | wc -w)
+      if [[ $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then
         echo -e "\nERROR: Input R1 and R2 fastq files do not seem to match. A set of matching *.R1.fastq.gz and *.R2.fastq.gz are expected in the TRIM_DIR folder (${TRIM_DIR})."
         echo -e "\nExiting.\n"
         exit 1
       fi
-    done
+      for fastq_r2 in $fastq_R2_list_exp ; do
+        if [[ ! -f ${TRIM_DIR}/$fastq_r2 ]] ; then
+          echo -e "\nERROR: Input R1 and R2 fastq files do not seem to match. A set of matching *.R1.fastq.gz and *.R2.fastq.gz are expected in the TRIM_DIR folder (${TRIM_DIR})."
+          echo -e "\nExiting.\n"
+          exit 1
+        fi
+      done
+    fi
   fi
-fi
 
-if [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
-  nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null | wc -l)
-  nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*R1*fastq.gz 2>/dev/null | wc -l)
-  nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*R2*fastq.gz 2>/dev/null | wc -l)
-  if [[ "$nb_fastq" = 0 ]] ; then
-    echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.fastq.gz'."
-    echo -e "\nExiting.\n"
-    exit 1
+  if [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
+    nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null | wc -l)
+    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*R1*fastq.gz 2>/dev/null | wc -l)
+    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*R2*fastq.gz 2>/dev/null | wc -l)
+    if [[ "$nb_fastq" = 0 ]] ; then
+      echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.fastq.gz'."
+      echo -e "\nExiting.\n"
+      exit 1
+    fi
+    if [[ "$nb_fastq_R1_obs" > 0 && "$nb_fastq_R2_obs" > 0 ]] ; then
+      echo -e "\nWARNING: You set PAIRED_END to FALSE but it appears that your data may be paired: 'R1' and 'R2' patterns were found in their names."
+      echo -e "Your fastq files will be mapped as single end data. If your data is paired, please set PAIRED_END to TRUE.\n"
+    fi
   fi
-  if [[ "$nb_fastq_R1_obs" > 0 && "$nb_fastq_R2_obs" > 0 ]] ; then
-    echo -e "\nWARNING: You set PAIRED_END to FALSE but it appears that your data may be paired: 'R1' and 'R2' patterns were found in their names."
-    echo -e "Your fastq files will be mapped as single end data. If your data is paired, please set PAIRED_END to TRUE.\n"
-  fi
-fi
+done
 
 # **REFERENCE**
 if [[ -z "$REFERENCE" ]] ; then

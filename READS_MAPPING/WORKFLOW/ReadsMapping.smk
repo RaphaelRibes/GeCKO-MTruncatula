@@ -18,9 +18,10 @@ working_directory = os.getcwd()
 
 ### Variables from config file
 paired_end = config["PAIRED_END"]
-trim_dir = config["TRIM_DIR"]
-if (len(trim_dir) == 0):
-    trim_dir = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"
+trim_dirs = list(config["TRIM_DIRS"].split(" "))
+
+if (len(trim_dirs) == 0):
+    trim_dirs = [working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"]
 
 
 if config["REMOVE_DUP"]:
@@ -33,7 +34,7 @@ mapping_subfolder = ""
 if (len(config["MAPPING_SUBFOLDER"]) > 0):
     mapping_subfolder = "/"+config["MAPPING_SUBFOLDER"]
 
-ref_name = ref.rsplit('/', 1)[1].replace('.fasta','').replace('.fas','').replace('.fa','')
+ref_name = ref.rsplit('/', 1)[::-1][0].replace('.fasta','').replace('.fas','').replace('.fa','')
 
 bed = config["BED"]
 if (len(bed) == 0):
@@ -54,30 +55,34 @@ mapper = config["MAPPER"]
 ### Samples list
 if paired_end:
     end="--pairedEnd"
-    fastqs_R1_list = [fastq for fastq in os.listdir(trim_dir) if '.R1.fastq.gz' in fastq]
-
-    #ex_fastq = fastqs_R1_list[0]
-
-    fastqs_R2_list = []
-    for fastq_R1 in fastqs_R1_list:
-        fastq_R2 = fastq_R1.replace(".R1.", ".R2.")
-        fastqs_R2_list.append(fastq_R2)
 
     samples = []
-    for fastq_R1 in fastqs_R1_list:
-        sample = fastq_R1.replace(".R1.fastq.gz", "")
-        samples.append(sample)
+    fastqs_list_dict = {}
+
+    for trim_dir in trim_dirs:
+        fastqs_R1_list = [fastq for fastq in os.listdir(trim_dir) if '.R1.fastq.gz' in fastq]
+
+        fastqs_R2_list = []
+        for fastq_R1 in fastqs_R1_list:
+            fastq_R2 = fastq_R1.replace(".R1.", ".R2.")
+            fastqs_R2_list.append(fastq_R2)
+            sample = fastq_R1.replace(".R1.fastq.gz", "")
+            samples.append(sample)
+            fastqs_list_dict[sample] = [trim_dir+"/"+str(fastq_R1), trim_dir+"/"+str(fastq_R2)]
 
 else:
     end="--singleEnd"
-    fastqs_list = [fastq for fastq in os.listdir(trim_dir) if '.fastq.gz' in fastq]
-
-    #ex_fastq = fastqs_list[0]
 
     samples = []
-    for fastq in fastqs_list:
-        sample = fastq.replace(".fastq.gz", "")
-        samples.append(sample)
+    fastqs_list_dict = {}
+
+    for trim_dir in trim_dirs:
+        fastqs_list = [fastq for fastq in os.listdir(trim_dir) if '.fastq.gz' in fastq]
+
+        for fastq in fastqs_list:
+            sample = fastq.replace(".fastq.gz", "")
+            samples.append(sample)
+            fastqs_list_dict[sample] = trim_dir+"/"+str(fastq)
 
 
 ### Define outputs subfolders
@@ -150,8 +155,10 @@ rule Index_Reference:
 
 rule Mapping_PairedEndFastqs:
     input:
-        fastq_paired_R1 = trim_dir+"/{base}.R1.fastq.gz",
-        fastq_paired_R2 = trim_dir+"/{base}.R2.fastq.gz",
+        #fastq_paired_R1 = trim_dir+"/{base}.R1.fastq.gz",
+        #fastq_paired_R2 = trim_dir+"/{base}.R2.fastq.gz",
+        fastq_paired_R1 = lambda wildcards: fastqs_list_dict[wildcards.base][0],
+        fastq_paired_R2 = lambda wildcards: fastqs_list_dict[wildcards.base][1],
         ref = ref,
         ref_index = ref_index
     output:
@@ -174,7 +181,8 @@ rule Mapping_PairedEndFastqs:
 
 rule Mapping_SingleEndFastqs:
     input:
-        fastq_single = trim_dir+"/{base}.fastq.gz",
+        #fastq_single = trim_dir+"/{base}.fastq.gz",
+        fastq_single = lambda wildcards: fastqs_list_dict[wildcards.base],
         ref = ref,
         ref_index = ref_index
     output:

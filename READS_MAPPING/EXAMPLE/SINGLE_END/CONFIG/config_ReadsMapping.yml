@@ -6,7 +6,7 @@ MAPPING_SUBFOLDER: ""
 
 ### INPUT FILES ###
 # Provide the directory containing the trimmed fastq files to be mapped
-TRIM_DIR: "DEMULT_TRIM"
+TRIM_DIRS: "DEMULT_TRIM"
 
 # Reference genome
 REFERENCE: "../REFERENCE/Reference.fasta"
