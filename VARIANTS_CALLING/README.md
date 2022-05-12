@@ -94,9 +94,11 @@ For each of the three GATK steps, two options fields are available: options rela
 - *GATK_GENOTYPE_GVCFS_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK GenotypeGVCFs function (eg: "-Xmx30g"). Be careful to provide them between quotes.
 - *GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'GATK GenotypeGVCFs' command (eg: "--include-non-variant-sites --heterozygosity 0.001). Be careful to provide them between quotes.
 
+&nbsp;
 
 <ins>An example of config_VariantsCalling.yml file can be found in the EXAMPLE/CONFIG folder</ins>.  
 
+&nbsp;
 
 
 ### 4/ Launch the analysis
