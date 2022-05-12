@@ -1,13 +1,13 @@
 # VCF FILTERING
 
-this VCF_FILTERING workflow allows to filter the raw vcf obtained after the variants calling. Different types of filters are applied: locus-based filters, a sample-based filter and filters based on population genetics statistics. 
+This VCF_FILTERING workflow allows to filter the raw vcf obtained after the variants calling step. Different types of filters can be applied: locus-based filters, a sample-based filter and filters based on population genetics statistics. 
 
 
 ### The VCF_FILTERING workflow's steps
-1) Variants filtering by **locus** with [vcftools](http://vcftools.sourceforge.net/man_latest.html). The filters proposed by VcfTools can be applied either at the genotype level (locus x samples) and in this case the data not respecting the filters are replaced by missing data (e.g. minGQ, minDP). or at the locus level and in this case the locus is completely deleted (e.g. minQ, max-missing)
-2) Variants filtering by **samples**. After performing the first filter step (locus), it is possible to remove samples that have too many locus with missing data (proportion).
-3) Variants filtering by **population genetics statistics** (e.g. FIS, He) 
-4) MultiQC report is created, showing variants informations/statistics after each filtering steps.
+1) Variants are filtered by **locus** with [vcftools](http://vcftools.sourceforge.net/man_latest.html). The filters proposed by VcfTools can be applied either at the genotype level (locus x sample) or at the locus level. For genotype level filtering, genotypes that don't pass the given thresholds (e.g. minGQ, minDP) are replaced by missing data. For locus level filtering, loci that do not pass the given thresholds (e.g. minQ, max-missing) are completely removed.
+2) Variants are filtered by **samples**. After performing the previous filtering step, it is possible to remove samples with too many missing data (proportion of missing loci above a given threshold).
+3) Variants are filtered by **population genetics statistics** (e.g. FIS, He). 
+4) A MultiQC report is created, showing variants informations/statistics after each filtering step.
 
 
 ## QUICK START
