@@ -5,7 +5,7 @@ This VCF_FILTERING workflow allows to filter the raw vcf obtained after the vari
 
 ### The VCF_FILTERING workflow's steps
 1) Variants are filtered by **locus** with [vcftools](http://vcftools.sourceforge.net/man_latest.html). The filters proposed by VcfTools can be applied either at the genotype level (locus x sample) or at the locus level. For genotype level filtering, genotypes that don't pass the given thresholds (e.g. minGQ, minDP) are replaced by missing data. For locus level filtering, loci that do not pass the given thresholds (e.g. minQ, max-missing) are completely removed.
-2) Variants are filtered by **samples**. After performing the previous filtering step, it is possible to remove samples with too many missing data (proportion of missing loci above a given threshold).
+2) Variants are filtered by **samples**. After performing the previous filtering step, it is possible to remove samples with too many missing data (proportion of ungenotyped loci above a given threshold).
 3) Variants are filtered by **population genetics statistics** (e.g. FIS, He). 
 4) A MultiQC report is created, showing variants informations/statistics after each filtering step.
 
@@ -72,16 +72,26 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 #### *config_VcfFiltering.yml file:*  
 This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
-**GENERAL VARIABLES**  
-
 **INPUT FILES**  
-- *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variants calling .vcf.gz file.
+- *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variants calling file in zipped vcf format (.vcf.gz).
 
 **VCF FILTERING PARAMETERS**  
 
-- *VCFTOOLS_LOCUS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; options for [vcftools](http://vcftools.sourceforge.net/man_latest.html) filtering (e.g. "--minDP 5 --minQ 30 --max-missing 0.5" ) 
-- *MAX_RATIO_NA_PER_SAMPLE:*&nbsp;&nbsp;&nbsp; maximum proportion of missing data per sample ("1": no filtering)
-- *POPGENSTATS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; Filtration available on 9 calculated parameters: He, heterozygote deficit (F), homozygous allele 1 (A1A1),  homozygous allele 2 (A2A2), heterozygous (A1A2), nbre of sample genotyped(nbG), NA proportion (pcNA), frequency allele 1 (p), frequency allele 1 (q). (e.g. "INFO/F>=0.8 & INFO/A1A1>0 & INFO/A2A2>0 & INFO/pcNA<0.5" )
+- *VCFTOOLS_LOCUS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; The list of filtering options to pass to [vcftools](http://vcftools.sourceforge.net/man_latest.html) (e.g. "--minDP 5 --minQ 30 --max-missing 0.5"). Be careful to provide them between quotes. 
+- *MAX_RATIO_NA_PER_SAMPLE:*&nbsp;&nbsp;&nbsp; The maximum proportion of allowed missing data per sample ("1": no filtering).
+- *POPGENSTATS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; The list of filtering options to pass to the 'bcftools filter' command. 9 parameters are calculated for each locus and can be used for filtering: 
+	- Number of allele 1 homozygous genotypes ('A1A1')
+	- Number of allele 2 homozygous genotypes ('A2A2')
+	- Number of heterozygous genotypes ('A1A2')
+	- Allele 1 frequency ('p')
+	- Allele 2 frequency ('q')
+	- Expected heterozygozity ('He')
+	- Heterozygote deficit ('F')
+	- Number of genotyped samples ('nbG')
+	- NA proportion ('pcNA') (between 0 and 1)  
+
+  e.g. : "INFO/F>=0.8 & INFO/A1A1>0 & INFO/A2A2>0 & INFO/pcNA<0.5"  
+  Be careful to use quotes when passing this parameter.
 
 &nbsp;
 
