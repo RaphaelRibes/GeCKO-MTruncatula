@@ -123,11 +123,11 @@ pkgs_dirs:
 ```
 
 ### 5/ Expected outputs  
-This workflow will create a "VARIANTS_CALLING" folder, placed in the "WORKFLOWS_OUTPUTS" folder. 
-In VARIANTS_CALLING/ you will find 3 folders corresponding to the outputs of the 3 variants calling steps performed with GATK:
-HAPLOTYPE_CALLER : It should contain two files by sample, the vcf.gz file (sample.g.vcf.gz) and the index file associated (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).
-GENOMICS_DB_IMPORT: It should contain several directories containing the GATK data base and associated files (.json, .vcf and . tdb)
-GENOTYPE_GVCFS: It should contain the final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)
+This workflow will create a "VARIANTS_CALLING" folder, placed in the "WORKFLOWS_OUTPUTS" folder.  
+In VARIANTS_CALLING/ you will find 3 folders corresponding to the outputs of the 3 variants calling steps performed with GATK:  
+- HAPLOTYPE_CALLER : It should contain two files by sample, the vcf.gz file (sample.g.vcf.gz) and the index file associated (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).  
+- GENOMICS_DB_IMPORT: It should contain several directories containing the GATK data base and associated files (.json, .vcf and . tdb)  
+- GENOTYPE_GVCFS: It should contain the final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)  
 
 
 ## Tools
