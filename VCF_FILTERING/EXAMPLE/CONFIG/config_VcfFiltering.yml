@@ -18,7 +18,7 @@ VCF_FILE: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/WORKFLOWS_OUTPUTS/S
 # --minQ 30 (site level) The Phred-scaled probability that a REF/ALT polymorphism exists at this site given sequencing data.
 # --max-missing 0.5 keep variants that have been successfully genotyped in 50% of individuals
 # READS2SNP (no Q available)
-# LOCUS_FILTERS: "--minGQ 15.0 --minDP 6 --max-missing 0.5"
+# VCFTOOLS_LOCUS_FILTERING_OPTIONS: "--minGQ 15.0 --minDP 6 --max-missing 0.5"
 
 #GATK
 VCFTOOLS_LOCUS_FILTERING_OPTIONS: "--minGQ 15.0 --minDP 5 --minQ 30 --max-missing 0.5"
