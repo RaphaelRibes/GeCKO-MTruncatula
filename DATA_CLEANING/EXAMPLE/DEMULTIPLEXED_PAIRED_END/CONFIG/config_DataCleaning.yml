@@ -28,7 +28,7 @@ ADAPT_FILE: "CONFIG/adapter_file_MEL.txt"
 ### DEMULTIPLEXING PARAMETERS ###
 
 # Complete these two fields if the raw fastq files is multiplexed, if not leave blank: ""
-DEMULT_CPUS_PER_TASK: ""
+DEMULT_CPUS_PER_TASK: 0
 DEMULT_SUBSTITUTIONS: ""
 
 
