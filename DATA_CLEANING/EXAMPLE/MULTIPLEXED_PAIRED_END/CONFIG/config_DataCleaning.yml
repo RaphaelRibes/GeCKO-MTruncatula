@@ -28,11 +28,13 @@ ADAPT_FILE: "CONFIG/adapter_file_DEV.txt"
 ### DEMULTIPLEXING PARAMETERS ###
 
 # Complete these two fields if the raw fastq files is multiplexed, if not leave blank: ""
+DEMULT_CORES: 1
 DEMULT_CPUS_PER_TASK: 1
 DEMULT_SUBSTITUTIONS: 0.1
 
 
 ### TRIMMING PARAMETERS ###
+TRIMMING_CORES: 1
 TRIMMING_CPUS_PER_TASK: 1
 TRIMMING_QUAL: 30
 TRIMMING_MIN_LENGTH: 36
