@@ -25,9 +25,9 @@ if (len(trim_dirs) == 0):
 
 
 if config["REMOVE_DUP"]:
-    rm_dup = True
+    rm_dup = "TRUE"
 else:
-    rm_dup = False
+    rm_dup = "FALSE"
 
 ref = config["REFERENCE"]
 mapping_subfolder = ""
@@ -155,8 +155,6 @@ rule Index_Reference:
 
 rule Mapping_PairedEndFastqs:
     input:
-        #fastq_paired_R1 = trim_dir+"/{base}.R1.fastq.gz",
-        #fastq_paired_R2 = trim_dir+"/{base}.R2.fastq.gz",
         fastq_paired_R1 = lambda wildcards: fastqs_list_dict[wildcards.base][0],
         fastq_paired_R2 = lambda wildcards: fastqs_list_dict[wildcards.base][1],
         ref = ref,
@@ -181,7 +179,6 @@ rule Mapping_PairedEndFastqs:
 
 rule Mapping_SingleEndFastqs:
     input:
-        #fastq_single = trim_dir+"/{base}.fastq.gz",
         fastq_single = lambda wildcards: fastqs_list_dict[wildcards.base],
         ref = ref,
         ref_index = ref_index

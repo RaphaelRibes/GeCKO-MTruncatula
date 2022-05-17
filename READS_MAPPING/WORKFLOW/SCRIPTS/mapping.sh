@@ -161,16 +161,11 @@ fi
 picard SortSam -I ${OUTPUT_DIR}/${SAMPLE}.fix.bam -O ${OUTPUT_DIR}/${SAMPLE}.sort.bam -SO coordinate -VALIDATION_STRINGENCY SILENT
 rm ${OUTPUT_DIR}/${SAMPLE}.fix.bam
 
-# Remove duplicates
-if [ "${RM_DUP}" = "True" ] ; then
-	mkdir -p ${REPORTS_DIR}
-  mkdir -p ${REPORTS_DIR}/DUPLICATES
-  picard MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${PICARD_MARKDUPLICATES_OPTIONS} -REMOVE_DUPLICATES TRUE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
-  rm ${OUTPUT_DIR}/${SAMPLE}.sort.bam
-else
-	mv ${OUTPUT_DIR}/${SAMPLE}.sort.bam ${OUTPUT_DIR}/${SAMPLE}.bam
-fi
-
+# Mark and remove duplicates
+mkdir -p ${REPORTS_DIR}
+mkdir -p ${REPORTS_DIR}/DUPLICATES
+picard MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${PICARD_MARKDUPLICATES_OPTIONS} -REMOVE_DUPLICATES $RM_DUP -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
+rm ${OUTPUT_DIR}/${SAMPLE}.sort.bam
 
 # Create index
 samtools index ${SAMTOOLS_INDEX_OPTIONS} ${OUTPUT_DIR}/${SAMPLE}.bam
