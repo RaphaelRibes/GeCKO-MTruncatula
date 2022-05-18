@@ -20,7 +20,7 @@ working_directory = os.getcwd()
 paired_end = config["PAIRED_END"]
 trim_dirs = list(config["TRIM_DIRS"].split(" "))
 
-if (len(trim_dirs) == 0):
+if (len(config["TRIM_DIRS"]) == 0):
     trim_dirs = [working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"]
 
 
