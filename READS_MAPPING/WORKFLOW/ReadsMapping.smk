@@ -273,7 +273,7 @@ rule Create_SubReference:
         bed = bed
     output:
         subref = subref_dir+"/"+ref_name+"_zones.fasta",
-        tmp_bed = temp(subref_dir+"/regions.bed"),
+        tmp_bed = temp(subref_dir+"/regions.bed")
     conda:
         "ENVS/conda_tools.yml"
     shell:
@@ -282,17 +282,30 @@ rule Create_SubReference:
         "sed -i 's/:/_/g ; s/-/_/g' {output.subref}"
 
 
+rule Create_ChainFile:
+    input:
+        ref = ref,
+        bed = bed
+    output:
+        chain = temp(subref_dir+"/zones.chain")
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "ln -s {input.ref} {subref_dir}/ref.fasta && samtools faidx {subref_dir}/ref.fasta;"
+        "awk '{{if(NR==FNR){{lg[$1]=$2}} else{{ print \"chain 4900 \"$1\" \"lg[$1]\" + \"$2\" \"$3\" \"$1\"_\"$2\"_\"$3\" \"$3-$2+1\" + 1 \"$3-$2+1\"\\n\"$3-$2+1 }}}}' {subref_dir}/ref.fasta.fai {input.bed} > {subref_dir}/zones.chain ;"
+        "rm {subref_dir}/ref.fasta*"
 
 rule Extract_Reads:
     input:
-        bams = bams_dir+"/{base}.bam"
+        bams = bams_dir+"/{base}.bam",
+        chain = subref_dir+"/zones.chain"
     output:
         subbams_dir+"/{base}_zones.bam",
         subbams_dir+"/{base}_zones.bam.bai"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "CrossMap.py bam -a regions.chain {input.bams} {subbams_dir}/{wildcards.base}_zones;"
+        "CrossMap.py bam -a {input.chain} {input.bams} {subbams_dir}/{wildcards.base}_zones;"
         "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai;"
         "picard SortSam -I {subbams_dir}/{wildcards.base}_zones.sorted.bam -O {subbams_dir}/{wildcards.base}_zones.sortname.bam -SO queryname -VALIDATION_STRINGENCY SILENT;"
         "samtools fixmate {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam ;"
