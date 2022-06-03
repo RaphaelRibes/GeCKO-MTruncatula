@@ -158,7 +158,7 @@ else
 fi
 
 # Sort
-picard SortSam -I ${OUTPUT_DIR}/${SAMPLE}.fix.bam -O ${OUTPUT_DIR}/${SAMPLE}.sort.bam -SO coordinate -VALIDATION_STRINGENCY SILENT
+picard SortSam --TMP_DIR ${OUTPUT_DIR}/TMP -I ${OUTPUT_DIR}/${SAMPLE}.fix.bam -O ${OUTPUT_DIR}/${SAMPLE}.sort.bam -SO coordinate -VALIDATION_STRINGENCY SILENT
 rm ${OUTPUT_DIR}/${SAMPLE}.fix.bam
 
 # Mark and remove duplicates

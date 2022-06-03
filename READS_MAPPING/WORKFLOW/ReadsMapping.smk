@@ -217,7 +217,8 @@ rule Summarize_BamsReadsCount:
     output:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
     shell:
-        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {bams_stats_reports_dir} --output {output}"
+        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {bams_stats_reports_dir} --output {output};"
+	"rm -r {bams_dir}/TMP"
 
 
 
@@ -307,9 +308,9 @@ rule Extract_Reads:
     shell:
         "CrossMap.py bam -a {input.chain} {input.bams} {subbams_dir}/{wildcards.base}_zones;"
         "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai;"
-        "picard SortSam -I {subbams_dir}/{wildcards.base}_zones.sorted.bam -O {subbams_dir}/{wildcards.base}_zones.sortname.bam -SO queryname -VALIDATION_STRINGENCY SILENT;"
+        "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.sorted.bam -O {subbams_dir}/{wildcards.base}_zones.sortname.bam -SO queryname -VALIDATION_STRINGENCY SILENT;"
         "samtools fixmate {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam ;"
-        "picard SortSam -I {subbams_dir}/{wildcards.base}_zones.fix.bam -O {subbams_dir}/{wildcards.base}_zones.bam -SO coordinate -VALIDATION_STRINGENCY SILENT;"
+        "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.fix.bam -O {subbams_dir}/{wildcards.base}_zones.bam -SO coordinate -VALIDATION_STRINGENCY SILENT;"
         "samtools index {subbams_dir}/{wildcards.base}_zones.bam;"
         "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam"
 
@@ -332,7 +333,8 @@ rule Summarize_SubbamsReadsCount:
     output:
         subbams_reports_dir+"/nb_reads_per_sample.tsv"
     shell:
-        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {subbams_stats_reports_dir} --output {output}"
+        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {subbams_stats_reports_dir} --output {output};"
+	"rm -r {subbams_dir}/TMP"
 
 
 rule MultiQC_Subbams:
