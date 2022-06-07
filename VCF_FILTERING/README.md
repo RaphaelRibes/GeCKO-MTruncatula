@@ -150,12 +150,12 @@ These tools are loaded in a CONDA environment from the conda-forge and bioconda 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
 
-| **Rule name**        | **Description**                                                                                            | **Tools**       |
-|:--------------------:|:----------------------------------------------------------------------------------------------------------:|:---------------:|
-| Filters_Locus        | Filtering of variants by locus. Applied either at the genotype level (locusXsamples) or at the locus level | vcftools        |
-| Filter_samples       | Filtering of variants by samples. Remove samples that have too many locus with missing data.               | vcftools        |
-| Calculate_PopGenStat | Calculating population genetics statistics (e.g. FIS, He)                                                  |                 |
-| Filters_PopGenStat   | Filtering of variants by population genetics statistics (e.g. FIS, He)                                     | bcftools filter |
-| BuildStatReport      | Building statistics reports of unfiltering variants and each filtering step                                | bcftools stats  |
-| BuildReport          | Runing MultiQC on unfiltering variants and each filtering steps                                            | MultiQC         |
+| **Rule name**         | **Description**                                                                                            | **Tools**       |
+|:---------------------:|:----------------------------------------------------------------------------------------------------------:|:---------------:|
+| Filter_Loci           | Filtering variants by locus. Applied either at the genotype level (locus X sample) or at the locus level   | vcftools        |
+| Filter_Samples        | Filtering variants by sample. Removing samples that have too many loci with missing data.                  | vcftools        |
+| Calculate_PopGenStat  | Calculating population genetics statistics (e.g. FIS, He)                                                  |                 |
+| Filter_PopGenStat     | Filtering variants based on population genetics statistics (e.g. FIS, He)                                  | bcftools filter |
+| Build_StatReport      | Building statistics reports for unfiltered variants and each filtering step                                | bcftools stats  |
+| Build_Report          | Running MultiQC on unfiltered variants and each filtering step                                             | MultiQC         |
 
