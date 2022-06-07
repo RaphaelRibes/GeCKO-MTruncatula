@@ -310,10 +310,10 @@ rule Extract_Reads:
         "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai;"
         "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.sorted.bam -O {subbams_dir}/{wildcards.base}_zones.sortname.bam -SO queryname -VALIDATION_STRINGENCY SILENT;"
         "samtools fixmate {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam ;"
-        "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.fix.bam -O {subbams_dir}/{wildcards.base}_zones.bam -SO coordinate -VALIDATION_STRINGENCY SILENT;"
+        "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.fix.bam -O {subbams_dir}/{wildcards.base}_zones.sortcoord.bam -SO coordinate -VALIDATION_STRINGENCY SILENT;"
+        "picard MarkDuplicates -I {subbams_dir}/{wildcards.base}_zones.sortcoord.bam -O {subbams_dir}/{wildcards.base}_zones.bam -VALIDATION_STRINGENCY SILENT -REMOVE_DUPLICATES FALSE -M {subbams_reports_dir}/DUPLICATES/{wildcards.base}.bam.metrics"
         "samtools index {subbams_dir}/{wildcards.base}_zones.bam;"
-        "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam"
-
+        "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.sortcoord.bam {subbams_dir}/{wildcards.base}_zones.fix.bam"
 
 
 rule Stats_Subbams:
@@ -334,7 +334,7 @@ rule Summarize_SubbamsReadsCount:
         subbams_reports_dir+"/nb_reads_per_sample.tsv"
     shell:
         "{scripts_dir}/summarize_stats.sh {end} --stats_folder {subbams_stats_reports_dir} --output {output};"
-	"rm -r {subbams_dir}/TMP"
+	    "rm -r {subbams_dir}/TMP"
 
 
 rule MultiQC_Subbams:
