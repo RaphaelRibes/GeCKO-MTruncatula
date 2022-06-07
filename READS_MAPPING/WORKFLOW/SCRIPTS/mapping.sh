@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {} --samtools_index_options {}
+#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {picard_markduplicates_options} --picard_markduplicates_java_options {picard_markduplicates_java_options} --samtools_index_options {samtools_index_options}
 #ou
-#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} -reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {picard_markduplicates_options} --samtools_index_options {samtools_index_options}
+#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} -reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {picard_markduplicates_options} --picard_markduplicates_java_options {picard_markduplicates_java_options} --samtools_index_options {samtools_index_options}
 
 
 #### ARGUMENTS:
@@ -77,6 +77,11 @@ do
     ;;
     --picard_markduplicates_options)
     PICARD_MARKDUPLICATES_OPTIONS="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --picard_markduplicates_java_options)
+    PICARD_MARKDUPLICATES_JAVA_OPTIONS="$2"
     shift # past argument
     shift # past value
     ;;
@@ -164,7 +169,7 @@ rm ${OUTPUT_DIR}/${SAMPLE}.fix.bam
 # Mark and remove duplicates
 mkdir -p ${REPORTS_DIR}
 mkdir -p ${REPORTS_DIR}/DUPLICATES
-picard MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${PICARD_MARKDUPLICATES_OPTIONS} -REMOVE_DUPLICATES $RM_DUP -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
+picard ${PICARD_MARKDUPLICATES_JAVA_OPTIONS} MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${PICARD_MARKDUPLICATES_OPTIONS} -REMOVE_DUPLICATES $RM_DUP -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
 rm ${OUTPUT_DIR}/${SAMPLE}.sort.bam
 
 # Create index

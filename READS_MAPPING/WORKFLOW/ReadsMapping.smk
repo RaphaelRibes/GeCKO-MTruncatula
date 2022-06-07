@@ -169,12 +169,13 @@ rule Mapping_PairedEndFastqs:
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
+        picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"],
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
         "--output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options \"{params.picard_markduplicates_options}\" "
-        "--samtools_index_options \"{params.samtools_index_options}\""
+        "--picard_markduplicates_java_options \"{params.picard_markduplicates_java_options}\" --samtools_index_options \"{params.samtools_index_options}\""
 
 
 rule Mapping_SingleEndFastqs:
@@ -192,12 +193,13 @@ rule Mapping_SingleEndFastqs:
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
+        picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"],
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
         "--output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options \"{params.picard_markduplicates_options}\" "
-        "--samtools_index_options \"{params.samtools_index_options}\""
+        "--picard_markduplicates_java_options \"{params.picard_markduplicates_java_options}\" --samtools_index_options \"{params.samtools_index_options}\""
 
 
 rule Stats_Bams:
@@ -218,7 +220,7 @@ rule Summarize_BamsReadsCount:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
     shell:
         "{scripts_dir}/summarize_stats.sh {end} --stats_folder {bams_stats_reports_dir} --output {output};"
-	"rm -r {bams_dir}/TMP"
+	    "rm -r {bams_dir}/TMP"
 
 
 
@@ -301,18 +303,22 @@ rule Extract_Reads:
         bams = bams_dir+"/{base}.bam",
         chain = subref_dir+"/zones.chain"
     output:
-        subbams_dir+"/{base}_zones.bam",
-        subbams_dir+"/{base}_zones.bam.bai"
+        bam = subbams_dir+"/{base}_zones.bam",
+        bai = subbams_dir+"/{base}_zones.bam.bai",
+        metrics = subbams_reports_dir+"/DUPLICATES/{base}.bam.metrics"
     conda:
         "ENVS/conda_tools.yml"
+    params:
+        picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
+        picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
     shell:
         "CrossMap.py bam -a {input.chain} {input.bams} {subbams_dir}/{wildcards.base}_zones;"
         "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai;"
         "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.sorted.bam -O {subbams_dir}/{wildcards.base}_zones.sortname.bam -SO queryname -VALIDATION_STRINGENCY SILENT;"
         "samtools fixmate {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam ;"
         "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.fix.bam -O {subbams_dir}/{wildcards.base}_zones.sortcoord.bam -SO coordinate -VALIDATION_STRINGENCY SILENT;"
-        "picard MarkDuplicates -I {subbams_dir}/{wildcards.base}_zones.sortcoord.bam -O {subbams_dir}/{wildcards.base}_zones.bam -VALIDATION_STRINGENCY SILENT -REMOVE_DUPLICATES FALSE -M {subbams_reports_dir}/DUPLICATES/{wildcards.base}.bam.metrics"
-        "samtools index {subbams_dir}/{wildcards.base}_zones.bam;"
+        "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {subbams_dir}/{wildcards.base}_zones.sortcoord.bam -O {output.bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES FALSE -M {output.metrics};"
+        "samtools index {output.bam};"
         "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.sortcoord.bam {subbams_dir}/{wildcards.base}_zones.fix.bam"
 
 
