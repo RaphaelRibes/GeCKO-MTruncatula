@@ -33,7 +33,7 @@ rule FinalTargets:
  # ----------------------------------------------------------------------------------------------- #
 
 
-rule Filters_Locus:
+rule Filter_Loci:
     input:
         vcf_raw
     output:
@@ -49,7 +49,7 @@ rule Filters_Locus:
         "grep -v '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf | sort -k1,1 -k2,2n >> {outputs_directory}/01_Locus_Filtered.recode.vcf"
 
 
-rule Filter_samples:
+rule Filter_Samples:
     input:
         outputs_directory+"/01_Locus_Filtered.recode.vcf"
     output:
@@ -76,7 +76,7 @@ rule Calculate_PopGenStat:
     shell:
         "{scripts_dir}/add_popGenStat2VCF.sh {input.SamplesLocus_Filtered} {input.header} {output}"
 
-rule Filters_PopGenStat:
+rule Filter_PopGenStat:
     input:
         outputs_directory+"/SamplesLocus_Filtered_withPopStat.recode.vcf"
     output:
@@ -91,7 +91,7 @@ rule Filters_PopGenStat:
         "bcftools filter -sFilterSmk -i '{params}' {input}.gz "
         "| bcftools view -f 'PASS' > {output};"
 
-rule BuildStatReport:
+rule Build_StatReport:
     input:
         vcf_raw = vcf_raw,
         vcf_Locus_Filtered = outputs_directory+"/01_Locus_Filtered.recode.vcf",
@@ -110,7 +110,7 @@ rule BuildStatReport:
         "bcftools stats {input.vcf_SamplesLocus_Filtered} > {VCF_reports_dir}/02_SamplesLocus_Filtered_vcf.stats;"
         "bcftools stats {input.vcf_PopGenStatsSamplesLocus_Filtered} > {VCF_reports_dir}/03_PopGenStatsSamplesLocus_Filtered_vcf.stats"
 
-rule BuildReport:
+rule Build_Report:
     input:
         VCF_reports_dir+"/00_variants_raw_vcf.stats",
         VCF_reports_dir+"/01_Locus_Filtered_vcf.stats",
