@@ -131,13 +131,13 @@ the workflow create a directory "VCF_FILTERING" in the "WORKFLOWS_OUTPUTS" direc
 - the vcf file after Variants filtering by **locus** : 01_Locus_Filtered.recode.vcf 
 - the vcf file after Variants filtering by **sample** : 02_SamplesLocus_Filtered.recode.vcf 
 - vcf.gz and vcf.gz.tbi files with population genetics statistics (F, He, ...)
-- the vcf file after Variants filtering by **population genetics statistics** : 03_PopGenStatsSamplesLocus_Filtered.vcf  
+- the vcf file after Variants filtering by **population genetics statistics** : 03_PopGenStatsSampleLocus_Filtered.vcf  
 And REPORTS directory cotained:
 - 00_variants_raw_vcf.stats: bcftools statistics on vcf file unfiltered. 
 - 01_Locus_Filtered_vcf.stats: bcftools statistics after filtering by **locus**
-- 02_SamplesLocus_Filtered_vcf.stats: bcftools statistics after filtering by **sample**
-- 03_PopGenStatsSamplesLocus_Filtered_vcf.stats: bcftools statistics after filtering by **population genetics statistics**
-- multiQC_VcfFiltering_report.html allowing to visualize informations/statistics variants after each filtering steps.
+- 02_SampleLocus_Filtered_vcf.stats: bcftools statistics after filtering by **sample**
+- 03_PopGenStatsSampleLocus_Filtered_vcf.stats: bcftools statistics after filtering by **population genetics statistics**
+- multiQC_VcfFiltering_report.html allowing to visualize informations/statistics variants after each filtering step.
 
 ## Tools
 This workflow uses the following tools: 
@@ -150,12 +150,12 @@ These tools are loaded in a CONDA environment from the conda-forge and bioconda 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
 
-| **Rule name**         | **Description**                                                                                            | **Tools**       |
-|:---------------------:|:----------------------------------------------------------------------------------------------------------:|:---------------:|
-| Filter_Loci           | Filtering variants by locus. Applied either at the genotype level (locus X sample) or at the locus level   | vcftools        |
-| Filter_Samples        | Filtering variants by sample. Removing samples that have too many loci with missing data.                  | vcftools        |
-| Calculate_PopGenStat  | Calculating population genetics statistics (e.g. FIS, He)                                                  |                 |
-| Filter_PopGenStat     | Filtering variants based on population genetics statistics (e.g. FIS, He)                                  | bcftools filter |
-| Build_StatReport      | Building statistics reports for unfiltered variants and each filtering step                                | bcftools stats  |
-| Build_Report          | Running MultiQC on unfiltered variants and each filtering step                                             | MultiQC         |
+| **Rule name**          | **Description**                                                                                            | **Tools**       |
+|:----------------------:|:----------------------------------------------------------------------------------------------------------:|:---------------:|
+| Filter_Loci            | Filtering variants by locus. Applied either at the genotype level (locus X sample) or at the locus level   | vcftools        |
+| Filter_Samples         | Filtering variants by sample. Removing samples that have too many loci with missing data.                  | vcftools        |
+| Calculate_PopGenStats  | Calculating population genetics statistics (e.g. FIS, He)                                                  |                 |
+| Filter_PopGenStats     | Filtering variants based on population genetics statistics (e.g. FIS, He)                                  | bcftools filter |
+| Build_StatsReport      | Building statistics reports for unfiltered variants and each filtering step                                | bcftools stats  |
+| Build_Report           | Running MultiQC on unfiltered variants and each filtering step                                             | MultiQC         |
 
