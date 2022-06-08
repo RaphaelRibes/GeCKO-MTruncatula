@@ -41,14 +41,22 @@ rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 
 if performDemultiplexing:
     demult_dir = outputs_directory+"/DEMULT"
-    demult_cutadapt_reports_dir = demult_dir+"/REPORTS/CUTADAPT_INFOS"
+    demult_dir_output = demult_dir
 else:
     demult_dir = user_demult_dir
+    demult_dir_output = outputs_directory+"/DEMULT"
+
+demult_reports_dir = demult_dir_output+"/REPORTS"
+demult_fastqc_reports_dir = demult_reports_dir+"/FASTQC"
+
+if performDemultiplexing:
+    demult_cutadapt_reports_dir = demult_reports_dir+"/CUTADAPT_INFOS"
+else:
     demult_cutadapt_reports_dir = ""
 
-demult_reports_dir = outputs_directory+"/DEMULT/REPORTS"
+
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
-demult_trim_reports_dir = outputs_directory+"/DEMULT_TRIM/REPORTS"
+demult_trim_reports_dir = demult_trim_dir+"/REPORTS"
 demult_trim_cutadapt_reports_dir = demult_trim_reports_dir+"/CUTADAPT_INFOS"
 demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/FASTQC"
 
@@ -67,12 +75,13 @@ rule FinalTargets:
         buildExpectedFiles(
         [rawdata_reports_dir+"/Reads_Count_RawData.txt",
         demult_reports_dir+"/Reads_Count_Demult.txt",
+        demult_reports_dir+"/multiQC_Demult_Report.html",
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt",
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
         outputs_directory+"/multiQC_DataCleaning_Report.html",
         outputs_directory+"/workflow_info.txt"],
 
-        [performDemultiplexing, True, True, True, True, True]
+        [performDemultiplexing, True, True, True, True, True, True]
         )
 
 
@@ -121,6 +130,7 @@ rule Demultiplex_RawFastqs:
         "--substitutions {params.substitutions};"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 
+
 rule CountReads_DemultFastqs:
     input:
         expand("{demult_dir}/{sample}.R1.fastq.gz", sample=samples, demult_dir=demult_dir),
@@ -130,6 +140,51 @@ rule CountReads_DemultFastqs:
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_dir} --output {output}"
 
+
+rule Fastqc_DemultFastqs:
+    input:
+        demult_dir+"/{base}.{R}.fastq.gz"
+    output:
+        demult_fastqc_reports_dir+"/{base}.{R}_fastqc.zip"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "fastqc -o {demult_fastqc_reports_dir} {input}"
+
+
+rule MultiQC_DemultFastqs:
+    input:
+        expand("{demult_fastqc_reports_dir}/{sample}.R1_fastqc.zip", sample=samples, demult_fastqc_reports_dir=demult_fastqc_reports_dir),
+        expand("{demult_fastqc_reports_dir}/{sample}.R2_fastqc.zip", sample=samples, demult_fastqc_reports_dir=demult_fastqc_reports_dir)
+    output:
+        demult_reports_dir+"/multiQC_Demult_Report.html"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "multiqc {input} -o {demult_reports_dir} -n multiQC_Demult_Report"
+
+
+rule Concatenate_DemultFastqs:
+    input:
+        fastqs_demult = expand("{demult_dir}/{sample}.{{R}}.fastq.gz", sample=samples, demult_dir=demult_dir),
+        demult_reads_count = demult_reports_dir+"/Reads_Count_Demult.txt" # necessary to exclude concatenated fastq from read count
+    output:
+        temp(demult_dir_output+"/"+fastq_raw_base+"_demultiplexed.{R}.fastq.gz")
+    shell:
+        "cat {input.fastqs_demult} > {output}"
+
+
+rule Fastqc_ConcatDemultFastqs:
+    input:
+        demult_dir_output+"/"+fastq_raw_base+"_demultiplexed.{R}.fastq.gz"
+    output:
+        demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed.{R}_fastqc.zip"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "fastqc -o {demult_fastqc_reports_dir} {input} ;"
+        "mv {demult_fastqc_reports_dir}/{fastq_raw_base}_demultiplexed.{wildcards.R}_fastqc.html {demult_fastqc_reports_dir}/All_Samples_Concat_demultiplexed.{wildcards.R}_fastqc.html ;"
+        "mv {demult_fastqc_reports_dir}/{fastq_raw_base}_demultiplexed.{wildcards.R}_fastqc.zip {demult_fastqc_reports_dir}/All_Samples_Concat_demultiplexed.{wildcards.R}_fastqc.zip"
 
 rule Trimming_DemultFastqs:
     input:
@@ -194,7 +249,8 @@ rule MultiQC_TrimmedFastqs:
 
 rule Concatenate_TrimmedFastqs:
     input:
-        fastqs_trim = expand("{demult_trim_dir}/{sample}_trimmed.{{R}}.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir)
+        fastqs_trim = expand("{demult_trim_dir}/{sample}_trimmed.{{R}}.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir),
+        demult_trim_reads_count = demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt" # necessary to exclude concatenated fastq from read count
     output:
         temp(demult_trim_dir+"/"+fastq_raw_base+"_trimmed.{R}.fastq.gz")
     shell:
@@ -219,10 +275,12 @@ rule MultiQC_Global:
         buildExpectedFiles(
         [rawdata_reports_dir+"/"+fastq_R1_raw_base+"_fastqc.zip",
         rawdata_reports_dir+"/"+fastq_R2_raw_base+"_fastqc.zip",
+        demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed.R1_fastqc.zip",
+        demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed.R2_fastqc.zip",
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R1_fastqc.zip",
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R2_fastqc.zip"],
 
-        [performDemultiplexing, performDemultiplexing, True, True]
+        [performDemultiplexing, performDemultiplexing, True, True, True, True]
         )
 
     output:
