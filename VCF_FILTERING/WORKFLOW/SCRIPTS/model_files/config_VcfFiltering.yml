@@ -1,0 +1,13 @@
+#### INPUT FILES ###
+
+VCF_FILE: ""
+
+### VCF FILTERING PARAMETERS ###
+
+VCFTOOLS_LOCUS_FILTERING_OPTIONS: ""
+
+## Variants filtering by samples. Remove samples that have too many locus with missing data (proportion)
+MAX_RATIO_NA_PER_SAMPLE: ""
+
+## Variants filtering by population genetics statistics 
+POPGENSTATS_FILTERING_OPTIONS: ""
