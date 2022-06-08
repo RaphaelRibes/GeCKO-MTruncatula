@@ -231,25 +231,25 @@ pkgs_dirs:
 ```
 
 ### 5/ Expected outputs  
-the workflow create a directory "DATA_CLEANING" in the "WORKFLOWS_OUTPUTS" directory. This directory contained:
+The workflow creates a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS" directory. It is organized as follow:
 - RAWDATA directory
     - REPORTS directory 
-        - html file(s) allowing to visualize the quality of the raw reads before cleanning (fastQC)
+        - html file(s) allowing to visualize the quality of the raw reads before cleaning (fastQC)
         - Reads_Count_RawData.txt containing the number of reads per initial fastq.gz file (illumina sequencer)
-- DEMULT directory (if the data is multiplexed using barcode)
-     - fastq.gz files by samples after demultiplexing (sample1.R1.fastq.gz + sample1.R2.fastq.gz ) and unassigned reads in "unknown" files.
+- DEMULT directory (if the data is multiplexed using barcodes)
+     - fastq.gz files per sample after demultiplexing (sample1.R1.fastq.gz + sample1.R2.fastq.gz) and unassigned reads in "unknown" files.
      - REPORTS directory
-         - Reads_Count_Demult.txt containing the number of reads per sample contains fastq.gz files after demultiplexing.
+         - Reads_Count_Demult.txt containing the number of reads per sample after demultiplexing.
          - CUTADAPT_INFOS directory 
              - demultiplexing_cutadapt.info containing cutadapt demultiplexing informations, for each barcode.
 - DEMULT_TRIM directory
-     - fastq.gz files by samples after trimming (sample1_trimmed.R1.fastq.gz + sample1_trimmed.R2.fastq.gz) 
+     - fastq.gz files per sample after trimming (sample1_trimmed.R1.fastq.gz + sample1_trimmed.R2.fastq.gz) 
      - REPORTS directory
-         - Reads_Count_DemultTrim.txt containing the number of reads per sample contains fastq.gz files after trimming.
-         - CUTADAPT_INFOS directory containing a cutadapt trimming report by sample
-         - FASTQC directory containing a html file (and the .zip file) by sample, to visualize the quality of reads after trimming (fastQC).
+         - Reads_Count_DemultTrim.txt containing the number of reads per sample after trimming.
+         - CUTADAPT_INFOS directory containing a cutadapt trimming report per sample
+         - FASTQC directory containing a html file (and the associated .zip file) per sample, to visualize the quality of reads after trimming (fastQC).
          - multiQC_Trimming_Report.html (and the directory associated) graphic report based on fastQC and cutadapt reports to visualize the quality of reads after trimming.
-- multiQC_DataCleaning_Overall_Report.html (and the directory associated) graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING. 
+- multiQC_DataCleaning_Report.html (and the assiociated directory) graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING. 
      
 
 ## Tools
