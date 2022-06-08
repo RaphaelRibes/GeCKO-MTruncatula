@@ -159,3 +159,8 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Build_StatsReport      | Building statistics reports for unfiltered variants and each filtering step                                | bcftools stats  |
 | Build_Report           | Running MultiQC on unfiltered variants and each filtering step                                             | MultiQC         |
 
+
+
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VcfFiltering_Workflow.jpg?raw=true)
+
+
