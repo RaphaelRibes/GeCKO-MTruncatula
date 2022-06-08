@@ -228,12 +228,13 @@ rule MultiQC_TrimmedFastqs:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report" # -c {scripts_dir}/config_multiQC_keepTrim.yaml
+        "multiqc {input} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report"
 
 
 rule Concatenate_TrimmedFastqs:
     input:
-        fastqs_trim = expand("{demult_trim_dir}/{sample}_trimmed.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir)
+        fastqs_trim = expand("{demult_trim_dir}/{sample}_trimmed.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir),
+        demult_trim_reads_count = demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt" # necessary to exclude concatenated fastq from read count
     output:
         temp(demult_trim_dir+"/"+fastq_raw_base+"_trimmed.fastq.gz")
     shell:
@@ -267,7 +268,7 @@ rule MultiQC_Global:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {outputs_directory} -c {scripts_dir}/config_multiQC_keepTrim.yaml -n multiQC_DataCleaning_Report" # 
+        "multiqc {input} -o {outputs_directory} -c {scripts_dir}/config_multiQC_keepTrim.yaml -n multiQC_DataCleaning_Report" #
 
 
 rule Metadata:

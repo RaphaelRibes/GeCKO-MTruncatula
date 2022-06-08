@@ -195,7 +195,8 @@ rule Trimming_DemultFastqs:
         demult_trim_dir+"/{base}_trimmed.R1.fastq.gz",
         demult_trim_dir+"/{base}_trimmed.R2.fastq.gz",
         demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info",
-        temp(demult_trim_cutadapt_reports_dir+"/tmp_trimming_cutadapt_{base}.info")
+        temp(demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.R1.info"),
+        temp(demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.R2.info")
     params:
         quality_cutoff = config["TRIMMING_QUAL"],
         minimum_length = config["TRIMMING_MIN_LENGTH"],
@@ -208,8 +209,9 @@ rule Trimming_DemultFastqs:
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapt_file {input.adapt_file} "
         "--cores {params.cores} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
         "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info;"
-        "sed 's/R1//g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info | sed 's/R2//g' > {demult_trim_cutadapt_reports_dir}/tmp_trimming_cutadapt_{wildcards.base}.info"
-
+        "sed 's/\.R2/_trimmed\.R1/g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info > {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.R1.info;"
+        "sed 's/\.R2/_trimmed\.R2/g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info > {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.R2.info"
+        # faire un script qui fait les 2 sed's + calculs des valeurs de %trimmed par cutadapt pour R1 et R2 séparement > permettre la fusion avec les valeurs R1 et R2 de fastqc
 
 rule CountReads_TrimmedFastqs:
     input:
@@ -234,7 +236,8 @@ rule Fastqc_TrimmedFastqs:
 
 rule MultiQC_TrimmedFastqs:
     input:
-        expand("{demult_trim_cutadapt_reports_dir}/tmp_trimming_cutadapt_{sample}.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
+        expand("{demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{sample}.R1.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
+        expand("{demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{sample}.R2.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
         expand("{demult_trim_fastqc_reports_dir}/{sample}_trimmed.R1_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir),
         expand("{demult_trim_fastqc_reports_dir}/{sample}_trimmed.R2_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir)
 
