@@ -13,7 +13,7 @@ from itertools import compress
 samples = pd.read_csv(config["ADAPT_FILE"], sep='\t', header=None).iloc[:, 0]
 fastq_R1_raw = config["FASTQ_R1"]
 fastq_R2_raw = config["FASTQ_R2"]
-#outputs_dirname = config["OUTPUTS_DIRNAME"]
+
 user_demult_dir = config["DEMULT_DIR"]
 
 if (len(user_demult_dir) == 0):
@@ -209,9 +209,8 @@ rule Trimming_DemultFastqs:
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapt_file {input.adapt_file} "
         "--cores {params.cores} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
         "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info;"
-        "sed 's/\.R2/_trimmed\.R1/g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info > {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.R1.info;"
-        "sed 's/\.R2/_trimmed\.R2/g' {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info > {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.R2.info"
-        # faire un script qui fait les 2 sed's + calculs des valeurs de %trimmed par cutadapt pour R1 et R2 séparement > permettre la fusion avec les valeurs R1 et R2 de fastqc
+        "{scripts_dir}/modify_cutadapt_info_for_multiQC_PE.sh {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info"
+
 
 rule CountReads_TrimmedFastqs:
     input:
