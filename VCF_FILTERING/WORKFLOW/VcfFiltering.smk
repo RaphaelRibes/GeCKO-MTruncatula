@@ -107,8 +107,8 @@ rule Build_StatsReports:
     shell:
         "bcftools stats {input.vcf_raw} > {VCF_reports_dir}/00_variants_raw_vcf.stats;"
         "bcftools stats {input.vcf_Locus_Filtered} > {VCF_reports_dir}/01_Locus_Filtered_vcf.stats;"
-        "bcftools stats {input.vcf_SamplesLocus_Filtered} > {VCF_reports_dir}/02_SampleLocus_Filtered_vcf.stats;"
-        "bcftools stats {input.vcf_PopGenStatSamplesLocus_Filtered} > {VCF_reports_dir}/03_PopGenStatsSampleLocus_Filtered_vcf.stats"
+        "bcftools stats {input.vcf_SampleLocus_Filtered} > {VCF_reports_dir}/02_SampleLocus_Filtered_vcf.stats;"
+        "bcftools stats {input.vcf_PopGenStatsSampleLocus_Filtered} > {VCF_reports_dir}/03_PopGenStatsSampleLocus_Filtered_vcf.stats"
 
 rule Build_Report:
     input:
