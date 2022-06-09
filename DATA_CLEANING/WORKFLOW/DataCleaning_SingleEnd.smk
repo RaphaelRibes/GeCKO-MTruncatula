@@ -146,13 +146,18 @@ rule Fastqc_DemultFastqs:
 
 rule MultiQC_DemultFastqs:
     input:
-        expand("{demult_fastqc_reports_dir}/{sample}_fastqc.zip", sample=samples, demult_fastqc_reports_dir=demult_fastqc_reports_dir)
+        fastqc = expand("{demult_fastqc_reports_dir}/{sample}_fastqc.zip", sample=samples, demult_fastqc_reports_dir=demult_fastqc_reports_dir),
+        nb_reads = demult_reports_dir+"/Reads_Count_Demult.txt"
     output:
-        demult_reports_dir+"/multiQC_Demult_Report.html"
+        demult_reports_dir+"/multiQC_Demult_Report.html",
+        temp(demult_reports_dir+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {demult_reports_dir} -n multiQC_Demult_Report"
+        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
+        "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_reports_dir};"
+        "multiqc {input.fastqc} -o {demult_reports_dir} -n multiQC_Demult_Report -c {demult_reports_dir}/config_multiQC.yaml"
+
 
 
 rule Concatenate_DemultFastqs:
@@ -221,14 +226,18 @@ rule Fastqc_TrimmedFastqs:
 
 rule MultiQC_TrimmedFastqs:
     input:
-        expand("{demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{sample}.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
-        expand("{demult_trim_fastqc_reports_dir}/{sample}_trimmed_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir)
+        cutadapt = expand("{demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{sample}.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
+        fastqc = expand("{demult_trim_fastqc_reports_dir}/{sample}_trimmed_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir),
+        nb_reads =  demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt"
     output:
-        demult_trim_reports_dir+"/multiQC_Trimming_Report.html"
+        demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
+        temp(demult_trim_reports_dir+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report"
+        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
+        "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_trim_reports_dir};"
+        "multiqc {input.cutadapt} {input.fastqc} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report -c {demult_trim_reports_dir}/config_multiQC.yaml"
 
 
 rule Concatenate_TrimmedFastqs:
@@ -264,11 +273,15 @@ rule MultiQC_Global:
         )
 
     output:
-        outputs_directory+"/multiQC_DataCleaning_Report.html"
+        outputs_directory+"/multiQC_DataCleaning_Report.html",
+        temp(outputs_directory+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {outputs_directory} -c {scripts_dir}/config_multiQC_keepTrim.yaml -n multiQC_DataCleaning_Report" #
+        "sum_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T}}' {demult_trim_reports_dir}/Reads_Count_DemultTrim.txt | sed 's/\..*//');"
+        "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_keepTrim.yaml --nb_reads ${{sum_nb_reads}} --output_dir {outputs_directory};"
+        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report -c {outputs_directory}/config_multiQC.yaml"
+
 
 
 rule Metadata:

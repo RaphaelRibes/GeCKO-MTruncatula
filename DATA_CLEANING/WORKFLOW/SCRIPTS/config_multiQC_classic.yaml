@@ -10,6 +10,8 @@ fn_clean_trim:
   - ".r"
   - "_val"
   - ".idxstats"
+  - "_trimmed"
+  - ".trimmed"
   - ".csv"
   - ".yaml"
   - ".yml"
