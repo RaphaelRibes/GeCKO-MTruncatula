@@ -5,7 +5,7 @@
 #### INPUT FILES ###
 
 ## Provide the VCF file to be filtered. The vcf need to be gzipped
-VCF_FILE: "/home/ardissonm/scratch/TEST_WORKFLOW/SNP_CALLING/WORKFLOWS_OUTPUTS/SNP_CALLING/GENOTPYE_GVCFS/variants.vcf.gz"
+VCF_FILE: "VCF/variants_calling.vcf.gz"
 
 ### VCF FILTERING PARAMETERS ###
 
