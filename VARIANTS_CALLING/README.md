@@ -4,17 +4,17 @@ This VARIANTS_CALLING workflow generates a vcf file from bam files obtained afte
 
 
 ### The VARIANTS_CALLING workflow's steps
-1) An index of the provided reference is created if it does not exist yet.
-2) A dictionary of the provided reference is created if it does not exist yet.
+1) An index of the provided reference is created if it does not exist yet
+2) A dictionary of the provided reference is created if it does not exist yet
 3) The list of chromosomes or contigs in the reference is created for the GenomicsDBImport step 
 4) Variants calling by sample is performed with the GATK HaplotypeCaller function
-5) A data base from variants calling by sample is generated with the GATK GenomicsDBImport function, and a list of the reference's chromosomes or contigs is created
+5) A database from variants calling by sample is generated with the GATK GenomicsDBImport function, and a list of the reference's chromosomes or contigs is created
 6) Variants calling for all samples (population) is performed with the GATK GenotypeGVCFs function, creating a single vcf file
 
 
 ## QUICK START
 
-To easily launch the workflow, use our runSnakemakeWorkflow.sh launcher:  
+To easily launch the workflow, use the runSnakemakeWorkflow.sh launcher:  
 ```./runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS```  
 
 Needed files:  
@@ -73,7 +73,7 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 
 
 #### *config_VariantsCalling.yml file:*  
-This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
+This file is used to pass all the information and tools parameters that will be used by the VARIANTS_CALLING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **GENERAL VARIABLES**  
 - *VARIANTS_CALLING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different variants calling parameters (different reference, mapping options...), provide a name for an extra folder to create in the VARIANTS_CALLING output folder. Otherwise leave blank ("").  
