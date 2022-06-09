@@ -24,7 +24,7 @@ Needed files:
 &nbsp;
 
 
-For example, if you need to launch the workflow on our example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
+For example, if you need to launch the workflow on our VCF example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
 ```./runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering.yml --jobs 20 --job-scheduler SLURM```  
 
 
@@ -44,13 +44,13 @@ For example, if you need to launch the workflow on our example dataset on a Slur
 
 ### 1/ Prepare your input data
 
-The input data is the .vcf file obtained after the variants calling (variants_calling.vcf.gz) and its associated index file (variants_calling.vcf.gz.tbi). 
+The input data is the .vcf file obtained after the variants calling step (variants_calling.vcf.gz) and its associated index file (variants_calling.vcf.gz.tbi). 
 
 
 ### 2/ Clone our GitHub repository
 
 The CAPTURE_SNAKEMAKE_WORKFLOWS folder must be fully copied in a workspace/storage of your choice.  
-For example, you can clone the our repository with:  
+For example, you can clone the repository with:  
 ```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```   
 
 
@@ -71,7 +71,7 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 
 
 #### *B/ The config_VcfFiltering.yml file:*  
-This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
+This file is used to pass all the information and tools parameters that will be used by the VCF_FILTERING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **INPUT FILES**  
 - *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variants calling file in zipped vcf format (.vcf.gz).
@@ -128,7 +128,7 @@ pkgs_dirs:
 
 
 ### 5/ Expected outputs  
-This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follow and should contain:  
+This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follow and contains:  
 
 |─── 01_Locus_Filtered.recode.vcf  
 |─── 02_SampleLocus_Filtered.recode.vcf  
