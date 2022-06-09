@@ -23,7 +23,8 @@ Needed files:
 
 &nbsp;
 
-For example, if you need to launch the workflow on our ... dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/... directory:  
+
+For example, if you need to launch the workflow on our example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
 ```./runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering.yml --jobs 20 --job-scheduler SLURM```  
 
 
