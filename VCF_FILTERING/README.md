@@ -43,7 +43,7 @@ For example, if you need to launch the workflow on our ... dataset on a Slurm jo
 
 ### 1/ Prepare your input data
 
-the input data is the .vcf file obtained after the variants calling ( variants.vcf.gz) and the associated index files (variants_calling.vcf.gz.tbi). 
+The input data is the .vcf file obtained after the variants calling (variants_calling.vcf.gz) and its associated index file (variants_calling.vcf.gz.tbi). 
 
 
 ### 2/ Clone our GitHub repository
@@ -59,7 +59,7 @@ The VCF_FILTERING workflow will need information about the dataset and the analy
 These information are provided through two files: *cluster_config_VcfFiltering.yml* and *config_VcfFiltering.yml*.  
 If you name them exactly as written above and place them in a folder named 'CONFIG', the bash launching script will detect them automatically. Otherwise, you will have to pass them as arguments with --config and --cluster-config (see [below](#4-launch-the-analysis) for details).
 
-#### *cluster_config_VcfFiltering.yml file:*
+#### *A/ The cluster_config_VcfFiltering.yml file:*
 This file will be needed if you run the workflow on a computer cluster and want Snakemake to submit jobs. You <ins>only need to modify the partitions or queues names</ins> to match those of your cluster. The first section of the file gives the default values for the job-scheduler's parameters that Snakemake should use for all its steps (or rules). The following sections correspond to specific Snakemake steps, with new parameters values to overwrite the defaults. If you want to assign a different partition/queue for a specific step that does not yet have its own section, you can create a new section for it, preceded by a comma:  
 
 	specificStepName:
@@ -69,7 +69,7 @@ You will find [the list of the steps names](#list-of-the-snakefile-rules) along 
 Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-config files for both in the EXAMPLE/CONFIG folder</ins>.  
 
 
-#### *config_VcfFiltering.yml file:*  
+#### *B/ The config_VcfFiltering.yml file:*  
 This file is used to pass all the information and tools parameters that will be used by the READS_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **INPUT FILES**  
