@@ -29,7 +29,7 @@ For example, if you need to launch the workflow on our ... dataset on a Slurm jo
 
 &nbsp;
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE\_PIPELINES\_SNAKEMAKE/blob/main/readme\_img/VcfFiltering\_4elements.png")
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VcfFiltering_4elements.png)
 
 
 ## How to use the VCF_FILTERING workflow
