@@ -1,3 +1,5 @@
+# see here for defaults : https://github.com/ewels/MultiQC/blob/master/multiqc/utils/config_defaults.yaml
+
 # These are removed after the above, only if sample names
 # start or end with this string. Again, removed in order.
 fn_clean_trim:
