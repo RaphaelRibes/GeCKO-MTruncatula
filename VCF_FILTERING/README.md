@@ -128,7 +128,7 @@ pkgs_dirs:
 
 
 ### 5/ Expected outputs  
-This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follow and contains:  
+This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
 
 |─── 01_Locus_Filtered.recode.vcf  
 |─── 02_SampleLocus_Filtered.recode.vcf  
