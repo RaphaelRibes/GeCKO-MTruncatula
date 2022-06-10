@@ -232,29 +232,32 @@ pkgs_dirs:
 
 ### 5/ Expected outputs  
 
+This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
+
 ![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_DataCleaning.png?raw=true)
 
 
+<ins>Description of the main files:</ins>  
+- *blip*:&nbsp;&nbsp;&nbsp;blop 
 
-The workflow creates a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS" directory. It is organized as follow:
-- RAWDATA directory
-    - REPORTS directory 
+**RAWDATA directory**  
+- REPORTS directory: fastQC output files and  
         - html file(s) allowing to visualize the quality of the raw reads before cleaning (fastQC)
         - Reads_Count_RawData.txt containing the number of reads per initial fastq.gz file (illumina sequencer)
-- DEMULT directory (if the data is multiplexed using barcodes)
+**DEMULT directory** (if the data is multiplexed using barcodes)
      - fastq.gz files per sample after demultiplexing (sample1.R1.fastq.gz + sample1.R2.fastq.gz) and unassigned reads in "unknown" files.
      - REPORTS directory
          - Reads_Count_Demult.txt containing the number of reads per sample after demultiplexing.
          - CUTADAPT_INFOS directory 
              - demultiplexing_cutadapt.info containing cutadapt demultiplexing informations, for each barcode.
-- DEMULT_TRIM directory
+**DEMULT_TRIM directory**
      - fastq.gz files per sample after trimming (sample1_trimmed.R1.fastq.gz + sample1_trimmed.R2.fastq.gz) 
      - REPORTS directory
          - Reads_Count_DemultTrim.txt containing the number of reads per sample after trimming.
          - CUTADAPT_INFOS directory containing a cutadapt trimming report per sample
          - FASTQC directory containing a html file (and the associated .zip file) per sample, to visualize the quality of reads after trimming (fastQC).
          - multiQC_Trimming_Report.html (and the directory associated) graphic report based on fastQC and cutadapt reports to visualize the quality of reads after trimming.
-- multiQC_DataCleaning_Report.html (and the assiociated directory) graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING. 
+- *multiQC_DataCleaning_Report.html (and the assiociated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING. 
      
 
 ## Tools
