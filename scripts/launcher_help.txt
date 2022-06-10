@@ -46,15 +46,15 @@ $ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataClean
 
 
 MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):
---workflow-path [...]: the path to the directory you cloned from GitHub (PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS)
---workflow [...]: the name of the workflow you want to run. Current existing options are 'DataCleaning' and 'ReadsMapping'
+--workflow-path [...]: the path to the directory you cloned from GitHub (PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS
+--workflow [...]: the name of the workflow you want to run. Current existing options are 'DataCleaning', 'ReadsMapping', 'VariantsCalling' and 'VcfFiltering'
 
 CONFIGURATION PARAMETERS:
 --job-scheduler [...]: name of the job scheduler that is installed on your cluster. Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will run without submitting any job and any parallelization.
 --cluster-config [...]: path to the cluster config file. If omitted, this script will look for a cluster_config_WorkflowName.yml file (eg: cluster_config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).
 --config-file [...]: path to the workflow's config file. If omitted, this script will look for a config_WorkflowName.yml file (eg: config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from.
 
-EXTRA OPTIONS FOR --run-with-conda:
+USEFUL EXTRA OPTIONS:
 --jobs [int]: the maximum number of jobs that can be run in parallel (default: 1)
 --printshellcmds: to print the shell commands run by Snakemake for each step
 --latency-wait [int]: the number of seconds Snakemake will wait after the end of a task to look for the expected output files (default: 20).
