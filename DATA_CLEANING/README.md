@@ -240,7 +240,7 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 
 <ins>Description of the main files:</ins>  
 
-- *multiQC_DataCleaning_Report.html (and the assiociated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING.  
+- *multiQC_DataCleaning_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING.  
 
 **RAWDATA/REPORTS directory**  
 - *html file(s)*:&nbsp;&nbsp;&nbsp;Graphic representation of the quality of the raw reads before cleaning (fastQC)  
