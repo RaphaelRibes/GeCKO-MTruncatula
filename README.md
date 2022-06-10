@@ -77,10 +77,10 @@ The launcher's default behavior is to run the workflow, but other actions can be
 
 #### MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):  
 **--workflow-path [...]**&nbsp;&nbsp;&nbsp;*the path to the directory you cloned from GitHub*  
-If the directory was cloned from GitHub, it should end with /CAPTURE_SNAKEMAKE_WORKFLOWS)  
+If the directory was cloned from GitHub, it should end with /CAPTURE_SNAKEMAKE_WORKFLOWS  
 
 **--workflow [...]**&nbsp;&nbsp;&nbsp;*name of the workflow you want to run*  
-Current existing options are 'DataCleaning' and 'ReadsMapping'  
+Current existing options are 'DataCleaning', 'ReadsMapping', 'VariantsCalling' and 'VcfFiltering'  
 
 &nbsp;
 
@@ -96,7 +96,7 @@ If omitted, this script will look for a config_WorkflowName.yml file (eg: config
 
 &nbsp;
 
-#### EXTRA OPTIONS FOR --run-with-conda:  
+#### USEFUL EXTRA OPTIONS:  
 **--jobs [int]**&nbsp;&nbsp;&nbsp;*maximum number of jobs that can be run in parallel (default: 1)*  
 
 **--printshellcmds**&nbsp;&nbsp;&nbsp;*print the shell commands run by Snakemake for each step*  
