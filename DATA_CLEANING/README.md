@@ -231,6 +231,11 @@ pkgs_dirs:
 ```
 
 ### 5/ Expected outputs  
+
+![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_DataCleaning.png?raw=true)
+
+
+
 The workflow creates a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS" directory. It is organized as follow:
 - RAWDATA directory
     - REPORTS directory 
