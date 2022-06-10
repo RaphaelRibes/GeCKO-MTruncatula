@@ -117,7 +117,7 @@ This file is used to pass all the information and tools parameters that will be 
 **DEMULTIPLEXING PARAMETERS** (mandatory if the raw fastq files are multiplexed, otherwise leave blank: "")  
 - *DEMULT_CORES:*&nbsp;&nbsp;&nbsp;Number of cores to be allocated on your cluster for the demultiplexing step with Cutadapt (will be passed to the "--cores" Cutadapt parameter)  
 - *DEMULT_SUBSTITUTIONS:*&nbsp;&nbsp;&nbsp;Fraction of authorized substitutions per barcode (tag). Example: to allow 1 substitution for an 8bp barcode, use '0.15'. (will be passed to the "--substitutions" Cutadapt parameter)  
-- *DEMULT_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;Number of CPUs to allocate for each demultiplexing task. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.  
+- *DEMULT_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;Number of CPUs to allocate for each demultiplexing task. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number (set to 0 if working with demultiplexed data).  
 
 
 **TRIMMING PARAMETERS** (mandatory)  
@@ -133,7 +133,7 @@ This file is used to pass all the information and tools parameters that will be 
 Expected variables differ for paired-end and single-end data: if PAIRED_END is set to TRUE, both FASTQ_R1 and FASTQ_R2 are expected. If PAIRED_END is set to FALSE, only FASTQ is expected.  
 
 **Demultiplex or multiplexed data**  
-Some variables must be left blank (*variable: ""*), depending on whether the raw data is multiplexed or demultiplexed. In case of multiplexed data, DEMULT_DIR must be left blank. In case of demultiplexed data, FASTQ, FASTQ_R1, FASTQ_R2, BARCODE_FILE, DEMULT_THREADS and DEMULT_SUBSTITUTIONS must be left blank.
+Some variables must be left blank (*variable: ""*), depending on whether the raw data is multiplexed or demultiplexed. In case of multiplexed data, DEMULT_DIR must be left blank. In case of demultiplexed data, FASTQ, FASTQ_R1, FASTQ_R2, BARCODE_FILE, DEMULT_CORES and DEMULT_SUBSTITUTIONS must be left blank.
 
 <ins>Examples of config_DataCleaning.yml files adapted to each case can be found in the EXAMPLE/CONFIG folder</ins>.  
 
