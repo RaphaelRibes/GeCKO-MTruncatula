@@ -234,7 +234,7 @@ pkgs_dirs:
 
 This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_DataCleaning.png?raw=true)
+<img src="https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_DataCleaning.png" width="600"/>
 
 &nbsp;
 
