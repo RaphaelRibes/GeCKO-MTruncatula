@@ -29,7 +29,7 @@ if config["REMOVE_DUP"]:
 else:
     rm_dup = "FALSE"
 
-ref = config["REFERENCE"]
+ref = os.path.abspath(config["REFERENCE"])
 mapping_subfolder = ""
 if (len(config["MAPPING_SUBFOLDER"]) > 0):
     mapping_subfolder = "/"+config["MAPPING_SUBFOLDER"]
