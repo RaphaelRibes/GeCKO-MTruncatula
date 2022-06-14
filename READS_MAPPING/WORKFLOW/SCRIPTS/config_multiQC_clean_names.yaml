@@ -28,4 +28,3 @@ fn_clean_trim:
   - ".hist"
   - ".phased"
   - "stats_"
-  
