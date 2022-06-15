@@ -152,6 +152,7 @@ This workflow uses the following tools:
 - [picard v2.26.10](https://broadinstitute.github.io/picard/)
 - [seaborn v0.11.2](https://seaborn.pydata.org/)
 - [matplotlib v3.5.1](https://matplotlib.org/)
+- [pandas v1.3.5](https://pandas.pydata.org/)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
 - [crossmap v0.6.3](http://crossmap.sourceforge.net/)
 
