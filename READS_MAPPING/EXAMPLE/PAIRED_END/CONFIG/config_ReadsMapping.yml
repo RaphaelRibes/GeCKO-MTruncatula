@@ -5,13 +5,14 @@ MAPPING_SUBFOLDER: ""
 
 
 ### INPUT FILES ###
-# Provide the directory containing the trimmed fastq files to be mapped
+# Path(s) to the directory or directories containing the trimmed fastq files to be mapped. To provide several directories, separate them with spaces.
+    # If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files. 
 TRIM_DIRS: "DEMULT_TRIM"
 
-# Reference genome
+# Path to the reference file in fasta format (must end with .fa, .fas or .fasta).
 REFERENCE: "../REFERENCE/Reference.fasta"
 
-# Targeted zones bed file (optionnal)
+# Path to the bed file listing targeted zones. Optionnal: can be left blank ("").
 BED: "../REFERENCE/Reference_targeted_zones.bed"
 
 
