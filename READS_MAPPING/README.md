@@ -150,6 +150,8 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 
 - *multiQC_DataCleaning_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING.  
 
+[WIP...]
+
 
 ## Tools
 This workflow uses the following tools: 
