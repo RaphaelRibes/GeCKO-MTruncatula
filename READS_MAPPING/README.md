@@ -139,7 +139,16 @@ pkgs_dirs:
 
 
 ### 5/ Expected outputs  
-...work in progress...
+
+This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
+
+<img src="https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_ReadsMapping.png" width="600"/>
+
+&nbsp;
+
+<ins>Description of the main files:</ins>  
+
+- *multiQC_DataCleaning_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING.  
 
 
 ## Tools
