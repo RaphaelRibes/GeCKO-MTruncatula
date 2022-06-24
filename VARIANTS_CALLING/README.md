@@ -126,8 +126,13 @@ pkgs_dirs:
 ```
 
 ### 5/ Expected outputs  
-This workflow will create a "VARIANTS_CALLING" folder, placed in the "WORKFLOWS_OUTPUTS" folder.  
-In VARIANTS_CALLING/ you will find 3 folders corresponding to the outputs of the 3 variants calling steps performed with GATK:  
+
+This workflow will create a "VARIANTS_CALLING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
+
+<img src="https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_VariantsCalling.png" width="600"/>
+
+&nbsp;
+
 - HAPLOTYPE_CALLER : It will contain two files by sample, the vcf.gz file (sample.g.vcf.gz) and the associated index file (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).  
 - GENOMICS_DB_IMPORT: It will contain several directories containing the GATK data base and associated files (.json, .vcf and . tdb)  
 - GENOTYPE_GVCFS: It will contain the final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)  
