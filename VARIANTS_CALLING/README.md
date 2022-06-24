@@ -131,7 +131,7 @@ This workflow will create a "VARIANTS_CALLING" directory in the "WORKFLOWS_OUTPU
 
 <img src="https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_VariantsCalling.png" width="600"/>
 
-&nbsp;
+
 
 <ins>Description of the main files:</ins> 
 - in the HAPLOTYPE_CALLER folder: two files by sample, the vcf.gz file (sample.g.vcf.gz) and the associated index file (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).  
