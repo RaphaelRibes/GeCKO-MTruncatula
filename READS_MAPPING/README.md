@@ -147,26 +147,32 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 
 
 <ins>Description of the main files:</ins>  
+
 **BAMS directory**  
 - *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads mapped to the provided reference along with the associated index file (.bai).  
 
 **BAMS/REPORTS directory**  
-
+- *nb_reads_per_sample.tsv*:&nbsp;&nbsp;&nbsp;Number of reads per sample after mapping  
+- *DUPLICATES directory*:&nbsp;&nbsp;&nbsp;MarkDuplicates reports (one per sample)  
+- *STATS directory*:&nbsp;&nbsp;&nbsp;Samtools stats reports (one per sample)  
+- *multiQC_ReadsMapping_Bams_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on stats reports to visualize the number and percentages of mapped reads  
 
 **EXTRACTED_BAMS/BAMS_ZONES directory** (if a bed file was provided and CREATE_SUB_BAMS was set to TRUE)  
-- *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads that mapped to the zones provided in the bed file, with coordinates given in the corresponding sub-reference.  
+- *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads that mapped to the zones provided in the bed file, with coordinates given in the corresponding sub-reference  
 
 **EXTRACTED_BAMS/BAMS_ZONES/REPORTS directory** (if a bed file was provided and CREATE_SUB_BAMS was set to TRUE)  
+- *nb_reads_per_sample.tsv*:&nbsp;&nbsp;&nbsp;Number of reads per sample after mapping and extraction  
+- *DUPLICATES directory*:&nbsp;&nbsp;&nbsp;MarkDuplicates reports (one per sample)  
+- *STATS directory*:&nbsp;&nbsp;&nbsp;Samtools stats reports (one per sample)  
+- *multiQC_ReadsMapping_SubBams_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on stats reports to visualize the number and percentages of mapped reads in sub-bams  
 
 **EXTRACTED_BAMS/REFERENCE_ZONES directory** (if a bed file was provided and CREATE_SUB_BAMS was set to TRUE)  
-- *Reference_zones.fasta*:&nbsp;&nbsp;&nbsp;The sub-reference, corresponding to the extraction from the reference of the zones provided in the bed file.  
+- *Reference_zones.fasta*:&nbsp;&nbsp;&nbsp;The sub-reference, corresponding to the extraction of the zones provided in the bed file  
 
 **ZONES_STATS directory** (if a bed file was provided) 
-- *mean_depth_per_zone_per_sample.tsv*:&nbsp;&nbsp;&nbsp;.... 
-- *mean_depth_per_zone_per_sample_heatmap.pdf*:&nbsp;&nbsp;&nbsp;....  
+- *mean_depth_per_zone_per_sample.tsv*:&nbsp;&nbsp;&nbsp;For each zone and each sample, the mean depth per zone (number of reads per base) 
+- *mean_depth_per_zone_per_sample_heatmap.pdf*:&nbsp;&nbsp;&nbsp;The heatmap representing the mean depth per zone per sample
 
-
-[WIP...]
 
 
 ## Tools
