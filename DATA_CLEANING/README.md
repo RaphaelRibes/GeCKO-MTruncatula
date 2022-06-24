@@ -174,6 +174,7 @@ Illumina adapters and index i5/i7 sequences are available in [this document](htt
 
 
 **Example for paired-end sequencing:**
+> ⚠ *The following figure is a generic representation of Illumina adapters. Some elements may differ or not be present in your data depending on your libraries preparation protocol. To properly trim your reads, you will need to know what type of adapter was used to prepare your libraries, and provide adapters sequences for each sample accordingly.*  
 
 ![fragment_structure](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/DataCleaning_FragmentStructure.jpg)
 
