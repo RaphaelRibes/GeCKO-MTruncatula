@@ -207,6 +207,23 @@ Two-column file specifying the samples names (column 1) and technical sequences 
 	Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA  
 	```
 
+&nbsp;
+
+
+> 📌 **_TIP_**  
+> The Cutadapt software will assume 3' adapters to be ligated to the 3' end of the reads, and 5' adapters to be ligated to the 5' end of the reads. When such a sequence shows up in a read, not only is the adapter sequence trimmed, but also the sequence following it (if there is any).  
+> This means that it is sufficient to provide only the beginning of the technical sequences to be removed for each sample.  
+> For example, in case of UDI Truseq adapters where barcodes (b5 and b7) are absent from the construction, you can provide the first part of the adapters (instead of the whole sequences), which is the same for all samples:  
+> 	```
+>	Tc2208a	AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT  
+>	Tc2235a	AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT  
+>	Tc2249a	AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC	AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT  
+>	```
+>
+
+&nbsp;
+
+
 ### 4/ Launch the analysis
 
 **Environment**  
