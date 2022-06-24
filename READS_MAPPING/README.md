@@ -144,7 +144,7 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 
 <img src="https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_ReadsMapping.png" width="600"/>
 
-&nbsp;
+
 
 <ins>Description of the main files:</ins>  
 
