@@ -69,11 +69,12 @@ Input sequences can be multiplexed:
 - single-end sequences (SE): you must provide one fastq file named in the format \*name\*.fastq.gz  
 - paired-end sequences (PE): you must provide two fastq files named in the format \*name\*_R1.fastq.gz and \*name\*_R2.fastq.gz  
 
-or already demultiplexed:  
+or already demultiplexed<sup>1</sup>:  
 - single-end sequences (SE): you must provide one fastq file per sample named in the format \*sample\*.fastq.gz  
 - paired-end sequences (PE): you must provide two fastq files per sample named in the format \*sample\*.R1.fastq.gz and \*sample\*.R2.fastq.gz  
 The demultiplexed sequences must be placed together in a folder to be specified in the config_file.txt.  
 
+<sup>1</sup> *either because there was no multiplexing involved, or because the demultiplexing was performed by the sequencer (as it is the case e.g. if your libraries were multiplexed with UDI adapters)*
 
 ### 2/ Clone our GitHub repository
 
