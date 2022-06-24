@@ -147,8 +147,24 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 
 
 <ins>Description of the main files:</ins>  
+**BAMS directory**  
+- *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads mapped to the provided reference along with the associated index file (.bai).  
 
-- *multiQC_DataCleaning_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING.  
+**BAMS/REPORTS directory**  
+
+
+**EXTRACTED_BAMS/BAMS_ZONES directory** (if a bed file was provided and CREATE_SUB_BAMS was set to TRUE)  
+- *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads that mapped to the zones provided in the bed file, with coordinates given in the corresponding sub-reference.  
+
+**EXTRACTED_BAMS/BAMS_ZONES/REPORTS directory** (if a bed file was provided and CREATE_SUB_BAMS was set to TRUE)  
+
+**EXTRACTED_BAMS/REFERENCE_ZONES directory** (if a bed file was provided and CREATE_SUB_BAMS was set to TRUE)  
+- *Reference_zones.fasta*:&nbsp;&nbsp;&nbsp;The sub-reference, corresponding to the extraction from the reference of the zones provided in the bed file.  
+
+**ZONES_STATS directory** (if a bed file was provided) 
+- *mean_depth_per_zone_per_sample.tsv*:&nbsp;&nbsp;&nbsp;.... 
+- *mean_depth_per_zone_per_sample_heatmap.pdf*:&nbsp;&nbsp;&nbsp;....  
+
 
 [WIP...]
 
