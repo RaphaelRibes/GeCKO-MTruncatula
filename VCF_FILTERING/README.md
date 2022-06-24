@@ -130,25 +130,7 @@ pkgs_dirs:
 ### 5/ Expected outputs  
 This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
 
-|─── 01_Locus_Filtered.recode.vcf  
-|─── 02_SampleLocus_Filtered.recode.vcf  
-|─── samples_to_remove.list  
-|─── SampleLocus_Filtered_withPopStats.recode.vcf.gz  
-|─── SampleLocus_Filtered_withPopStats.recode.vcf.gz.tbi  
-|─── 03_PopGenStatsSampleLocus_Filtered.vcf  
-|─── **REPORTS**  
-|    |─── 00_variants_raw_vcf.stats  
-|    |─── 01_Locus_Filtered_vcf.stats  
-|    |─── 02_SampleLocus_Filtered_vcf.stats  
-|    |─── 03_PopGenStatsSampleLocus_Filtered_vcf.stats  
-|    |─── multiQC_VcfFiltering_report.html  
-|    |─── **multiQC_VcfFiltering_report_data**  
-|    |    |─── multiqc_bcftools_stats.txt  
-|    |    |─── multiqc_data.json  
-|    |    |─── multiqc_general_stats.txt  
-|    |    |─── multiqc.log  
-|    |    |─── multiqc_sources.txt  
-|─── workflow_info.txt  
+<img src="https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_VcfFiltering.png" width="600"/>
 
 &nbsp;
 
