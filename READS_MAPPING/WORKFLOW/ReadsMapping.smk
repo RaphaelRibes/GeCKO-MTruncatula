@@ -302,6 +302,7 @@ rule Create_ChainFile:
         "awk '{{if(NR==FNR){{lg[$1]=$2}} else{{ print \"chain 4900 \"$1\" \"lg[$1]\" + \"$2\" \"$3\" \"$1\"_\"$2\"_\"$3\" \"$3-$2+1\" + 1 \"$3-$2+1\"\\n\"$3-$2+1 }}}}' {subref_dir}/ref.fasta.fai {input.bed} > {subref_dir}/zones.chain ;"
         "rm {subref_dir}/ref.fasta*"
 
+
 rule Extract_Reads:
     input:
         bams = bams_dir+"/{base}.bam",
@@ -316,14 +317,15 @@ rule Extract_Reads:
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
     shell:
-        "CrossMap.py bam -a {input.chain} {input.bams} {subbams_dir}/{wildcards.base}_zones;"
+        "samtools view -b -F 0x800 -F 0x100 {input.bams} > {subbams_dir}/{wildcards.base}_primary.bam ;"
+        "CrossMap.py bam -a {input.chain} {subbams_dir}/{wildcards.base}_primary.bam {subbams_dir}/{wildcards.base}_zones;"
         "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam.bai;"
         "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.sorted.bam -O {subbams_dir}/{wildcards.base}_zones.sortname.bam -SO queryname -VALIDATION_STRINGENCY SILENT;"
         "samtools fixmate {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.fix.bam ;"
         "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {subbams_dir}/{wildcards.base}_zones.fix.bam -O {subbams_dir}/{wildcards.base}_zones.sortcoord.bam -SO coordinate -VALIDATION_STRINGENCY SILENT;"
         "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {subbams_dir}/{wildcards.base}_zones.sortcoord.bam -O {output.bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES FALSE -M {output.metrics};"
         "samtools index {output.bam};"
-        "rm {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.sortcoord.bam {subbams_dir}/{wildcards.base}_zones.fix.bam"
+        "rm {subbams_dir}/{wildcards.base}_primary.bam {subbams_dir}/{wildcards.base}_zones.sorted.bam {subbams_dir}/{wildcards.base}_zones.sortname.bam {subbams_dir}/{wildcards.base}_zones.sortcoord.bam {subbams_dir}/{wildcards.base}_zones.fix.bam"
 
 
 rule Stats_Subbams:
