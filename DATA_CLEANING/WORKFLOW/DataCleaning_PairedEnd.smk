@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import pandas as pd
 import os,sys
 from itertools import compress
 
@@ -10,7 +9,11 @@ from itertools import compress
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Variables from config file
-samples = pd.read_csv(config["ADAPT_FILE"], sep='\t', header=None).iloc[:, 0]
+samples = []
+with open(config["ADAPT_FILE"], "r") as file:
+    for row in file:
+        samples.append(row.split("\t")[0])
+
 fastq_R1_raw = config["FASTQ_R1"]
 fastq_R2_raw = config["FASTQ_R2"]
 
