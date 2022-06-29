@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-import pandas as pd
 import os,sys
 from itertools import compress
-import gzip
 
 #singularity: "docker://condaforge/mambaforge"
 
