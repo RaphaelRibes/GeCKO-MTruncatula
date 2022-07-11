@@ -41,6 +41,7 @@ working_directory = os.getcwd()
 ### Define outputs subfolders
 outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING"
 rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
+rawdata_fastqc_reports_dir = rawdata_reports_dir+"/FASTQC"
 
 if performDemultiplexing:
     demult_dir = outputs_directory+"/DEMULT"
@@ -95,11 +96,11 @@ rule Fastqc_RawFastqs:
     input:
         raw_data_dir+"/{base}.fastq.gz"
     output:
-        rawdata_reports_dir+"/{base}_fastqc.zip"
+        rawdata_fastqc_reports_dir+"/{base}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "fastqc -o {rawdata_reports_dir} {input}"
+        "fastqc -o {rawdata_fastqc_reports_dir} {input}"
 
 
 rule CountReads_RawFastqs:
@@ -285,8 +286,8 @@ rule Fastqc_ConcatTrimmedFastqs:
 rule MultiQC_Global:
     input:
         buildExpectedFiles(
-        [rawdata_reports_dir+"/"+fastq_R1_raw_base+"_fastqc.zip",
-        rawdata_reports_dir+"/"+fastq_R2_raw_base+"_fastqc.zip",
+        [rawdata_fastqc_reports_dir+"/"+fastq_R1_raw_base+"_fastqc.zip",
+        rawdata_fastqc_reports_dir+"/"+fastq_R2_raw_base+"_fastqc.zip",
         demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed.R1_fastqc.zip",
         demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed.R2_fastqc.zip",
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.R1_fastqc.zip",
