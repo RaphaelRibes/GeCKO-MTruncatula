@@ -262,7 +262,7 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 - *multiQC_DataCleaning_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data and trimming fastQC reports to visualize the impact of DATA_CLEANING.  
 
 **RAWDATA/REPORTS directory**  
-- *FASTQC directory*:&nbsp;&nbsp;&nbsp;Graphic representation of the quality of the raw reads before cleaning (fastQC)  
+- *FASTQC directory*:&nbsp;&nbsp;&nbsp;Graphics representations (R1 /R2) of the quality of the raw reads before cleaning (fastQC)  
 - *Reads_Count_RawData.txt*:&nbsp;&nbsp;&nbsp;Number of reads per initial fastq.gz file (illumina sequencer)  
 
 **DEMULT directory** (if the data is multiplexed using barcodes)  
