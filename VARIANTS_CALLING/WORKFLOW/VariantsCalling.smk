@@ -14,7 +14,11 @@ if (len(config["VARIANT_CALLING_SUBFOLDER"]) > 0):
     vc_subfolder = "/"+config["VARIANT_CALLING_SUBFOLDER"]
 
 ### Samples list
-bams_list = pd.read_csv(config["BAMS_LIST"], header=None).iloc[:, 0]
+bams_list = []
+with open(config["BAMS_LIST"], "r") as file:
+    for row in file:
+        bams_list.append(row.rstrip("\n"))
+
 bams_list_dict = {}
 samples = []
 for f in bams_list:
