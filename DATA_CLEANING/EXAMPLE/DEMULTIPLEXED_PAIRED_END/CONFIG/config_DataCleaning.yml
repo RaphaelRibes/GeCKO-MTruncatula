@@ -18,23 +18,23 @@ FASTQ_R2: ""
 # File extension format: PairedEnd > sampleX.R1.fastq.gz and sampleX.R2.fastq.gz / SingleEnd > sampleX.fastq.gz 
 DEMULT_DIR: "DEMULT"
 
-# Mandatory files:
-# Complete this field if the raw fastq files are multiplexed (sequencing Single_end or paired_end), if not leave blank: ""
-BARCODE_FILE: ""
 # Complete this field in all cases
 ADAPT_FILE: "CONFIG/adapter_file_MEL.txt"
+
+# Complete this field if the raw fastq files are multiplexed (sequencing Single_end or paired_end), if not leave blank: ""
+BARCODE_FILE: ""
 
 
 ### DEMULTIPLEXING PARAMETERS ###
 
-# Complete these two fields if the raw fastq files is multiplexed, if not leave blank: ""
-DEMULT_CORES: ""
+# Complete these three fields if the raw fastq files is multiplexed, if not leave blank: ""
 DEMULT_CPUS_PER_TASK: 0
-DEMULT_SUBSTITUTIONS: ""
+DEMULT_CORES: ""             # Cutadapt parameter "--cores"
+DEMULT_SUBSTITUTIONS: ""     # Cutadapt parameter "--substitutions"
 
 
 ### TRIMMING PARAMETERS ###
-TRIMMING_CORES: 1
 TRIMMING_CPUS_PER_TASK: 1
-TRIMMING_QUAL: 30
-TRIMMING_MIN_LENGTH: 36
+TRIMMING_CORES: 1           # Cutadapt parameter "--cores"
+TRIMMING_QUAL: 30           # Cutadapt parameter "--quality_cutoff"
+TRIMMING_MIN_LENGTH: 36     # Cutadapt parameter "--minimum_length"
