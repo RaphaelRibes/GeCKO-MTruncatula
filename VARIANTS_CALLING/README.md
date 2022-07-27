@@ -134,9 +134,17 @@ This workflow will create a "VARIANTS_CALLING" directory in the "WORKFLOWS_OUTPU
 
 
 <ins>Description of the main files:</ins> 
-- in the HAPLOTYPE_CALLER folder: two files by sample, the vcf.gz file (sample.g.vcf.gz) and the associated index file (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).  
-- in the GENOMICS_DB_IMPORT folder: several directories containing the GATK data base and associated files (.json, .vcf and . tdb)  
-- in the GENOTYPE_GVCFS folder: the final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)  
+
+- *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
+
+**HAPLOTYPE_CALLER directory**  
+Two files by sample, the vcf.gz file (sample.g.vcf.gz) and the associated index file (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).  
+
+**GENOMICS_DB_IMPORT directory** 
+Several directories containing the GATK data base and associated files (.json, .vcf and . tdb)  
+
+**GENOTYPE_GVCFS directory** 
+The final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)  
 
 
 ## Tools
