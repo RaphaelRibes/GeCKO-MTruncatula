@@ -27,7 +27,7 @@ Needed files:
 &nbsp;
 
 For example, if you need to launch the workflow on our BAMS example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```./runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VariantsCalling.yml --cluster-config CONFIG/cluster_config_VariantsCalling.yml --jobs 20 --job-scheduler SLURM```  
+```../../runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path ../../../CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VariantsCalling.yml --cluster-config CONFIG/cluster_config_VariantsCalling_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
