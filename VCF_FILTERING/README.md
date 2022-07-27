@@ -135,17 +135,21 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 
 
 <ins>Description of the main files:</ins>  
+
 - *01_Locus_Filtered.recode.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **locus**  
-- *02_SampleLocus_Filtered.recode.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **sample**  
-- *SampleLocus_Filtered_withPopStats.recode.vcf.gz(.tbi)*:&nbsp;&nbsp;&nbsp;the vcf.gz and vcf.gz.tbi files with population genetics statistics (F, He, ...)  
+- *02_SampleLocus_Filtered.recode.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **sample** 
+- *samples_to_remove.list*:&nbsp;&nbsp;&nbsp;list of samples that were deleted in step 02 (filtering by sample)
+- *SampleLocus_Filtered_withPopStats.recode.vcf*:&nbsp;&nbsp;&nbsp;the intermediate vcf file corresponding to variants filtered after step 02 (locus + sample), with population genetics statistics (F, He, ...) by variants.  
 - *03_PopGenStatsSampleLocus_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **population genetics statistics**  
+- *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
+
+**REPORTS directory** 
 - *00_variants_raw_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics of the unfiltered vcf file 
 - *01_Locus_Filtered_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **locus**
 - *02_SampleLocus_Filtered_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **sample**
 - *03_PopGenStatsSampleLocus_Filtered_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **population genetics statistics**
 - *multiQC_VcfFiltering_report.html*:&nbsp;&nbsp;&nbsp;graphic representation of the variants informations/statistics after each filtering step
 
-&nbsp;
 
 ## Tools
 This workflow uses the following tools: 
