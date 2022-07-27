@@ -7,7 +7,7 @@ HERE=$PWD
 workflow_help=$(grep -e "^--workflow " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
 config_file_help=$(grep -e "^--config-file " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
 cluster_config_help=$(grep -e "^--cluster-config " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
-
+conda_env_path_help=$(grep -e "^--conda-env-path: " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
 
 ### 1/ WORKFLOW FOLDER AND ITS CONTENTS ###
 
@@ -262,4 +262,20 @@ if ! [[ -x "$(command -v conda)" ]] ; then
   awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/scripts/launcher_help.txt
   echo -e "\nExiting.\n"
   exit 1
+fi
+
+
+### 8/ CONDA environment path
+
+if [[ ! -z "$CONDA_ENV_PATH" && ! -d "$CONDA_ENV_PATH" ]] ; then
+    echo -e "\nERROR: the path passed to the --conda-env-path parameter is not valid. Please make sure the folder exists and the path is correctly written."
+		echo "As a reminder:"
+		echo $conda_env_path_help
+		echo -e "\nExiting.\n"
+    exit 1
+fi
+
+if [[ ! -z "$CONDA_ENV_PATH" ]] ; then
+  CONDA_ENV_PATH=$(absolutePath $CONDA_ENV_PATH)
+  CONDA_ENV_PATH_CMD="--conda-prefix $CONDA_ENV_PATH"
 fi
