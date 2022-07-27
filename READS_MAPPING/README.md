@@ -148,6 +148,11 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 
 <ins>Description of the main files:</ins>  
 
+- *bams_list.txt*:&nbsp;&nbsp;&nbsp;File containing the list of paths to bams files
+- *reference_chr_size.txt*:&nbsp;&nbsp;&nbsp;File containing the name and size of each chromosome in the genomic reference (just if "CREATE_SUB_BAMS: TRUE")
+- *subbams_list.txt*:&nbsp;&nbsp;&nbsp;File containing the list of paths to subbams files (just if "CREATE_SUB_BAMS: TRUE")
+- *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
+
 **BAMS directory**  
 - *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads mapped to the provided reference along with the associated index file (.bai).  
 
