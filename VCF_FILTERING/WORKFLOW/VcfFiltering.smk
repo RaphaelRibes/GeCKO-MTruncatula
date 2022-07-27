@@ -123,6 +123,7 @@ rule Build_Report:
     shell:
         "multiqc {input} -c {scripts_dir}/config_multiQC_deleteRecode.yaml -o {VCF_reports_dir} -n multiQC_VcfFiltering_report"
 
+
 rule Metadata:
     output:
         outputs_directory+"/workflow_info.txt"
@@ -132,6 +133,5 @@ rule Metadata:
         "echo -e \"${{Date}}\\n\" >> {outputs_directory}/workflow_info.txt;"
         "echo -e \"Workflow:\" >> {outputs_directory}/workflow_info.txt;"
         "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VCF_FILTERING\\n\" >> {outputs_directory}/workflow_info.txt;"
-        "echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt;"
         "cd {snakefile_dir};"
-        "git rev-parse HEAD >> {outputs_directory}/workflow_info.txt"
+        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt; git rev-parse HEAD >> {outputs_directory}/workflow_info.txt ; fi"
