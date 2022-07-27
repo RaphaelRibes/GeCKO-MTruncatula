@@ -1,7 +1,7 @@
 __default__:
     cpus-per-task: 1
     partition: agap_normal
-    job-name: SC.{rule}
+    job-name: VC.{rule}
     output: Logs_VariantsCallingWorkflow/{rule}.%j.out.txt
     error: Logs_VariantsCallingWorkflow/{rule}.%j.err.txt
     
