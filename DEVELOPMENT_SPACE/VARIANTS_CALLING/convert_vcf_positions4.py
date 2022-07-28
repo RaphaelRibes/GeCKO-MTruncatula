@@ -12,30 +12,17 @@ vcf_converted = args.vcf_converted
 
 
 
+chr_size = pd.read_csv('reference_chr_size.txt', sep="\t",header=None)
+k = chr_size.iloc[0]
+L = chr_size.iloc[1]
+
 flag = True
-chroms = [
-    ('chr1A', 609493238),
-    ('chr1B', 712626289),
-    ('chr2A', 788782410),
-    ('chr2B', 825750385),
-    ('chr3A', 767616973),
-    ('chr3B', 865950040),
-    ('chr4A', 751837965),
-    ('chr4B', 684047826),
-    ('chr5A', 715386202),
-    ('chr5B', 726095352),
-    ('chr6A', 633698003),
-    ('chr6B', 724204431),
-    ('chr7A', 747227478),
-    ('chr7B', 777835607)]
-
-
 with open(vcf, 'r', errors="replace") as f1:
     with open(vcf_converted, 'w') as f2:
         for line in f1:
             if flag and re.match('##source', line):
                 flag = False
-                for k, L in chroms:
+                for k, L in chr_size:
                     f2.write(f'##contig=<ID={k},length={L}>\n')
             if not re.match('##contig', line): f2.write(line)
             if re.match('#CHROM', line):
@@ -53,6 +40,7 @@ with open(vcf, 'r', errors="replace") as f1:
             bits[1] = str(pos)
             df.loc[i] = bits
             i = i+1
+            #f2.write('\t'.join(bits) + '\n')
         df2 = df.sort_values(by=['#CHROM','POS'], ascending = (True, True))
         df2.reset_index(inplace=True, drop=True)
         for row in range(len(df2)):
