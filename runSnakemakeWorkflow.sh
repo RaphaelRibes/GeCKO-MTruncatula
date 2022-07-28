@@ -22,7 +22,8 @@ DRYRUN="FALSE"
 DIAGRAM="FALSE"
 REPORT="FALSE"
 USE_CONDA="TRUE"
-
+CONDA_ENV_PATH=""
+CONDA_ENV_PATH_CMD=""
 
 ### ARGUMENTS
 POSITIONAL=()
@@ -91,6 +92,11 @@ do
     ;;
     --job-scheduler)
     JOB_SCHEDULER="$2"
+    shift
+    shift
+    ;;
+    --conda-env-path)
+    CONDA_ENV_PATH="$2"
     shift
     shift
     ;;
@@ -237,7 +243,7 @@ fi
 if [ "${USE_CONDA}" = "TRUE" ] ; then
   mkdir -p Logs_${WORKFLOW}Workflow
 
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command

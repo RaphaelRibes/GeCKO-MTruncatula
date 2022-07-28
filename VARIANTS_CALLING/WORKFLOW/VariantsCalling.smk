@@ -156,6 +156,6 @@ rule Metadata:
         "echo -e \"${{Date}}\\n\" >> {vc_dir}/workflow_info.txt;"
         "echo -e \"Workflow:\" >> {vc_dir}/workflow_info.txt;"
         "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VARIANTS_CALLING\\n\" >> {vc_dir}/workflow_info.txt;"
-        "echo -e \"Commit ID:\" >> {vc_dir}/workflow_info.txt;"
         "cd {snakefile_dir};"
-        "git rev-parse HEAD >> {vc_dir}/workflow_info.txt"
+        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {vc_dir}/workflow_info.txt; git rev-parse HEAD >> {vc_dir}/workflow_info.txt ; fi"
+
