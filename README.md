@@ -112,7 +112,7 @@ You should increase it if Snakemake returns an error such as:
 **--forceall**&nbsp;&nbsp;&nbsp;*run all the workflow's steps, even if output files already exist (and overwrite them)*  
 Without this argument, Snakemake's default behavior is to only run the steps for which output files are missing.  
 
-**--conda-prefix**&nbsp;&nbsp;&nbsp;*the path to a folder of your choice where conda will build the workflow's environment*  
+**--conda-env-path**&nbsp;&nbsp;&nbsp;*the path to a folder of your choice where conda will build the workflow's environment*  
 If specified, the environment will only be built once in this folder (the first time you run the workflow). Otherwise, a new environment will be built in every new folder the workflow is launched from.
 
 &nbsp;
