@@ -14,7 +14,7 @@ outfile=$3
         if (geno == "./.") miss += 1; \
         else if (geno == "0/0" ||geno == "0|0") {A1A1 += 1; A1+=2;} \
         else if (geno == "1/1" || geno == "1|1") {A2A2 += 1; A2+=2;} \
-        else if (geno == "0/1" || geno == "1/0" || geno == "0|1" || geno == "1|0") {A1A2 += 1; A1+=1;A2+=2;}\
+        else if (geno == "0/1" || geno == "1/0" || geno == "0|1" || geno == "1|0") {A1A2 += 1; A1+=1;A2+=1;}\
         else biAllelic=0;
       }\
       if( (biAllelic==1) && (A1>0) && (A2>0))
