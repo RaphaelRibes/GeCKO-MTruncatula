@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import pandas as pd
 import os,sys
 from itertools import compress
 
@@ -37,25 +36,25 @@ rule Filter_Loci:
     input:
         vcf_raw
     output:
-        outputs_directory+"/01_Locus_Filtered.recode.vcf",
-        temp(outputs_directory+"/tmp_Locus_Filtered.recode.vcf")
+        tmp_Locus_Filtering = temp(outputs_directory+"/tmp_Locus_Filtered.recode.vcf"),
+        Locus_Filtered = outputs_directory+"/01_Locus_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"
     params:
         config["VCFTOOLS_LOCUS_FILTERING_OPTIONS"]
     shell:
         "vcftools --gzvcf {input} {params} --recode --recode-INFO-all --out {outputs_directory}/tmp_Locus_Filtered;"
-        "grep '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf > {outputs_directory}/01_Locus_Filtered.recode.vcf;"
-        "grep -v '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf | sort -k1,1 -k2,2n >> {outputs_directory}/01_Locus_Filtered.recode.vcf"
+        "grep '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf > {output.Locus_Filtered};"
+        "grep -v '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf | sort -k1,1 -k2,2n >> {output.Locus_Filtered}"
 
 
 rule Filter_Samples:
     input:
-        outputs_directory+"/01_Locus_Filtered.recode.vcf"
+        outputs_directory+"/01_Locus_Filtered.vcf"
     output:
         out_imiss = temp(outputs_directory+"/SampleFilter.imiss"),
         samples_to_remove = outputs_directory+"/samples_to_remove.list",
-        SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.recode.vcf"
+        SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"
     params:
@@ -63,52 +62,58 @@ rule Filter_Samples:
     shell:
         "vcftools --vcf {input} --missing-indv --out {outputs_directory}/SampleFilter;"
         "awk -v max_pc_NA={params} '{{if($5>max_pc_NA){{print $0}}}}' {output.out_imiss} | cut -f1 > {output.samples_to_remove};"
-        "vcftools --vcf {input} --remove {output.samples_to_remove} --recode --recode-INFO-all --out {outputs_directory}/02_SampleLocus_Filtered"
+        "vcftools --vcf {input} --remove {output.samples_to_remove} --recode --recode-INFO-all --out {outputs_directory}/02_SampleLocus_Filtered;"
+        "mv {outputs_directory}/02_SampleLocus_Filtered.recode.vcf {output.SampleLocus_Filtered}"
+
 
 rule Calculate_PopGenStats:
     input:
-        SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.recode.vcf",
+        SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf",
         header = scripts_dir+"/vcf_extra_info_header.txt"
     output:
-        outputs_directory+"/SampleLocus_Filtered_withPopStats.recode.vcf"
+        outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf"
     conda:
         "ENVS/conda_tools.yml"
     shell:
         "{scripts_dir}/add_popGenStats2VCF.sh {input.SampleLocus_Filtered} {input.header} {output}"
 
+
 rule Filter_PopGenStats:
     input:
-        outputs_directory+"/SampleLocus_Filtered_withPopStats.recode.vcf"
+        outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf"
     output:
-        outputs_directory+"/03_PopGenStatsSampleLocus_Filtered.vcf"
+        temp_SampleLocus_gz = temp(outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf.gz"),
+        temp_SampleLocus_csi = temp(outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf.gz.csi"),
+        PopGenStatsSampleLocus_Filtered = outputs_directory+"/03_PopGenStatsSampleLocus_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"
     params:
         config["POPGENSTATS_FILTERING_OPTIONS"]
     shell:
-        "bgzip {input};"
-        "tabix {input}.gz;"
-        "bcftools filter -sFilterSmk -i '{params}' {input}.gz "
-        "| bcftools view -f 'PASS' > {output};"
+        "bgzip -c {input} > {output.temp_SampleLocus_gz};"
+        "tabix --csi {output.temp_SampleLocus_gz};"
+        "bcftools filter -sFilterSmk -i '{params}' {output.temp_SampleLocus_gz} | bcftools view -f 'PASS' > {output.PopGenStatsSampleLocus_Filtered}"
+
 
 rule Build_StatsReports:
     input:
         vcf_raw = vcf_raw,
-        vcf_Locus_Filtered = outputs_directory+"/01_Locus_Filtered.recode.vcf",
-        vcf_SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.recode.vcf",
+        vcf_Locus_Filtered = outputs_directory+"/01_Locus_Filtered.vcf",
+        vcf_SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf",
         vcf_PopGenStatsSampleLocus_Filtered = outputs_directory+"/03_PopGenStatsSampleLocus_Filtered.vcf"
     output:
-        VCF_reports_dir+"/00_variants_raw_vcf.stats",
-        VCF_reports_dir+"/01_Locus_Filtered_vcf.stats",
-        VCF_reports_dir+"/02_SampleLocus_Filtered_vcf.stats",
-        VCF_reports_dir+"/03_PopGenStatsSampleLocus_Filtered_vcf.stats"
+        stats_raw = VCF_reports_dir+"/00_variants_raw_vcf.stats",
+        stats_Locus = VCF_reports_dir+"/01_Locus_Filtered_vcf.stats",
+        stats_SampleLocus = VCF_reports_dir+"/02_SampleLocus_Filtered_vcf.stats",
+        stats_PopGenStatsSampleLocus = VCF_reports_dir+"/03_PopGenStatsSampleLocus_Filtered_vcf.stats"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "bcftools stats {input.vcf_raw} > {VCF_reports_dir}/00_variants_raw_vcf.stats;"
-        "bcftools stats {input.vcf_Locus_Filtered} > {VCF_reports_dir}/01_Locus_Filtered_vcf.stats;"
-        "bcftools stats {input.vcf_SampleLocus_Filtered} > {VCF_reports_dir}/02_SampleLocus_Filtered_vcf.stats;"
-        "bcftools stats {input.vcf_PopGenStatsSampleLocus_Filtered} > {VCF_reports_dir}/03_PopGenStatsSampleLocus_Filtered_vcf.stats"
+        "bcftools stats {input.vcf_raw} > {output.stats_raw};"
+        "bcftools stats {input.vcf_Locus_Filtered} > {output.stats_Locus};"
+        "bcftools stats {input.vcf_SampleLocus_Filtered} > {output.stats_SampleLocus};"
+        "bcftools stats {input.vcf_PopGenStatsSampleLocus_Filtered} > {output.stats_PopGenStatsSampleLocus}"
+
 
 rule Build_Report:
     input:
@@ -133,5 +138,6 @@ rule Metadata:
         "echo -e \"${{Date}}\\n\" >> {outputs_directory}/workflow_info.txt;"
         "echo -e \"Workflow:\" >> {outputs_directory}/workflow_info.txt;"
         "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VCF_FILTERING\\n\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt;"
         "cd {snakefile_dir};"
-        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt; git rev-parse HEAD >> {outputs_directory}/workflow_info.txt ; fi"
+        "git rev-parse HEAD >> {outputs_directory}/workflow_info.txt"
