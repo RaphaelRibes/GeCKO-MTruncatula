@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import pandas as pd
 import os,sys
 from itertools import compress
 
@@ -25,6 +26,12 @@ for f in bams_list:
     bams_list_dict[sample_name] = str(f)
     samples.append(sample_name)
 
+reference_chr_size = config["GENOMIC_REFERENCE_CHR_SIZE"]
+
+if (len(reference_chr_size) > 0):
+    performConvertPositions = True
+else:
+    performConvertPositions = False
 
 
 ### remove .fa .fas .fasta file extension
@@ -43,14 +50,25 @@ HaplotypeCaller_dir = vc_dir+"/HAPLOTYPE_CALLER"
 GenomicsDBImport_dir = vc_dir+"/GENOMICS_DB_IMPORT"
 GenotypeGVCFs_dir = vc_dir+"/GENOTYPE_GVCFS"
 
+
+def buildExpectedFiles(filesNames, isExpected):
+    expectedFiles = list(compress(filesNames, isExpected))
+    return(expectedFiles)
+
+
  # ----------------------------------------------------------------------------------------------- #
 
 ### PIPELINE ###
 
 rule FinalTargets:
     input:
-        GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
-        vc_dir+"/workflow_info.txt"
+        buildExpectedFiles(
+        [GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
+        GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz",
+        vc_dir+"/workflow_info.txt"],
+
+        [ not performConvertPositions, performConvertPositions, True ]
+        )
 
 
 rule Index_Reference:
@@ -92,7 +110,7 @@ rule HaplotypeCaller:
         dict = reference_base+".dict"
     output:
         vcf = HaplotypeCaller_dir+"/{base}.g.vcf.gz",
-#        tbi = HaplotypeCaller_dir+"/{base}.g.vcf.gz.tbi"
+        tbi = HaplotypeCaller_dir+"/{base}.g.vcf.gz.tbi"
     params:
         java_options = config["GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS"],
         extra_options = config["GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS"]
@@ -135,7 +153,8 @@ rule GenotypeGVCFs:
         reference = reference,
         DB = GenomicsDBImport_dir
     output:
-        GVCF = GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
+        vcf_gz = GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
+        vcf_gz_tbi = GenotypeGVCFs_dir+"/variants_calling.vcf.gz.tbi",
         tmp_GVCF = temp(directory(GenotypeGVCFs_dir+"/tmp_dir_GVCF"))
     params:
         java_options = config["GATK_GENOTYPE_GVCFS_JAVA_OPTIONS"],
@@ -144,7 +163,26 @@ rule GenotypeGVCFs:
         "ENVS/conda_tools.yml"
     shell:
         "mkdir -p {output.tmp_GVCF};"
-        "gatk --java-options \"{params.java_options}\" GenotypeGVCFs --reference {input.reference} --variant gendb://{input.DB} {params.extra_options} --output {output.GVCF} --tmp-dir {output.tmp_GVCF}"
+        "gatk --java-options \"{params.java_options}\" GenotypeGVCFs --reference {input.reference} --variant gendb://{input.DB} {params.extra_options} --output {output.vcf_gz} --tmp-dir {output.tmp_GVCF}"
+
+
+rule ConvertPositions:
+    input:
+        vcf_gz = GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
+        vcf_gz_tbi = GenotypeGVCFs_dir+"/variants_calling.vcf.gz.tbi",
+        reference_chr_size = reference_chr_size
+    output:
+        vcf = temp(GenotypeGVCFs_dir+"/variants_calling.vcf"),
+        vcf_converted_gz = GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz",
+        vcf_converted_gz_csi = GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz.csi"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "gunzip {input.vcf_gz};"
+        "python3 {scripts_dir}/convert_vcf_positions.py --vcf {output.vcf} --chr_size {input.reference_chr_size} --vcf_converted {GenotypeGVCFs_dir}/variants_calling_converted.vcf;"
+        "bgzip {GenotypeGVCFs_dir}/variants_calling_converted.vcf;"
+        "tabix --csi {output.vcf_converted_gz};"
+        "rm {input.vcf_gz_tbi}"
 
 
 rule Metadata:
@@ -158,4 +196,3 @@ rule Metadata:
         "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VARIANTS_CALLING\\n\" >> {vc_dir}/workflow_info.txt;"
         "cd {snakefile_dir};"
         "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {vc_dir}/workflow_info.txt; git rev-parse HEAD >> {vc_dir}/workflow_info.txt ; fi"
-
