@@ -88,7 +88,7 @@ rule Filter_PopGenStats:
     conda:
         "ENVS/conda_tools.yml"
     params:
-        config["POPGENSTATS_FILTERING_OPTIONS"]
+        config["BCFTOOLS_FILTERING_OPTIONS"]
     shell:
         "bgzip -c {input} > {output.temp_SampleLocus_gz};"
         "tabix --csi {output.temp_SampleLocus_gz};"
