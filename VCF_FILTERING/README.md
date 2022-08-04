@@ -81,19 +81,19 @@ This file is used to pass all the information and tools parameters that will be 
 - *VCFTOOLS_LOCUS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; The list of filtering options to pass to [vcftools](http://vcftools.sourceforge.net/man_latest.html) (e.g. "--minDP 5 --minQ 30 --max-missing 0.5"). Be careful to provide them between quotes. 
 - *MAX_RATIO_NA_PER_SAMPLE:*&nbsp;&nbsp;&nbsp; The maximum proportion of allowed missing data per sample ("1": no filtering).
 - *BCFTOOLS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; The list of filtering options to pass to the 'bcftools filter' command. 13 parameters are calculated for each locus and can be used for filtering: 
-SNP = Variant with at least 2 mononucleotide alleles (Type=Integer)
-INDEL = Variant with at least 2 alleles of different lengths (Type=Integer)
-nbGS = Number of genotyped samples (Type=Integer)
-pNA = Frequency of missing genotypes for this site (Type=Float)
-nbG = Number of genotypes (Type=Integer)
-nbAll = Number of alleles (Type=Integer)
-All = list of alleles (Type=String)
-AllFreq = Frequency of all alleles (Type=Float)
-MinHomo = Number of the least frequent homozygous genotype (Type=Integer)
-MAF = Minor allele frequency (Type=Float)
-MAFb = Minor base frequency (Type=Float)
-He = Nei expected Heterozygosity (Type=Float)
-Fis = Inbreeding coefficient (Type=Float)
+	- SNP = Variant with at least 2 mononucleotide alleles (Type=Integer)
+	- INDEL = Variant with at least 2 alleles of different lengths (Type=Integer)
+	- nbGS = Number of genotyped samples (Type=Integer)
+	- pNA = Frequency of missing genotypes for this site (Type=Float)
+	- nbG = Number of genotypes (Type=Integer)
+	- nbAll = Number of alleles (Type=Integer)
+	- All = list of alleles (Type=String)
+	- AllFreq = Frequency of all alleles (Type=Float)
+	- MinHomo = Number of the least frequent homozygous genotype (Type=Integer)
+	- MAF = Minor allele frequency (Type=Float)
+	- MAFb = Minor base frequency (Type=Float)
+	- He = Nei expected Heterozygosity (Type=Float)
+	- Fis = Inbreeding coefficient (Type=Float)
 
   e.g. : "INFO/SNP==1 & INFO/INDEL==0 & INFO/nbAll=2 & INFO/pNA<0.5 & MinHomo>=1 & Fis>=0.8"
   Be careful to use quotes when passing this parameter.
