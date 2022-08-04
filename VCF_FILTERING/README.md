@@ -80,18 +80,22 @@ This file is used to pass all the information and tools parameters that will be 
 
 - *VCFTOOLS_LOCUS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; The list of filtering options to pass to [vcftools](http://vcftools.sourceforge.net/man_latest.html) (e.g. "--minDP 5 --minQ 30 --max-missing 0.5"). Be careful to provide them between quotes. 
 - *MAX_RATIO_NA_PER_SAMPLE:*&nbsp;&nbsp;&nbsp; The maximum proportion of allowed missing data per sample ("1": no filtering).
-- *POPGENSTATS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; The list of filtering options to pass to the 'bcftools filter' command. 9 parameters are calculated for each locus and can be used for filtering: 
-	- Number of allele 1 homozygous genotypes ('A1A1')
-	- Number of allele 2 homozygous genotypes ('A2A2')
-	- Number of heterozygous genotypes ('A1A2')
-	- Allele 1 frequency ('p')
-	- Allele 2 frequency ('q')
-	- Expected heterozygozity ('He')
-	- Heterozygote deficit ('F')
-	- Number of genotyped samples ('nbG')
-	- NA proportion ('pcNA') (between 0 and 1)  
+- *BCFTOOLS_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; The list of filtering options to pass to the 'bcftools filter' command. 13 parameters are calculated for each locus and can be used for filtering: 
+SNP = Variant with at least 2 mononucleotide alleles (Type=Integer)
+INDEL = Variant with at least 2 alleles of different lengths (Type=Integer)
+nbGS = Number of genotyped samples (Type=Integer)
+pNA = Frequency of missing genotypes for this site (Type=Float)
+nbG = Number of genotypes (Type=Integer)
+nbAll = Number of alleles (Type=Integer)
+All = list of alleles (Type=String)
+AllFreq = Frequency of all alleles (Type=Float)
+MinHomo = Number of the least frequent homozygous genotype (Type=Integer)
+MAF = Minor allele frequency (Type=Float)
+MAFb = Minor base frequency (Type=Float)
+He = Nei expected Heterozygosity (Type=Float)
+Fis = Inbreeding coefficient (Type=Float)
 
-  e.g. : "INFO/F>=0.8 & INFO/A1A1>0 & INFO/A2A2>0 & INFO/pcNA<0.5"  
+  e.g. : "INFO/SNP==1 & INFO/INDEL==0 & INFO/nbAll=2 & INFO/pNA<0.5 & MinHomo>=1 & Fis>=0.8"
   Be careful to use quotes when passing this parameter.
 
 &nbsp;
@@ -136,10 +140,10 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 
 <ins>Description of the main files:</ins>  
 
-- *01_Locus_Filtered.recode.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **locus**  
-- *02_SampleLocus_Filtered.recode.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **sample** 
+- *01_Locus_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **locus**  
+- *02_SampleLocus_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **sample** 
 - *samples_to_remove.list*:&nbsp;&nbsp;&nbsp;list of samples that were deleted in step 02 (filtering by sample)
-- *SampleLocus_Filtered_withPopStats.recode.vcf*:&nbsp;&nbsp;&nbsp;the intermediate vcf file corresponding to variants filtered after step 02 (locus + sample), with population genetics statistics (F, He, ...) by variants.  
+- *02_SampleLocus_Filtered_withPopGenStats.vcf*:&nbsp;&nbsp;&nbsp;the intermediate vcf file corresponding to variants filtered after step 02 (locus + sample), with population genetics statistics (Fis, He, ...) by variants.  
 - *03_PopGenStatsSampleLocus_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **population genetics statistics**  
 - *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
 
