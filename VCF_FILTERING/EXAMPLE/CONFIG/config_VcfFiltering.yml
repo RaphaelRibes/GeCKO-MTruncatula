@@ -27,8 +27,8 @@ BCFTOOLS_FILTERING_OPTIONS: "INFO/SNP==1 & INFO/INDEL==0 & INFO/nbAll=2 & INFO/p
 
 
 
-##INFO=<ID=SNP,Number=0,Type=Flag,Description="Variant with at least 2 mononucleotide alleles">
-##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Variant with at least 2 alleles of different lengths">
+##INFO=<ID=SNP,Number=0,Type=Integer,Description="Variant with at least 2 mononucleotide alleles">
+##INFO=<ID=INDEL,Number=0,Type=Integer,Description="Variant with at least 2 alleles of different lengths">
 ##INFO=<ID=nbGS,Number=1,Type=Integer,Description="Number of genotyped samples">
 ##INFO=<ID=pNA,Number=1,Type=Float,Description="Frequency of missing genotypes for this site">
 ##INFO=<ID=nbG,Number=1,Type=Integer,Description="Number of genotypes">
