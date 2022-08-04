@@ -1,11 +1,10 @@
 ### GENERAL VARIABLES ###
 
 
-
 #### INPUT FILES ###
 
 ## Provide the VCF file to be filtered. The vcf need to be gzipped
-VCF_FILE: "VCF/variants_calling.vcf.gz"
+VCF_FILE: "VCF/variants_calling_converted.vcf.gz"
 
 ### VCF FILTERING PARAMETERS ###
 
@@ -24,4 +23,20 @@ VCFTOOLS_LOCUS_FILTERING_OPTIONS: "--minGQ 15.0 --minDP 5 --minQ 30 --max-missin
 MAX_RATIO_NA_PER_SAMPLE: "1"
 
 ## Variants filtering by population genetics statistics 
-BCFTOOLS_FILTERING_OPTIONS: "INFO/F>=0.8 & INFO/A1A1>0 & INFO/A2A2>0 & INFO/pcNA<0.5"
+BCFTOOLS_FILTERING_OPTIONS: "INFO/SNP==1 & INFO/INDEL==0 & INFO/nbAll=2 & INFO/pNA<0.5 & MinHomo>=1 & Fis>=0.8"
+
+
+
+##INFO=<ID=SNP,Number=0,Type=Flag,Description="Variant with at least 2 mononucleotide alleles">
+##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Variant with at least 2 alleles of different lengths">
+##INFO=<ID=nbGS,Number=1,Type=Integer,Description="Number of genotyped samples">
+##INFO=<ID=pNA,Number=1,Type=Float,Description="Frequency of missing genotypes for this site">
+##INFO=<ID=nbG,Number=1,Type=Integer,Description="Number of genotypes">
+##INFO=<ID=nbAll,Number=1,Type=Integer,Description="Number of alleles">
+##INFO=<ID=All,Number=.,Type=String,Description="list of alleles">
+##INFO=<ID=AllFreq,Number=.,Type=Float,Description="Frequency of all alleles">
+##INFO=<ID=MinHomo,Number=1,Type=Integer,Description="Number of the least frequent homozygous genotype">
+##INFO=<ID=MAF,Number=1,Type=Float,Description="Minor allele frequency">
+##INFO=<ID=MAFb,Number=1,Type=Float,Description="Minor base frequency">
+##INFO=<ID=He,Number=1,Type=Float,Description="Nei expected Heterozygosity">
+##INFO=<ID=Fis,Number=1,Type=Float,Description="Inbreeding coefficient">
