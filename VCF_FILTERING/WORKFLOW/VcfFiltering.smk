@@ -71,7 +71,7 @@ rule Calculate_PopGenStats:
         SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf",
         header = scripts_dir+"/vcf_extra_info_header.txt"
     output:
-        outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf"
+        outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf"
     conda:
         "ENVS/conda_tools.yml"
     shell:
@@ -80,10 +80,10 @@ rule Calculate_PopGenStats:
 
 rule Filter_PopGenStats:
     input:
-        outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf"
+        outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf"
     output:
-        temp_SampleLocus_gz = temp(outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf.gz"),
-        temp_SampleLocus_csi = temp(outputs_directory+"/SampleLocus_Filtered_withPopStats.vcf.gz.csi"),
+        temp_SampleLocus_gz = temp(outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf.gz"),
+        temp_SampleLocus_csi = temp(outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf.gz.csi"),
         PopGenStatsSampleLocus_Filtered = outputs_directory+"/03_PopGenStatsSampleLocus_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"
@@ -126,7 +126,7 @@ rule Build_Report:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -c {scripts_dir}/config_multiQC_deleteRecode.yaml -o {VCF_reports_dir} -n multiQC_VcfFiltering_report"
+        "multiqc {input} -o {VCF_reports_dir} -n multiQC_VcfFiltering_report"
 
 
 rule Metadata:
@@ -137,7 +137,6 @@ rule Metadata:
         "Date=$(date);"
         "echo -e \"${{Date}}\\n\" >> {outputs_directory}/workflow_info.txt;"
         "echo -e \"Workflow:\" >> {outputs_directory}/workflow_info.txt;"
-        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VCF_FILTERING\\n\" >> {outputs_directory}/workflow_info.txt;"
-        "echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt;"
+        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/READS_MAPPING\\n\" >> {outputs_directory}/workflow_info.txt;"
         "cd {snakefile_dir};"
-        "git rev-parse HEAD >> {outputs_directory}/workflow_info.txt"
+        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt; git rev-parse HEAD >> {outputs_directory}/workflow_info.txt ; fi"
