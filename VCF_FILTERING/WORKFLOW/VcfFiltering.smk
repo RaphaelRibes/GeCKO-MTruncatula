@@ -71,8 +71,6 @@ rule Calculate_PopGenStats:
         SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf"
     output:
         outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf"
-    conda:
-        "ENVS/conda_tools.yml"
     shell:
         "python {scripts_dir}/egglib_PopGenStats.py --input {input} --output {output}"
 
