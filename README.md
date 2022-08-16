@@ -38,13 +38,13 @@ Either install them on your computer, or if you are working on a cluster, you ma
 &nbsp;
 ### Using the workflow
 
-The following section describes the different workflow actions and parameters. The /PATH/TO/WORKFLOW path refers to the directory you cloned from GitHub, e.g  /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS/.
+The following section describes the different workflow actions and parameters. The /PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS path refers to the directory you cloned from GitHub, e.g  /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS.
 
 &nbsp;
 #### QUICK START:  
 There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning```
+```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning```
 
 On my computer this will look like:
 
