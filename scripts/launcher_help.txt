@@ -33,20 +33,20 @@ POSSIBLE ACTIONS:
 The launcher's default behavior is to run the workflow, but other actions can be called instead:
 
 --help: to print the help
-$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --help
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS --help
 
 --dryrun: to only dryrun the workflow (and detect potential errors) without actually running it
-$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow WorkflowName --dryrun
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow WorkflowName --dryrun
 
 --report: to write an html report of the workflow's last run
-$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --report
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning --report
 
 --diagram: to write an svg diagram of the workflow
-$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/SMK_DIR --workflow DataCleaning --diagram
+$ ./runSnakemakeWorkflow.sh --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning --diagram
 
 
 MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):
---workflow-path [...]: the path to the directory you cloned from GitHub (PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS
+--workflow-path [...]: the path to the directory you cloned from GitHub (PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS)
 --workflow [...]: the name of the workflow you want to run. Current existing options are 'DataCleaning', 'ReadsMapping', 'VariantsCalling' and 'VcfFiltering'
 
 CONFIGURATION PARAMETERS:
