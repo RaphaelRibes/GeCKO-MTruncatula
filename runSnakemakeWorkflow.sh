@@ -146,10 +146,10 @@ fi
 if [ ! -d "$WORKFLOW_PATH" ] ; then
 	echo -e "\nERROR: the path given in the --workflow-path parameter is not valid. Please make sure the directory exists and the path is correctly written."
 	echo "As a reminder:"
-  echo "--workflow-path [...]: the path to the directory containing the workflow's Snakemake (.smk) file. If the directory was cloned from GitHub, it should end with /WORKFLOW)"
+  echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /CAPTURE_SNAKEMAKE_WORKFLOWS"
 	echo -e "\nExiting.\n"
 	exit 1
-fi
+fi 
 
 WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
 
