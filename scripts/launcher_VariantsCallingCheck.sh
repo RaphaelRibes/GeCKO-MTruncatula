@@ -25,9 +25,10 @@ done
                           ### CONFIG FILE VARIABLES VALUES ###
 
 
-## Input data (BAMS_LIST, REFERENCE) ##
+## Input data (BAMS_LIST, REFERENCE, GENOMIC_REFERENCE_CHR_SIZE) ##
 BAMS_LIST=$(grep "^BAMS_LIST:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 REFERENCE=$(grep "^REFERENCE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+GENOMIC_REFERENCE_CHR_SIZE=$(grep "^GENOMIC_REFERENCE_CHR_SIZE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 # **BAMS_LIST**
 if [[ -z "$BAMS_LIST" ]] ; then
@@ -53,12 +54,18 @@ elif [[ ! -f "$REFERENCE" ]] ; then
   echo -e "\nExiting.\n"
   exit 1
 fi
-if [[ "$REFERENCE" != *.fasta && "$REFERENCE" != *.fas && "$REFERENCE" != *.fa ]] ; then
-  echo -e "\nERROR: The REFERENCE file (${REFERENCE}) provided in your config file (${CONFIG}) does not have a proper fasta extension. Please make sure the file is a fasta file and ends with '.fa', '.fas', or '.fasta'."
+if [[ "$REFERENCE" != *.fasta && "$REFERENCE" != *.fas && "$REFERENCE" != *.fa && "$REFERENCE" != *.fn ]] ; then
+  echo -e "\nERROR: The REFERENCE file (${REFERENCE}) provided in your config file (${CONFIG}) does not have a proper fasta extension. Please make sure the file is a fasta file and ends with '.fa', '.fn', '.fas', or '.fasta'."
   echo -e "\nExiting.\n"
   exit 1
 fi
 
+# **GENOMIC_REFERENCE_CHR_SIZE**
+if [[ ! -z "$GENOMIC_REFERENCE_CHR_SIZE" && ! -f "$GENOMIC_REFERENCE_CHR_SIZE" ]] ; then
+  echo -e "\nERROR: The GENOMIC_REFERENCE_CHR_SIZE provided in the config file (${GENOMIC_REFERENCE_CHR_SIZE}) does not exist. Please make sure the file exists and its path is correct."
+  echo -e "\nExiting.\n"
+  exit 1
+fi
 
 # **Variant Calling parameters**
 GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK=$(grep "^GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')

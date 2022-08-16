@@ -34,7 +34,7 @@ else:
 
 
 ### remove .fa .fas .fasta file extension
-reference_base = reference.rsplit('.fa', 1)[0]
+reference_base = reference.rsplit('.fa', 1)[0].rsplit('.fn', 1)[0]
 
 ### Define paths
 path_to_snakefile = workflow.snakefile
