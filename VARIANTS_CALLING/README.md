@@ -53,7 +53,7 @@ The expected input data are .bam files and their associated index files (.bam.ba
 
 The CAPTURE_SNAKEMAKE_WORKFLOWS folder must be fully copied in a workspace/storage of your choice.  
 For example, you can clone the repository with:  
-```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE.git```   
+```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS.git```   
 
 
 ### 3/ Prepare the config files
