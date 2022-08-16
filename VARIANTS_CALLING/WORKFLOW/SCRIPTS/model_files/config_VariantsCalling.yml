@@ -9,7 +9,7 @@ VARIANT_CALLING_SUBFOLDER: ""
 
 # Reference genome for the VARIANTS_CALLING. The reference must be identical to that of the mapping.
 REFERENCE: ""
-
+GENOMIC_REFERENCE_CHR_SIZE: ""
 
 ### VARIANTS_CALLING PARAMETERS ###
 

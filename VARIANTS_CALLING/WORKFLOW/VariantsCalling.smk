@@ -48,6 +48,7 @@ vc_dir = outputs_directory+vc_subfolder
 HaplotypeCaller_dir = vc_dir+"/HAPLOTYPE_CALLER"
 GenomicsDBImport_dir = vc_dir+"/GENOMICS_DB_IMPORT"
 GenotypeGVCFs_dir = vc_dir+"/GENOTYPE_GVCFS"
+Stats_dir = vc_dir+"/STATS"
 
 
 def buildExpectedFiles(filesNames, isExpected):
@@ -61,13 +62,15 @@ def buildExpectedFiles(filesNames, isExpected):
 
 rule FinalTargets:
     input:
-        buildExpectedFiles(
-        [GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
-        GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz",
-        vc_dir+"/workflow_info.txt"],
+        Stats_dir+"/variants_stats_histograms.pdf",
+        vc_dir+"/workflow_info.txt"
+        #buildExpectedFiles(
+        #[GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
+        #GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz",
+        #vc_dir+"/workflow_info.txt"],
 
-        [ not performConvertPositions, performConvertPositions, True ]
-        )
+        #[ not performConvertPositions, performConvertPositions, True ]
+        #)
 
 
 rule Index_Reference:
@@ -183,6 +186,28 @@ rule ConvertPositions:
         "tabix --csi {output.vcf_converted_gz};"
         "rm {input.vcf_gz_tbi}"
 
+rule Summarize_GVCFVariables:
+    input:
+        buildExpectedFiles(
+        [GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
+        GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz"],
+
+        [ not performConvertPositions, performConvertPositions ]
+        )
+    output:
+        Stats_dir+"/variants_stats.tsv"
+    shell:
+        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output}"
+
+rule Plot_GVCFVariablesHistograms:
+    input:
+        Stats_dir+"/variants_stats.tsv"
+    output:
+        Stats_dir+"/variants_stats_histograms.pdf"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
 
 rule Metadata:
     output:
