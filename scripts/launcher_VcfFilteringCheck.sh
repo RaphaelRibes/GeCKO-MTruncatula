@@ -46,10 +46,10 @@ fi
 
 
 ### VCF FILTERING PARAMETERS ###
-MAX_RATIO_NA_PER_SAMPLE=$(grep "^MAX_RATIO_NA_PER_SAMPLE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+MAX_NA_PER_SAMPLE=$(grep "^MAX_NA_PER_SAMPLE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
-if [[ -z "$MAX_RATIO_NA_PER_SAMPLE" ]] ; then
-  echo -e "\nERROR: You must provide the MAX_RATIO_NA_PER_SAMPLE in the config_file."
+if [[ -z "$MAX_NA_PER_SAMPLE" ]] ; then
+  echo -e "\nERROR: You must provide the MAX_NA_PER_SAMPLE in the config_file."
   echo -e "\nExiting.\n"
   exit 1
 fi

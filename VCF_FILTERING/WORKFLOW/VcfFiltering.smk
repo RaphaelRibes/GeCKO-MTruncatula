@@ -11,6 +11,7 @@ from itertools import compress
 ### Variables from config file
 vcf_raw = config["VCF_FILE"]
 
+
 ### Define paths
 path_to_snakefile = workflow.snakefile
 snakefile_dir = path_to_snakefile.rsplit('/', 1)[0]
@@ -29,95 +30,114 @@ rule FinalTargets:
         outputs_directory+"/workflow_info.txt"
 
 
+
  # ----------------------------------------------------------------------------------------------- #
 
 
-rule Filter_Loci:
+
+rule Filter_Genotypes:
     input:
         vcf_raw
     output:
-        tmp_Locus_Filtering = temp(outputs_directory+"/tmp_Locus_Filtered.recode.vcf"),
-        Locus_Filtered = outputs_directory+"/01_Locus_Filtered.vcf"
+        outputs_directory+"/01__Genotype_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"
     params:
-        config["VCFTOOLS_LOCUS_FILTERING_OPTIONS"]
+        config["BCFTOOLS_GENOTYPES_FILTERING_OPTIONS"]
     shell:
-        "vcftools --gzvcf {input} {params} --recode --recode-INFO-all --out {outputs_directory}/tmp_Locus_Filtered;"
-        "grep '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf > {output.Locus_Filtered};"
-        "grep -v '#' {outputs_directory}/tmp_Locus_Filtered.recode.vcf | sort -k1,1 -k2,2n >> {output.Locus_Filtered}"
+        "bcftools filter -Ou -i '{params}' -S . {input} | bcftools view -Ou --exclude-uncalled --trim-alt-alleles | bcftools view -m2 -o {output}"
+        
+
+
+rule Filter_Loci_1:
+    input:
+        outputs_directory+"/01__Genotype_Filtered.vcf"
+    output:
+        #tmp_Locus_Filtered = temp(outputs_directory+"/tmp_Locus_Filtered.vcf.gz"),
+        outputs_directory+"/02__Genotype_Locus1_Filtered.vcf"
+    conda:
+        "ENVS/conda_tools.yml"
+    params:
+        locus_filters = config["BCFTOOLS_LOCUS_FILTERING1_OPTIONS"]
+    shell:
+        "bcftools filter -Ou -sFilter1 -i '{params}' {input} | bcftools view -f 'PASS' > {output}"
+        
 
 
 rule Filter_Samples:
     input:
-        outputs_directory+"/01_Locus_Filtered.vcf"
+        outputs_directory+"/02__Genotype_Locus1_Filtered.vcf"
     output:
         out_imiss = temp(outputs_directory+"/SampleFilter.imiss"),
         samples_to_remove = outputs_directory+"/samples_to_remove.list",
-        SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf"
+        SampleLocus_Filtered = outputs_directory+"/03__Genotype_Locus1_Sample_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"
     params:
-        config["MAX_RATIO_NA_PER_SAMPLE"]
+        config["MAX_NA_PER_SAMPLE"]
     shell:
-        "vcftools --vcf {input} --missing-indv --out {outputs_directory}/SampleFilter;"
-        "awk -v max_pc_NA={params} '{{if($5>max_pc_NA){{print $0}}}}' {output.out_imiss} | cut -f1 > {output.samples_to_remove};"
-        "vcftools --vcf {input} --remove {output.samples_to_remove} --recode --recode-INFO-all --out {outputs_directory}/02_SampleLocus_Filtered;"
-        "mv {outputs_directory}/02_SampleLocus_Filtered.recode.vcf {output.SampleLocus_Filtered}"
+        "paste <(bcftools query -f '[%SAMPLE\t]\n' {input} | head -1 | tr '\t' '\n')"
+        " <(bcftools query -f '[%GT\t]\n' {input} | awk -v OFS=\"\t\" '{{for (i=1;i<=NF;i++) if (($i == \"./.\") || ($i == \".|.\")) sum[i]+=1 }} END {{for (i in sum) print i, sum[i] / NR }}' | sort -k1,1n | cut -f 2)"
+        " > {output.out_imiss};"
+        "awk -v max_pc_NA={params} '{{if($2>max_pc_NA){{print $1}}}}' {output.out_imiss} > {output.samples_to_remove};"
+        "bcftools view -Ou -S ^{output.samples_to_remove} {input} | bcftools view -Ou --exclude-uncalled --trim-alt-alleles | bcftools view -m2 -o {output.SampleLocus_Filtered}"
 
 
-rule Calculate_PopGenStats:
+
+rule Calculate_LocusExtraStats:
     input:
-        SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf"
+        outputs_directory+"/03__Genotype_Locus1_Sample_Filtered.vcf"
     output:
-        outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf"
+        outputs_directory+"/03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf"
     shell:
         "python {scripts_dir}/egglib_PopGenStats.py --input {input} --output {output}"
 
 
-rule Filter_PopGenStats:
+rule Filter_Loci_2:
     input:
-        outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf"
+        outputs_directory+"/03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf"
     output:
-        temp_SampleLocus_gz = temp(outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf.gz"),
-        temp_SampleLocus_csi = temp(outputs_directory+"/02_SampleLocus_Filtered_withPopGenStats.vcf.gz.csi"),
-        PopGenStatsSampleLocus_Filtered = outputs_directory+"/03_PopGenStatsSampleLocus_Filtered.vcf"
+        outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"
     params:
-        config["BCFTOOLS_FILTERING_OPTIONS"]
+        config["BCFTOOLS_LOCUS_FILTERING2_OPTIONS"]
     shell:
-        "bgzip -c {input} > {output.temp_SampleLocus_gz};"
-        "tabix --csi {output.temp_SampleLocus_gz};"
-        "bcftools filter -sFilterSmk -i '{params}' {output.temp_SampleLocus_gz} | bcftools view -f 'PASS' > {output.PopGenStatsSampleLocus_Filtered}"
+        "bcftools filter -Ou -sFilter2 -i '{params}' {input} | bcftools view -f 'PASS' > {output}"
+
+
 
 
 rule Build_StatsReports:
     input:
         vcf_raw = vcf_raw,
-        vcf_Locus_Filtered = outputs_directory+"/01_Locus_Filtered.vcf",
-        vcf_SampleLocus_Filtered = outputs_directory+"/02_SampleLocus_Filtered.vcf",
-        vcf_PopGenStatsSampleLocus_Filtered = outputs_directory+"/03_PopGenStatsSampleLocus_Filtered.vcf"
+        vcf_Genotype_Filtered = outputs_directory+"/01__Genotype_Filtered.vcf",
+        vcf_GenotypeLocus1_Filtered = outputs_directory+"/02__Genotype_Locus1_Filtered.vcf",
+        vcf_GenotypeLocus1Sample_Filtered = outputs_directory+"/03__Genotype_Locus1_Sample_Filtered.vcf",
+        vcf_GenotypeLocus1SampleLocus2_Filtered = outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
     output:
-        stats_raw = VCF_reports_dir+"/00_variants_raw_vcf.stats",
-        stats_Locus = VCF_reports_dir+"/01_Locus_Filtered_vcf.stats",
-        stats_SampleLocus = VCF_reports_dir+"/02_SampleLocus_Filtered_vcf.stats",
-        stats_PopGenStatsSampleLocus = VCF_reports_dir+"/03_PopGenStatsSampleLocus_Filtered_vcf.stats"
+        stats_raw = VCF_reports_dir+"/00__Raw_Variants.stats",
+        stats_Genotype = VCF_reports_dir+"/01__Genotype_Filtered.stats",
+        stats_GenotypeLocus1 = VCF_reports_dir+"/02__Genotype_Locus1_Filtered.stats",
+        stats_GenotypeLocus1Sample = VCF_reports_dir+"/03__Genotype_Locus1_Sample_Filtered.stats",
+        stats_GenotypeLocus1SampleLocus2 = VCF_reports_dir+"/04__Genotype_Locus1_Sample_Locus2_Filtered.stats"
     conda:
         "ENVS/conda_tools.yml"
     shell:
         "bcftools stats {input.vcf_raw} > {output.stats_raw};"
-        "bcftools stats {input.vcf_Locus_Filtered} > {output.stats_Locus};"
-        "bcftools stats {input.vcf_SampleLocus_Filtered} > {output.stats_SampleLocus};"
-        "bcftools stats {input.vcf_PopGenStatsSampleLocus_Filtered} > {output.stats_PopGenStatsSampleLocus}"
+        "bcftools stats {input.vcf_Genotype_Filtered} > {output.stats_Genotype};"
+        "bcftools stats {input.vcf_GenotypeLocus1_Filtered} > {output.stats_GenotypeLocus1};"
+        "bcftools stats {input.vcf_GenotypeLocus1Sample_Filtered} > {output.stats_GenotypeLocus1Sample};"
+        "bcftools stats {input.vcf_GenotypeLocus1SampleLocus2_Filtered} > {output.stats_GenotypeLocus1SampleLocus2}"
 
 
 rule Build_Report:
     input:
-        VCF_reports_dir+"/00_variants_raw_vcf.stats",
-        VCF_reports_dir+"/01_Locus_Filtered_vcf.stats",
-        VCF_reports_dir+"/02_SampleLocus_Filtered_vcf.stats",
-        VCF_reports_dir+"/03_PopGenStatsSampleLocus_Filtered_vcf.stats"
+        VCF_reports_dir+"/00__Raw_Variants.stats",
+        VCF_reports_dir+"/01__Genotype_Filtered.stats",
+        VCF_reports_dir+"/02__Genotype_Locus1_Filtered.stats",
+        VCF_reports_dir+"/03__Genotype_Locus1_Sample_Filtered.stats",
+        VCF_reports_dir+"/04__Genotype_Locus1_Sample_Locus2_Filtered.stats"
     output:
         VCF_reports_dir+"/multiQC_VcfFiltering_report.html"
     conda:
