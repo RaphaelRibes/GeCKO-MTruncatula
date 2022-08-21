@@ -123,14 +123,14 @@ Then the command will be:
 Which will set to “.” (meaning NA in a VCF file) any genotype that does not pass DP >= 5 **AND** GQ >= 15.
 
 - **Loci filtering (first step)**  
-Loci are filtered with the following bcftools command:  
+Loci are filtered with the following command:  
 ```bcftools filter -i ‘[BCFTOOLS_LOCUS_FILTERING1_OPTIONS]’```  
 At this step, you can filter loci using all the common GATK metrics given in the VCF INFO field (DP, InbreedingCoeff, etc.), the QUAL column, or the metrics/info that can be computed on the fly by bcftools (F_MISSING, MAF, TYPE, etc. See the bcftools documentation for an exhaustive list).  
 For example, if you want to keep only biallelic SNP sites with quality above 30 and less than 50% missing values, here is what you could write in your config file:  
 *BCFTOOLS_ LOCUS_FILTERING1_OPTIONS: "N_ALT=1 & TYPE="snp" & QUAL >= 30 & F_MISSING <= 0.5"*
 
 - **Loci filtering (second step)**  
-After filtering out samples, loci can be filtered a second time with the following bcftools command:  
+After filtering out samples, loci can be filtered a second time with:  
 ```bcftools filter -i ‘[BCFTOOLS_LOCUS_FILTERING2_OPTIONS]’```  
 At this step, you can use all the previously mentioned GATK and bcftools metrics, as well as some newly computed metrics listed above in the BCFTOOLS_LOCUS_FILTERING2_OPTIONS description. Some of them are redundant with the bcftools metrics but we thought it could be useful to have them written down in the final VCF file. Also, you may want to filter loci again after possibly removing some samples from your dataset to make sure that all loci still pass your desired thresholds.  
 For example, if you want to make sure all variants still have less than 50% missing data and present at least two homozygous genotypes of each allele among the remaining samples, you could write in your config file:  
