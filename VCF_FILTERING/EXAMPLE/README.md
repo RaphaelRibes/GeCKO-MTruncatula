@@ -110,7 +110,7 @@ This file is used to pass all the information and tools parameters that will be 
 **UNDERSTANDING HOW TO USE THE PREVIOUS VARIABLES TO FILTER VARIANTS WITH BCFTOOLS**  
 
 The genotypes and loci filtering steps are performed with the [bcftools’ filter function](https://samtools.github.io/bcftools/bcftools.html#filter). The options you will pass to bcftools are the conditions that must be met for the genotypes or loci to be retained (--include). For more information on the syntax of the expressions that can be passed to bcftools filter, see [this page](https://samtools.github.io/bcftools/bcftools.html#expressions).  
-In a VCF file, metrics can relate either to a genotype (sample x locus) or to a locus. Some metrics (e.g. DP = reads depth) can relate to either (e.g. genotype level reads depth or site level reads depth across all samples). To differentiate between the genotype’s DP and the locus’ DP, we need to specify **FORMAT**/DP (or **FMT**/DP) for the genotype or **INFO**/DP for the locus.  
+In a VCF file, metrics can relate either to a genotype (sample x locus) or to a locus. Some metrics (e.g. DP = reads depth) can relate to both (e.g. genotype level reads depth or site level reads depth across all samples). To differentiate between the genotype’s DP and the locus’ DP, we need to specify **FORMAT**/DP (or **FMT**/DP) for the genotype or **INFO**/DP for the locus.  
 
 - **Genotypes filtering**  
 Genotypes are filtered with the following bcftools command:  
