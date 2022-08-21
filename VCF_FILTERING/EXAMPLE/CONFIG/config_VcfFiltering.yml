@@ -1,44 +1,57 @@
-### GENERAL VARIABLES ###
-
-
 #### INPUT FILES ###
 
 ## Provide the VCF file to be filtered. The vcf need to be gzipped
 VCF_FILE: "VCF/variants_calling_converted.vcf.gz"
 
+
 ### VCF FILTERING PARAMETERS ###
 
-## Variants filtering by locus with VCFTOOLS options : can be applied either at the genotype level (locus x samples) (e.g. minGQ, minDP)
-# or at the locus level (e.g. minQ, max-missing)
-# http://vcftools.sourceforge.net/man_latest.html
+## 1. Genotype filtering parameters passed to bcftools filter
+# Any genotype not meeting these conditions will be assigned a missing value. Be careful to provide them between quotes.
+# e.g.: “FMT/DP >= 5 & FMT/GQ >= 15” to set to “.” (<=> NA) any genotype that does not pass DP >= 5 AND GQ >= 15.
+# Common metrics used for filtering:
+# - FMT/DP = Approximate read depth (reads with MQ=255 or with bad mates are filtered)
+# - FMT/GQ = Genotype Quality
 
-# --minGQ 15.0 (sample level) The Genotype Quality represents the Phred-scaled confidence that the genotype assignment (GT) is correct, derived from the genotype PLs. Specifically, the GQ is the difference between the PL of the second most likely genotype, and the PL of the most likely genotype.
-# --minDP 5 (sample level) The number of filtered reads that support each of the reported alleles.
-# --minQ 30 (site level) The Phred-scaled probability that a REF/ALT polymorphism exists at this site given sequencing data.
-# --max-missing 0.5 keep variants that have been successfully genotyped in 50% of individuals
-
-#VCFTOOLS_LOCUS_FILTERING_OPTIONS: "--minGQ 15.0 --minDP 5 --minQ 30 --max-missing 0.5"
 BCFTOOLS_GENOTYPES_FILTERING_OPTIONS: "FMT/DP >= 5 & FMT/GQ >= 15"
+
+
+## 2. Locus filtering parameters passed to bcftools filter
+# Any locus not meeting these conditions will be removed. Be careful to provide them between quotes.
+# e.g.: "N_ALT=1 & TYPE="snp" & QUAL >= 30 & F_MISSING <= 0.5" to keep only biallelic SNP sites with quality above 30 and less than 50% missing values.
+# Common metrics used for filtering:
+# - QUAL column = Phred-scaled probability that the site has no variant. QUAL=20 means 1 % chance that there is no variant at the site. QUAL=50 means 1 in 1e5 chance that there is no variant at the site.
+# - INFO/DP = Approximate read depth; some reads may have been filtered
+# Computed on the fly by bcftools:
+# - F_MISSING = Fraction of samples with missing genotype
+# - MAF = Frequency of minor alleles
+# - N_ALT = Number of alternate alleles
+# - TYPE = Variant type based on REF,ALT columns (indel,snp,mnp,ref,bnd,other,overlap)
+
 BCFTOOLS_LOCUS_FILTERING1_OPTIONS: "QUAL >= 30 & F_MISSING <= 0.5"
 
-## Variants filtering by samples. Remove samples that have too many locus with missing data (proportion)
+
+## 3. The maximum proportion of allowed missing data per sample. Samples above the threshold will be removed. Between 0 and 1. Set to "1" for no filtering.
+
 MAX_NA_PER_SAMPLE: "1"
 
-## Variants filtering by population genetics statistics
+
+## 4. Locus filtering parameters passed to bcftools filter after removing poorly covered samples and computing additional site level statistics
+# Any locus not meeting these conditions will be removed. Be careful to provide them between quotes.
+# e.g.: "F_MISSING <= 0.5 & INFO/MinHomo >= 2" to make sure all variants still have less than 50% missing data and present at least two homozygous genotypes of each allele among the remaining samples.
+# The additional available metrics:
+##INFO/SNP = Variant with at least 2 mononucleotide alleles [0 or 1]
+##INFO/INDEL = Variant with at least 2 alleles of different lengths [0 or 1]
+##INFO/nbGS = Number of genotyped samples
+##INFO/pNA = Frequency of missing genotypes for this site
+##INFO/nbG = Number of genotypes
+##INFO/nbAll = Number of alleles
+##INFO/All = List of alleles
+##INFO/AllFreq = Frequency of all alleles
+##INFO/MinHomo = Number of occurrences of the least frequent homozygous genotype
+##INFO/MAF = Minor allele frequency
+##INFO/MAFb = Minor base frequency
+##INFO/He = Nei expected Heterozygosity
+##INFO/Fis = Inbreeding coefficient
+
 BCFTOOLS_LOCUS_FILTERING2_OPTIONS: "INFO/SNP==1 & INFO/INDEL==0 & INFO/nbAll==2 & INFO/pNA<0.5 & INFO/MinHomo>=1 & INFO/Fis>=0.8"
-
-
-
-##INFO=<ID=SNP,Number=0,Type=Integer,Description="Variant with at least 2 mononucleotide alleles">
-##INFO=<ID=INDEL,Number=0,Type=Integer,Description="Variant with at least 2 alleles of different lengths">
-##INFO=<ID=nbGS,Number=1,Type=Integer,Description="Number of genotyped samples">
-##INFO=<ID=pNA,Number=1,Type=Float,Description="Frequency of missing genotypes for this site">
-##INFO=<ID=nbG,Number=1,Type=Integer,Description="Number of genotypes">
-##INFO=<ID=nbAll,Number=1,Type=Integer,Description="Number of alleles">
-##INFO=<ID=All,Number=.,Type=String,Description="list of alleles">
-##INFO=<ID=AllFreq,Number=.,Type=Float,Description="Frequency of all alleles">
-##INFO=<ID=MinHomo,Number=1,Type=Integer,Description="Number of the least frequent homozygous genotype">
-##INFO=<ID=MAF,Number=1,Type=Float,Description="Minor allele frequency">
-##INFO=<ID=MAFb,Number=1,Type=Float,Description="Minor base frequency">
-##INFO=<ID=He,Number=1,Type=Float,Description="Nei expected Heterozygosity">
-##INFO=<ID=Fis,Number=1,Type=Float,Description="Inbreeding coefficient">
