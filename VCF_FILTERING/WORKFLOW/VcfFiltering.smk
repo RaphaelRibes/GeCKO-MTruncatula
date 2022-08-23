@@ -10,6 +10,9 @@ from itertools import compress
 
 ### Variables from config file
 vcf_raw = config["VCF_FILE"]
+filtering_subfolder = ""
+if (len(config["FILTERING_SUBFOLDER"]) > 0):
+    filtering_subfolder = "/"+config["FILTERING_SUBFOLDER"]
 
 
 ### Define paths
@@ -19,7 +22,7 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ### Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VCF_FILTERING"
+outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VCF_FILTERING"+filtering_subfolder
 VCF_reports_dir = outputs_directory+"/REPORTS"
 
 ### PIPELINE ###
@@ -46,7 +49,7 @@ rule Filter_Genotypes:
         config["BCFTOOLS_GENOTYPES_FILTERING_OPTIONS"]
     shell:
         "bcftools filter -Ou -i '{params}' -S . {input} | bcftools view -Ou --exclude-uncalled --trim-alt-alleles | bcftools view -m2 -o {output}"
-        
+
 
 
 rule Filter_Loci_1:
@@ -61,7 +64,7 @@ rule Filter_Loci_1:
         locus_filters = config["BCFTOOLS_LOCUS_FILTERING1_OPTIONS"]
     shell:
         "bcftools filter -Ou -sFilter1 -i '{params}' {input} | bcftools view -f 'PASS' > {output}"
-        
+
 
 
 rule Filter_Samples:
