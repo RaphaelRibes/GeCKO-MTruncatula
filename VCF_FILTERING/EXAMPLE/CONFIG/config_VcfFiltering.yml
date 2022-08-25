@@ -1,10 +1,13 @@
+### GENERAL VARIABLES ###
+##  If you want to separate results from different filtering parameters, provide a name for an extra folder to create in the VCF_FILTERING output folder. Otherwise leave blank ("").
+FILTERING_SUBFOLDER: ""
+
+
 #### INPUT FILES ###
 
 ## Provide the VCF file to be filtered. The vcf need to be gzipped
 VCF_FILE: "VCF/variants_calling_converted.vcf.gz"
 
-##  If you want to separate results from different filtering parameters, provide a name for an extra folder to create in the VCF_FILTERING output folder. Otherwise leave blank ("").
-FILTERING_SUBFOLDER: ""
 
 ### VCF FILTERING PARAMETERS ###
 
