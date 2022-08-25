@@ -2,12 +2,12 @@
 
 vcf_gz_input=$1
 tsv_output=$2
-
+outdir=$3
 
 
 # list all variables from column 8
-zcat $vcf_gz_input | grep -v '#' | cut -f8 | tr ';' '\n' | cut -d '=' -f1 | sort | uniq > tmp_variables
-cat tmp_variables | tr '\n' '\t' | sed 's/\t$//' | awk '{print "Contig\tPos\tQual\t"$0}' > $tsv_output
+zcat $vcf_gz_input | grep -v '#' | cut -f8 | tr ';' '\n' | cut -d '=' -f1 | sort | uniq > ${outdir}/tmp_variables
+cat ${outdir}/tmp_variables | tr '\n' '\t' | sed 's/\t$//' | awk '{print "Contig\tPos\tQual\t"$0}' > $tsv_output
 
 
 # for every site retrieve the values for all variables (and mark it NA if the info is missing)
@@ -23,6 +23,6 @@ awk -v nvar=$nvar -F"\t|;" '{
       }
     }
   }
-}' tmp_variables <(zcat $vcf_gz_input | grep -v '#' | cut -f1,2,6,8) | awk -v nvar=$nvar 'NR % (nvar+1) {printf("%s\t", $0); next} {print $0}' >> $tsv_output
+}' ${outdir}/tmp_variables <(zcat $vcf_gz_input | grep -v '#' | cut -f1,2,6,8) | awk -v nvar=$nvar 'NR % (nvar+1) {printf("%s\t", $0); next} {print $0}' >> $tsv_output
 
-rm tmp_variables
+rm ${outdir}/tmp_variables
