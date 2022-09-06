@@ -197,7 +197,7 @@ rule Summarize_GVCFVariables:
     output:
         Stats_dir+"/variants_stats.tsv"
     shell:
-    "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output} {Stats_dir}"
+        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output} {Stats_dir}"
 
 rule Plot_GVCFVariablesHistograms:
     input:
