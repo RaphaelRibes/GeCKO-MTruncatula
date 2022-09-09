@@ -11,7 +11,7 @@ cat ${outdir}/tmp_variables | tr '\n' '\t' | sed 's/\t$//' | awk '{print "Contig
 
 
 # for every site retrieve the values for all variables (and mark it NA if the info is missing)
-nvar=$(cat tmp_variables | wc -l)
+nvar=$(cat ${outdir}/tmp_variables | wc -l)
 awk -v nvar=$nvar -F"\t|;" '{
   if (NR==FNR)
     {vars[NR]=$1}
