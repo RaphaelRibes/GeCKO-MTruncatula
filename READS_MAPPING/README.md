@@ -176,7 +176,6 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 
 **ZONES_STATS directory** (if a bed file was provided) 
 - *mean_depth_per_zone_per_sample.tsv*:&nbsp;&nbsp;&nbsp;For each zone and each sample, the mean depth per zone (number of reads per base) 
-- *mean_depth_per_zone_per_sample_heatmap.pdf*:&nbsp;&nbsp;&nbsp;The heatmap representing the mean depth per zone per sample
 
 
 
@@ -210,7 +209,6 @@ Name, description and tools used for each of the snakemake workflow rules:
 | MultiQC_Bams                | Runing MultiQC on samtools stats output                                                                                        | MultiQC                                                                                                                                |
 | Create_BamsList             | Writing list of bams files                                                                                                     |                                                                                                                                        |
 | CountReadsZones_Bams        | Counting reads in each zone provided in the bed file for each sample                                                           | samtools bedcov                                                                                                                        |
-| Heatmap_ZonesReadsCount     | Plotting the heatmap showing the number of reads per zone per sample                                                           | seaborn, matplotlib, pandas                                                                                                                                |
 | Create_SubReference         | Generating the reduced reference corresponding to the genomic zones provided in the bed file                                   | samtools faidx                                                                                                                         |
 | Create_ChainFile            | Generating a file in chain format corresponding to the genomic zones provided in the bed file, necessary for the Extract_Reads rule | samtools faidx                |
 | Extract_Reads               | Extracting reads that mapped to the zones provided in the bed file, thus creating subbams                                      | crossmap                                                                                                                               |
