@@ -10,6 +10,8 @@ This VARIANTS_CALLING workflow generates a vcf file from bam files obtained afte
 4) Variants calling by sample is performed with the GATK HaplotypeCaller function
 5) A database from variants calling by sample is generated with the GATK GenomicsDBImport function, and a list of the reference's chromosomes or contigs is created
 6) Variants calling for all samples (population) is performed with the GATK GenotypeGVCFs function, creating a single vcf file
+7) [ Optional ] (if extracting bams in a sub reference): convert the positions of the variants in the variant file (vcf file) with the positions given in the genomic reference
+8) Based on the variant statistics calculated by GATK, histograms are created to estimate the quality of the variant calling before filtration
 
 
 ## QUICK START
@@ -147,6 +149,7 @@ This workflow will create a "VARIANTS_CALLING" directory in the "WORKFLOWS_OUTPU
 **GENOTYPE_GVCFS directory**
 - If the VARIANT_CALLING was performed on the full genomic reference: this folder contains final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)  
 - If the VARIANT_CALLING was performed on the basis of a sub reference (subbams) and the positions of the variants (vcf file) were converted to the genomic reference, this folder contains final variants_calling_converted.vcf.gz file and its associated index (variants_calling_converted.vcf.gz.csi)
+- **REPORTS directory** contains variants_stats_histograms.pdf file with all the histograms baseq on GATK locus statistics. 
 
 
 ## Tools
@@ -168,6 +171,9 @@ Name, description and tools used for each of the snakemake workflow rules:
 | List_Haplotype                    | Listing sample files (g.vcf.gz) from HaplotypeCaller for gatk GenomicsDBImport  |                               |
 | GenomicsDBImport                  | Creating data base from variants calling by sample and the intervals list       | gatk GenomicsDBImport         |
 | GenotypeGVCFs                     | Calling variants for all samples (population) from GenomicsDBImport to vcf file | gatk GenotypeGVCFs            |
+| ConvertPositions                  | Convert the positions of the variants (in vcf file) on the genomic reference    | bcftools                      |
+| Summarize_GVCFVariables           | Recovery and summarize GATK locus statistics                                    |                               |
+| Plot_GVCFVariablesHistograms      | Creating histograms based on GATK locus statistics                              |                               |
 
 
 
