@@ -177,8 +177,8 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 **ZONES_STATS directory** (if a bed file was provided) 
 - *mean_depth_per_zone_per_sample.tsv*:&nbsp;&nbsp;&nbsp;For each zone and each sample, the mean depth per zone (number of reads per base) 
 
-\*⚠ Paired reads are considered properly paired if they are mapped 
-A mapped pair is considered as "proper pair" if both ends mapped to different stand and the distance between them is less than
+\*⚠ During the extraction step by CrossMap, paired reads are considered as a "proper pair" if both ends are mapped to different strands and the distance between them is less than 500 pb. This information is stored in the bams' flags for each read (0x2).
+
 
 
 ## Tools
