@@ -21,7 +21,10 @@ CREATE_SUB_BAMS: TRUE
 # Path to the bed file listing targeted zones for extraction. Optionnal: can be left blank ("").
     # this file can be created with zones of your choice or using the mapping on the genomic reference to determine the most covered zones and store in : WORKFLOWS_OUTPUTS/READS_MAPPING/BAMS/name_file.bed
 BED: "../REFERENCE/Reference_targeted_zones.bed"
- 
+profondeur min
+taille gap pour fusionner
+taille min
+
 # parameters for bed file creation
 
 
