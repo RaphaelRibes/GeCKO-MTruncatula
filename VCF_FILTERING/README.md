@@ -10,7 +10,7 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 4) Additional site level statistics are then computed: general information (SNP or INDEL, number of alleles, MAF…) and population genetics statistics (Fis, He) are added to the VCF ‘INFO’ field for each variant.
 5) The statistics from step 4. (along with all other GATK stats) can be used in a second **loci** filtering step.
 6) A MultiQC report is created, showing variants information/statistics after each filtering step.
-7) Based on the variant statistics, histograms are created to estimate the quality of the variant calling after filtration
+7) Based on the variant statistics, histograms are created to estimate the quality of the variant calling after filtering
 
 
 ## QUICK START
