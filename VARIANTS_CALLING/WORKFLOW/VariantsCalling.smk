@@ -62,7 +62,7 @@ def buildExpectedFiles(filesNames, isExpected):
 
 rule FinalTargets:
     input:
-        GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms.pdf",
+        GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf",
         vc_dir+"/workflow_info.txt"
 
 
@@ -189,16 +189,16 @@ rule Summarize_GVCFVariables:
         [ not performConvertPositions, performConvertPositions ]
         )
     output:
-        GenotypeGVCFs_REPORTS_dir+"/variants_stats.tsv"
+        GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv"
     shell:
         "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output} {GenotypeGVCFs_REPORTS_dir}"
 
 
 rule Plot_GVCFVariablesHistograms:
     input:
-        GenotypeGVCFs_REPORTS_dir+"/variants_stats.tsv"
+        GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv"
     output:
-        GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms.pdf"
+        GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf"
     conda:
         "ENVS/conda_tools.yml"
     shell:
