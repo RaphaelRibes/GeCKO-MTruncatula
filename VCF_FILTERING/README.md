@@ -4,12 +4,13 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 
 
 ### The VCF_FILTERING workflow's steps
-1) The first filter applies to **genotypes**. What we call ‘genotype’ here is the single-locus genotype assigned to a sample at a given position. Genotypes that don't pass the given thresholds (e.g. FMT/GQ>=15; FMT/DP>=5) are replaced by missing data. Loci that have become monomorphic or fully ungenotyped as a result of this first step are eliminated.
+1) The first filter applies to **genotypes** (Loci x Sample). What we call ‘genotype’ here is the single-locus genotype assigned to a sample at a given position. Genotypes that don't pass the given thresholds (e.g. FMT/GQ>=15; FMT/DP>=5) are replaced by missing data. Loci that have become monomorphic or fully ungenotyped as a result of this first step are eliminated.
 2) Next, **loci** that do not pass the given thresholds (QUAL>=30; F_MISSING<=0.5) are removed. At this step, all site level statistics that are provided in GATK VCF outputs can be used to filter out unwanted loci.
 3) You can now decide to remove poorly covered **samples** if their proportion of ungenotyped loci is above a given threshold. 
 4) Additional site level statistics are then computed: general information (SNP or INDEL, number of alleles, MAF…) and population genetics statistics (Fis, He) are added to the VCF ‘INFO’ field for each variant.
 5) The statistics from step 4. (along with all other GATK stats) can be used in a second **loci** filtering step.
 6) A MultiQC report is created, showing variants information/statistics after each filtering step.
+7) Based on the variant statistics, histograms are created to estimate the quality of the variant calling after filtration
 
 
 ## QUICK START
@@ -173,19 +174,23 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 
 <ins>Description of the main files:</ins>  
 
-- *01_Locus_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **locus**  
-- *02_SampleLocus_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **sample** 
-- *samples_to_remove.list*:&nbsp;&nbsp;&nbsp;list of samples that were deleted in step 02 (filtering by sample)
-- *02_SampleLocus_Filtered_withPopGenStats.vcf*:&nbsp;&nbsp;&nbsp;the intermediate vcf file corresponding to variants filtered after step 02 (locus + sample), with population genetics statistics (Fis, He, ...) by variants.  
-- *03_PopGenStatsSampleLocus_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **population genetics statistics**  
+- *01__Genotype_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **genotype**
+- *02__Genotype_Locus1_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after the first variants filtering by **locus**  
+- *03__Genotype_Locus1_Sample_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **sample** 
+- *samples_to_remove.list*:&nbsp;&nbsp;&nbsp;list of samples that were deleted in step 03 (filtering by sample)
+- *03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf*:&nbsp;&nbsp;&nbsp;the intermediate vcf file corresponding to variants filtered after step 03 (genotype + locus1 + sample), with additional site level statistics (Fis, He, MAF,...) by variants.  
+- *04__Genotype_Locus1_Sample_Locus2_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **locus** 
 - *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
 
 **REPORTS directory** 
 - *00_variants_raw_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics of the unfiltered vcf file 
-- *01_Locus_Filtered_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **locus**
-- *02_SampleLocus_Filtered_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **sample**
-- *03_PopGenStatsSampleLocus_Filtered_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **population genetics statistics**
+- *01__Genotype_Filtered.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **genotype**
+- *02__Genotype_Locus1_Filtered.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after the first filtering by **locus**
+- *03__Genotype_Locus1_Sample_Filtered.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **sample**
+- *04__Genotype_Locus1_Sample_Locus2_Filtered.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after the second filtering by **locus**
 - *multiQC_VcfFiltering_report.html*:&nbsp;&nbsp;&nbsp;graphic representation of the variants informations/statistics after each filtering step
+- *variants_stats_VF.tsv*:&nbsp;&nbsp;&nbsp; file with locus statistics present filtered vcf file.
+- *variants_stats_histograms_VF.pdf*:&nbsp;&nbsp;&nbsp; pdf file with histograms baseq on locus statistics present filtered vcf file.
 
 
 ## Tools
@@ -198,14 +203,17 @@ These tools are loaded in a CONDA environment from the conda-forge and bioconda 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
 
-| **Rule name**          | **Description**                                                                                            | **Tools**       |
-|:----------------------:|:----------------------------------------------------------------------------------------------------------:|:---------------:|
-| Filter_Loci            | Filtering variants by locus. Applied either at the genotype level (locus X sample) or at the locus level   | vcftools        |
-| Filter_Samples         | Filtering variants by sample. Removing samples that have too many loci with missing data.                  | vcftools        |
-| Calculate_PopGenStats  | Calculating population genetics statistics (e.g. FIS, He)                                                  |                 |
-| Filter_PopGenStats     | Filtering variants based on population genetics statistics (e.g. FIS, He)                                  | bcftools filter |
-| Build_StatsReport      | Building statistics reports for unfiltered variants and each filtering step                                | bcftools stats  |
-| Build_Report           | Running MultiQC on unfiltered variants and each filtering step                                             | MultiQC         |
+| **Rule name**                | **Description**                                                                           | **Tools**       |
+|:----------------------------:|:-----------------------------------------------------------------------------------------:|:---------------:|
+| Filter_Genotypes             | Filtering variants by genotype (locus X sample)                                           | bcftools filter |
+| Filter_Loci_1                | Filtering variants by locus - first step                                                  | bcftools filter |
+| Filter_Samples               | Filtering variants by sample (Removing samples that have too many loci with missing data) | bcftools        |
+| Calculate_LocusExtraStats    | Calculating additional site level statistics (e.g. FIS, He, MAF)                          | Egglib          |
+| Filter_Loci_2                | Filtering variants based on additional site level statistics (e.g. FIS, He, MAF)          | bcftools filter |
+| Build_StatsReport            | Building statistics reports for unfiltered variants and each filtering step               | bcftools stats  |
+| Build_Report                 | Running MultiQC on unfiltered variants and each filtering step                            | MultiQC         |
+| Summarize_GVCFVariables      | Recovery and summarize locus statistics                                                   |                 |
+| Plot_GVCFVariablesHistograms | Creating histograms based on locus statistics                                             |                 |
 
 
 
