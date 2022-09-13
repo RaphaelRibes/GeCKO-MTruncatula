@@ -149,8 +149,9 @@ This workflow will create a "VARIANTS_CALLING" directory in the "WORKFLOWS_OUTPU
 **GENOTYPE_GVCFS directory**
 - If the VARIANT_CALLING was performed on the full genomic reference: this folder contains final variants_calling.vcf.gz file and its associated index (variants_calling.vcf.gz.tbi)  
 - If the VARIANT_CALLING was performed on the basis of a sub reference (subbams) and the positions of the variants (vcf file) were converted to the genomic reference, this folder contains final variants_calling_converted.vcf.gz file and its associated index (variants_calling_converted.vcf.gz.csi)
-- **REPORTS directory** contains variants_stats_histograms.pdf file with all the histograms baseq on GATK locus statistics. 
-
+- **REPORTS directory** contains:  
+    - *variants_stats_VC.tsv*:&nbsp;&nbsp;&nbsp;&nbsp; file that summarizes the statistics per locus present in the vcf file before filtering
+    - *variants_stats_histograms_VC.pdf*:&nbsp;&nbsp;&nbsp;&nbsp; file with histograms based on locus statistics before filtering
 
 ## Tools
 This workflow uses the following tools: 

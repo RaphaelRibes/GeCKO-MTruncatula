@@ -189,8 +189,8 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 - *03__Genotype_Locus1_Sample_Filtered.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after filtering by **sample**
 - *04__Genotype_Locus1_Sample_Locus2_Filtered.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics after the second filtering by **locus**
 - *multiQC_VcfFiltering_report.html*:&nbsp;&nbsp;&nbsp;graphic representation of the variants informations/statistics after each filtering step
-- *variants_stats_VF.tsv*:&nbsp;&nbsp;&nbsp; file with locus statistics present filtered vcf file.
-- *variants_stats_histograms_VF.pdf*:&nbsp;&nbsp;&nbsp; pdf file with histograms baseq on locus statistics present filtered vcf file.
+- *variants_stats_VF.tsv*:&nbsp;&nbsp;&nbsp; file that summarizes the statistics per locus present in the vcf file after filtering
+- *variants_stats_histograms_VF.pdf*:&nbsp;&nbsp;&nbsp; file with histograms based on locus statistics after filtering
 
 
 ## Tools
