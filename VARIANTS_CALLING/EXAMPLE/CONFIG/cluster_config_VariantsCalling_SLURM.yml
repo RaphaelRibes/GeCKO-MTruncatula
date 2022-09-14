@@ -1,6 +1,6 @@
 __default__:
     cpus-per-task: 1
-    mem: 5G
+    mem-per-cpu: 2G
     partition: agap_normal
     job-name: VC.{rule}
     output: Logs_VariantsCallingWorkflow/{rule}.%j.out.txt
@@ -9,7 +9,7 @@ __default__:
 HaplotypeCaller:
     cpus-per-task: "{threads}"
     partition: agap_bigmem
-    mem: 27G
+    mem-per-cpu: 27G
     output: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_VariantsCallingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 

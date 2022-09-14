@@ -1,6 +1,7 @@
 __default__:
     pe: smp 1
     q: short.q
+    h_vmem: 2G
     N: VF.{rule}
     o: Logs_VcfFilteringWorkflow/{rule}.$JOB_ID.out.txt
     e: Logs_VcfFilteringWorkflow/{rule}.$JOB_ID.err.txt

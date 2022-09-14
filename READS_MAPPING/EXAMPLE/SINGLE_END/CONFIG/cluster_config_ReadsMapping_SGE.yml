@@ -1,6 +1,7 @@
 __default__:
     pe: smp 1
     q: long.q
+    h_vmem: 2G
     N: RM.{rule}
     o: Logs_ReadsMappingWorkflow/{rule}.$JOB_ID.out.txt
     e: Logs_ReadsMappingWorkflow/{rule}.$JOB_ID.err.txt

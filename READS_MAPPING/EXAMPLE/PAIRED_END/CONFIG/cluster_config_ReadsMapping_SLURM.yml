@@ -1,7 +1,7 @@
 __default__:
     cpus-per-task: 1
     partition: agap_normal
-    mem: 5G
+    mem-per-cpu: 2G
     job-name: RM.{rule}
     output: Logs_ReadsMappingWorkflow/{rule}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.%j.err.txt
