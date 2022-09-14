@@ -319,6 +319,3 @@ rule Metadata:
         "cd {snakefile_dir};"
         "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt; git rev-parse HEAD >> {outputs_directory}/workflow_info.txt ; fi"
 
-
-#front.migale.inrae.fr
-#muse-login.hpc-lr.univ-montp2.fr
