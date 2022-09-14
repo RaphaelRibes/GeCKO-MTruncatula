@@ -94,7 +94,7 @@ This file will be needed if you run the workflow on a computer cluster and want 
 
 	specificStepName:
     	q or partition: {partition name for specificStep}
-    	mem-per-cpu or h_vmem: {needed memory for each job run in specificStep}
+    	mem-per-cpu or h_vmem: {needed memory for each job submitted in specificStep}
 
 
 You will find [the list of the steps names](#list-of-the-snakefile-rules) along with what they do and the tools they use at the end of this page.  
