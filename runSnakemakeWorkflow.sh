@@ -61,10 +61,6 @@ do
     shift
     shift
     ;;
-    --printshellcmds)
-    PRINTSHELLCMDS="--printshellcmds"
-    shift
-    ;;
     --forceall)
     FORCEALL="--forceall"
     shift
@@ -211,7 +207,7 @@ snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --jobs $JOBS --unlock -
 
 ## DRYRUN ##
 if [ "${DRYRUN}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -221,7 +217,7 @@ fi
 
 ## DIAGRAM ##
 if [ "${DIAGRAM}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -231,7 +227,7 @@ fi
 
 ## REPORT ##
 if [ "${REPORT}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -243,7 +239,7 @@ fi
 if [ "${USE_CONDA}" = "TRUE" ] ; then
   mkdir -p Logs_${WORKFLOW}Workflow
 
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} $PRINTSHELLCMDS $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
