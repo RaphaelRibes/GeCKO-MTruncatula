@@ -99,8 +99,6 @@ If omitted, this script will look for a config_WorkflowName.yml file (eg: config
 #### USEFUL EXTRA OPTIONS:  
 **--jobs [int]**&nbsp;&nbsp;&nbsp;*maximum number of jobs that can be run in parallel (default: 1)*  
 
-**--printshellcmds**&nbsp;&nbsp;&nbsp;*print the shell commands run by Snakemake for each step*  
-
 **--latency-wait [int]**&nbsp;&nbsp;&nbsp;*number of seconds Snakemake will wait after the end of a task to look for the expected output files (default: 20)*  
 You should increase it if Snakemake returns an error such as:  
 
