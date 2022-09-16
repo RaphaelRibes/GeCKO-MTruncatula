@@ -3,8 +3,6 @@
 import os,sys
 from itertools import compress
 
-#singularity: "docker://condaforge/mambaforge"
-
 
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
