@@ -93,7 +93,7 @@ rule Calculate_LocusExtraStats:
     output:
         outputs_directory+"/03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf"
     shell:
-        "python {scripts_dir}/egglib_PopGenStats.py --input {input} --output {output}"
+        "python {scripts_dir}/egglib_LocusExtraStats.py --input {input} --output {output}"
 
 
 rule Filter_Loci_2:

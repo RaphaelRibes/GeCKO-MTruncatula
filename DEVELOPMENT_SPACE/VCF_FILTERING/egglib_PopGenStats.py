@@ -21,10 +21,11 @@ header = """##INFO=<ID=SNP,Number=0,Type=Integer,Description="Variant with at le
 ##INFO=<ID=nbG,Number=1,Type=Integer,Description="Number of genotypes">
 ##INFO=<ID=nbAll,Number=1,Type=Integer,Description="Number of alleles">
 ##INFO=<ID=All,Number=.,Type=String,Description="list of alleles">
+##INFO=<ID=AllCount,Number=.,Type=Int,Description="Counts of all alleles">
 ##INFO=<ID=AllFreq,Number=.,Type=Float,Description="Frequency of all alleles">
 ##INFO=<ID=MinHomo,Number=1,Type=Integer,Description="Number of the least frequent homozygous genotype">
 ##INFO=<ID=MAF,Number=1,Type=Float,Description="Minor allele frequency">
-##INFO=<ID=MAFb,Number=1,Type=Float,Description="Minor base frequency">
+##INFO=<ID=MBF,Number=1,Type=Float,Description="Minor base frequency">
 ##INFO=<ID=He,Number=1,Type=Float,Description="Nei expected Heterozygosity">
 ##INFO=<ID=Fis,Number=1,Type=Float,Description="Inbreeding coefficient">
 """
@@ -89,7 +90,10 @@ for ch, pos, na in vcf:
     nbG = frq.num_genotypes
     All = [frq.allele(i) for i in range(nbAll)]
     genos = [tuple(sorted(frq.genotype(i))) for i in range(nbG)]
-    AllFreq = [frq.freq_allele(i) for i in range(nbAll)]
+    AllCount = [frq.freq_allele(i) for i in range(nbAll)]
+    t = sum(AllCount)
+    if t > 0: AllFreq = [i/t for i in AllCount]
+    else: AllFreq = None
     pG = [frq.freq_genotype(i) for i in range(nbG)]
 
     # minimum frequency of homozygote genotypes
@@ -111,15 +115,15 @@ for ch, pos, na in vcf:
 
     # MAF
     if nbAll > 1:
-        MAF = sorted(AllFreq)[-2] / sum(AllFreq)
+        MAF = sorted(AllFreq)[-2]
     else:
         MAF = '.'
     if SNP:
-        dA = dict(zip(All, AllFreq))
-        AllFreq_b = [dA[i] for i in alls_bases]
-        MAFb = sorted(AllFreq_b)[-2] / sum(AllFreq_b)
+        dA = dict(zip(All, AllCount))
+        AllCount_b = [dA[i] for i in alls_bases]
+        MBF = sorted(AllCount_b)[-2]
     else:
-        MAFb = '.'
+        MBF = '.'
 
     # insert new INFO in VCF
     line = input_vcf.readline()
@@ -134,10 +138,11 @@ for ch, pos, na in vcf:
     cols[7] += f'nbG={nbG};'
     cols[7] += f'nbAll={nbAll};'
     cols[7] += f'All={",".join(All)};'
-    cols[7] += 'AllFreq=' if na==0 else f'AllFreq={",".join(map(str, AllFreq))};'
+    cols[7] += 'AllCount=.' if na==0 else f'AllCount={",".join(map(str, AllFreq))};'
+    cols[7] += 'AllFreq=.' if AllFreq is None else f'AllCount={",".join([f'{i:.4f}' for i in AllFreq])};'
     cols[7] += 'MinHomo=.;' if MinHomo == '.' else f'MinHomo={MinHomo};'
     cols[7] += 'MAF=.;' if MAF == '.' else f'MAF={MAF:.6f};'
-    cols[7] += 'MAFb=.;' if MAFb == '.' else f'MAFb={MAFb:.6f};'
+    cols[7] += 'MBF=.;' if MBF == '.' else f'MBF={MBF:.6f};'
     cols[7] += 'He=.;' if He == '.' else f'He={He:.6f};'
     cols[7] += 'Fis=.' if Fis == '.' else f'Fis={Fis:.6f}'
 

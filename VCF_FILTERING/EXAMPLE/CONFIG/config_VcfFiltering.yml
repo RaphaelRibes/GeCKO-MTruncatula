@@ -52,10 +52,11 @@ MAX_NA_PER_SAMPLE: "1"
 ##INFO/nbG = Number of genotypes
 ##INFO/nbAll = Number of alleles
 ##INFO/All = List of alleles
+##INFO/AllCount = Counts of all alleles
 ##INFO/AllFreq = Frequency of all alleles
 ##INFO/MinHomo = Number of occurrences of the least frequent homozygous genotype
 ##INFO/MAF = Minor allele frequency
-##INFO/MAFb = Minor base frequency
+##INFO/MBF = Minor base frequency
 ##INFO/He = Nei expected Heterozygosity
 ##INFO/Fis = Inbreeding coefficient
 
