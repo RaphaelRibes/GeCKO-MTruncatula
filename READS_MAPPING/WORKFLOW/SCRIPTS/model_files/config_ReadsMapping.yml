@@ -13,6 +13,9 @@ REFERENCE: ""
 
 # Targeted zones bed file (optionnal)
 BED: ""
+BED_MIN_MEAN_COV: ""
+BED_MAX_DIST: ""
+BED_MIN_LENGTH: ""
 
 
 ### MAPPING PARAMETERS ###

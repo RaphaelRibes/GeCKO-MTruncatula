@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {picard_markduplicates_options} --picard_markduplicates_java_options {picard_markduplicates_java_options} --samtools_index_options {samtools_index_options}
+#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --sample {wildcards.base}
 #ou
-#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} -reports_dir {bams_reports_dir} --sample {wildcards.base} --rm_dup {rm_dup} --picard_markduplicates_options {picard_markduplicates_options} --picard_markduplicates_java_options {picard_markduplicates_java_options} --samtools_index_options {samtools_index_options}
+#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --sample {wildcards.base}
 
 
 #### ARGUMENTS:
@@ -60,33 +60,8 @@ do
     shift # past argument
     shift # past value
     ;;
-    --reports_dir)
-    REPORTS_DIR="$2"
-    shift # past argument
-    shift # past value
-    ;;
     --sample)
     SAMPLE="$2"
-    shift # past argument
-    shift # past value
-    ;;
-    --rm_dup)
-    RM_DUP="$2"
-    shift # past argument
-    shift # past value
-    ;;
-    --picard_markduplicates_options)
-    PICARD_MARKDUPLICATES_OPTIONS="$2"
-    shift # past argument
-    shift # past value
-    ;;
-    --picard_markduplicates_java_options)
-    PICARD_MARKDUPLICATES_JAVA_OPTIONS="$2"
-    shift # past argument
-    shift # past value
-    ;;
-    --samtools_index_options)
-    SAMTOOLS_INDEX_OPTIONS="$2"
     shift # past argument
     shift # past value
     ;;
@@ -98,9 +73,6 @@ done
 
 if [[ ! "$OUTPUT_DIR" = /* ]] ; then
   OUTPUT_DIR=$(readlink -f $OUTPUT_DIR) ;
-fi
-if [[ ! "$REPORTS_DIR" = /* ]] ; then
-  REPORTS_DIR=$(readlink -f $REPORTS_DIR) ;
 fi
 if [[ ! -z "$FASTQ_R1" && ! "$FASTQ_R1" = /* ]] ; then
   FASTQ_R1=$(readlink -f $FASTQ_R1) ;
@@ -161,16 +133,3 @@ else
   samtools fixmate ${OUTPUT_DIR}/${SAMPLE}.bam ${OUTPUT_DIR}/${SAMPLE}.fix.bam
   rm ${OUTPUT_DIR}/${SAMPLE}.bam
 fi
-
-# Sort
-picard SortSam --TMP_DIR ${OUTPUT_DIR}/TMP -I ${OUTPUT_DIR}/${SAMPLE}.fix.bam -O ${OUTPUT_DIR}/${SAMPLE}.sort.bam -SO coordinate -VALIDATION_STRINGENCY SILENT
-rm ${OUTPUT_DIR}/${SAMPLE}.fix.bam
-
-# Mark and remove duplicates
-mkdir -p ${REPORTS_DIR}
-mkdir -p ${REPORTS_DIR}/DUPLICATES
-picard ${PICARD_MARKDUPLICATES_JAVA_OPTIONS} MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}.sort.bam -O ${OUTPUT_DIR}/${SAMPLE}.bam -VALIDATION_STRINGENCY SILENT ${PICARD_MARKDUPLICATES_OPTIONS} -REMOVE_DUPLICATES $RM_DUP -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
-rm ${OUTPUT_DIR}/${SAMPLE}.sort.bam
-
-# Create index
-samtools index ${SAMTOOLS_INDEX_OPTIONS} ${OUTPUT_DIR}/${SAMPLE}.bam

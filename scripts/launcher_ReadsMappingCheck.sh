@@ -131,6 +131,9 @@ fi
 ## Zones and extraction (BED, CREATE_SUB_BAMS)
 BED=$(grep "^BED:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 CREATE_SUB_BAMS=$(grep "^CREATE_SUB_BAMS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+BED_MIN_MEAN_COV=$(grep "^BED_MIN_MEAN_COV:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+BED_MAX_DIST=$(grep "^BED_MAX_DIST:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+BED_MIN_LENGTH=$(grep "^BED_MIN_LENGTH:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 # **BED**
 # Targeted zones bed file (optionnal) -> si donné existe-t-il, est-il au bon format
@@ -165,12 +168,18 @@ elif [[ "$CREATE_SUB_BAMS" != "TRUE" && "$CREATE_SUB_BAMS" != "True" && "$CREATE
   exit 1
 fi
 if [[ "$CREATE_SUB_BAMS" == "TRUE" || "$CREATE_SUB_BAMS" == "True" || "$CREATE_SUB_BAMS" == "true" || "$CREATE_SUB_BAMS" == "T" ]] ; then
-  if [[ -z "$BED" ]] ; then
-    echo -e "\nERROR: CREATE_SUB_BAM was set to TRUE but the bed file was not provided in your config file (${CONFIG}). Please either provide a bed file or set CREATE_SUB_BAM to FALSE."
+  if [[ -z "$BED" && (-z "$BED_MIN_MEAN_COV" || -z "$BED_MAX_DIST" || -z "$BED_MIN_LENGTH") ]] ; then
+    echo -e "\nERROR: CREATE_SUB_BAM was set to TRUE but neither the bed file nor the parameters to automatically create it were provided in your config file (${CONFIG}). Please either provide a bed file, or values for BED_MIN_MEAN_COV, BED_MAX_DIST and BED_MIN_LENGTH, or set CREATE_SUB_BAM to FALSE."
+    echo -e "\nExiting.\n"
+    exit 1
+  fi
+  if [[ ! -z "$BED" && (! -z "$BED_MIN_MEAN_COV" || ! -z "$BED_MAX_DIST" || ! -z "$BED_MIN_LENGTH") ]] ; then
+    echo -e "\nERROR: You provided both the bed file and the parameters to automatically create it in your config file (${CONFIG}). Please EITHER provide a bed file, OR values for BED_MIN_MEAN_COV, BED_MAX_DIST and BED_MIN_LENGTH."
     echo -e "\nExiting.\n"
     exit 1
   fi
 fi
+
 
 ## Mapping parameters ##
 MAPPER=$(grep "^MAPPER:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
