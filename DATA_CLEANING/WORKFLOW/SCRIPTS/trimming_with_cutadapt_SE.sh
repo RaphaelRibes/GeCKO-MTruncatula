@@ -116,4 +116,4 @@ fi
 R_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f2)
 
 ## 2/ RUN CUTADAPT - TRIMMING
-cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.fastq.gz ${R_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info
+cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}.fastq.gz ${R_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

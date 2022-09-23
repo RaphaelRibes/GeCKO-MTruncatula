@@ -128,4 +128,4 @@ R1_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f2)
 R2_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f3)
 
 ## 2/ RUN CUTADAPT - TRIMMING
-cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}_trimmed.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}_trimmed.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info
+cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

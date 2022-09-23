@@ -200,8 +200,8 @@ rule Trimming_DemultFastqs:
         fastqs_R2_demult = demult_dir+"/{base}.R2.fastq.gz",
         adapt_file = config["ADAPT_FILE"]
     output:
-        demult_trim_dir+"/{base}_trimmed.R1.fastq.gz",
-        demult_trim_dir+"/{base}_trimmed.R2.fastq.gz",
+        demult_trim_dir+"/{base}.R1.fastq.gz",
+        demult_trim_dir+"/{base}.R2.fastq.gz",
         demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info",
         temp(demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.R1.info"),
         temp(demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.R2.info")
@@ -222,8 +222,8 @@ rule Trimming_DemultFastqs:
 
 rule CountReads_TrimmedFastqs:
     input:
-        expand("{demult_trim_dir}/{sample}_trimmed.R1.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir),
-        expand("{demult_trim_dir}/{sample}_trimmed.R2.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir)
+        expand("{demult_trim_dir}/{sample}.R1.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir),
+        expand("{demult_trim_dir}/{sample}.R2.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir)
     output:
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt"
     shell:
@@ -232,9 +232,9 @@ rule CountReads_TrimmedFastqs:
 
 rule Fastqc_TrimmedFastqs:
     input:
-        demult_trim_dir+"/{base}_trimmed.{R}.fastq.gz"
+        demult_trim_dir+"/{base}.{R}.fastq.gz"
     output:
-        demult_trim_fastqc_reports_dir+"/{base}_trimmed.{R}_fastqc.zip"
+        demult_trim_fastqc_reports_dir+"/{base}.{R}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
     shell:
@@ -245,8 +245,8 @@ rule MultiQC_TrimmedFastqs:
     input:
         cutadapt_R1 = expand("{demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{sample}.R1.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
         cutadapt_R2 = expand("{demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{sample}.R2.info", sample=samples, demult_trim_cutadapt_reports_dir=demult_trim_cutadapt_reports_dir),
-        fastqc_R1 = expand("{demult_trim_fastqc_reports_dir}/{sample}_trimmed.R1_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir),
-        fastqc_R2 = expand("{demult_trim_fastqc_reports_dir}/{sample}_trimmed.R2_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir),
+        fastqc_R1 = expand("{demult_trim_fastqc_reports_dir}/{sample}.R1_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir),
+        fastqc_R2 = expand("{demult_trim_fastqc_reports_dir}/{sample}.R2_fastqc.zip", sample=samples, demult_trim_fastqc_reports_dir=demult_trim_fastqc_reports_dir),
         nb_reads =  demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt"
     output:
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
@@ -256,13 +256,12 @@ rule MultiQC_TrimmedFastqs:
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_trim_reports_dir};"
-        "multiqc {input.cutadapt_R1} {input.cutadapt_R2} {input.fastqc_R1} {input.fastqc_R2} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report -c {demult_trim_reports_dir}/config_multiQC.yaml;"
-        "sed -i -e '/header_mqc-generalstats-cutadapt-percent_trimmed/s/>\\([a-zA-Z][^>]*\\)_trimmed.R/>\\1.R/g' {demult_trim_reports_dir}/multiQC_Trimming_Report.html"
+        "multiqc {input.cutadapt_R1} {input.cutadapt_R2} {input.fastqc_R1} {input.fastqc_R2} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report -c {demult_trim_reports_dir}/config_multiQC.yaml"
 
 
 rule Concatenate_TrimmedFastqs:
     input:
-        fastqs_trim = expand("{demult_trim_dir}/{sample}_trimmed.{{R}}.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir),
+        fastqs_trim = expand("{demult_trim_dir}/{sample}.{{R}}.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir),
         demult_trim_reads_count = demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt" # necessary to exclude concatenated fastq from read count
     output:
         temp(demult_trim_dir+"/"+fastq_raw_base+"_trimmed.{R}.fastq.gz")
@@ -318,4 +317,3 @@ rule Metadata:
         "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/DATA_CLEANING\\n\" >> {outputs_directory}/workflow_info.txt;"
         "cd {snakefile_dir};"
         "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt; git rev-parse HEAD >> {outputs_directory}/workflow_info.txt ; fi"
-
