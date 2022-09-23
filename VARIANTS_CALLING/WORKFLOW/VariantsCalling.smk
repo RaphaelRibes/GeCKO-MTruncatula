@@ -3,8 +3,6 @@
 import os,sys
 from itertools import compress
 
-#singularity: "docker://condaforge/mambaforge"
-
 
 ### Variables from config file
 reference = config["REFERENCE"]

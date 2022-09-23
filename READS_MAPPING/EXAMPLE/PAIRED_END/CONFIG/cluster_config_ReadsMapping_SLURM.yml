@@ -1,6 +1,6 @@
 __default__:
     cpus-per-task: 1
-    partition: agap_normal
+    partition: agap_short
     mem-per-cpu: 2G
     job-name: RM.{rule}
     output: Logs_ReadsMappingWorkflow/{rule}.%j.out.txt
@@ -16,11 +16,27 @@ Mapping_SingleEndFastqs:
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
+MarkDuplicates_Bams:
+    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Index_Bams:
+    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
 Stats_Bams:
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Extract_Reads:
+    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+MarkDuplicates_ExtractedReads:
+    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Index_ExtractedReads:
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
