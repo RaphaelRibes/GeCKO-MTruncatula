@@ -14,14 +14,14 @@ vcf = egglib.io.VcfParser(args.input)
 input_vcf = open(args.input)
 
 # open output VCF and write header
-header = """##INFO=<ID=SNP,Number=0,Type=Integer,Description="Variant with at least 2 mononucleotide alleles">
-##INFO=<ID=INDEL,Number=0,Type=Integer,Description="Variant with at least 2 alleles of different lengths">
+header = """##INFO=<ID=SNP,Number=1,Type=Integer,Description="Variant with at least 2 mononucleotide alleles">
+##INFO=<ID=INDEL,Number=1,Type=Integer,Description="Variant with at least 2 alleles of different lengths">
 ##INFO=<ID=nbGS,Number=1,Type=Integer,Description="Number of genotyped samples">
 ##INFO=<ID=pNA,Number=1,Type=Float,Description="Frequency of missing genotypes for this site">
 ##INFO=<ID=nbG,Number=1,Type=Integer,Description="Number of genotypes">
 ##INFO=<ID=nbAll,Number=1,Type=Integer,Description="Number of alleles">
 ##INFO=<ID=All,Number=.,Type=String,Description="list of alleles">
-##INFO=<ID=AllCount,Number=.,Type=Int,Description="Counts of all alleles">
+##INFO=<ID=AllCount,Number=.,Type=Integer,Description="Counts of all alleles">
 ##INFO=<ID=AllFreq,Number=.,Type=Float,Description="Frequency of all alleles">
 ##INFO=<ID=MinHomo,Number=1,Type=Integer,Description="Number of the least frequent homozygous genotype">
 ##INFO=<ID=MAF,Number=1,Type=Float,Description="Minor allele frequency">

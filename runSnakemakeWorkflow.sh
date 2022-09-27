@@ -6,7 +6,7 @@
 # module purge
 # module load snakemake/5.13.0
 # module load anaconda/python3.8
-# module load egglib/3.1 
+ 
 
 ### ^ WRITE YOUR MODULE LOADS HERE ^ ###
 

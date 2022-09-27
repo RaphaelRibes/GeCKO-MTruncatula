@@ -90,8 +90,10 @@ rule Calculate_LocusExtraStats:
         outputs_directory+"/03__Genotype_Locus1_Sample_Filtered.vcf"
     output:
         outputs_directory+"/03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf"
+    conda:
+        "ENVS/conda_tools.yml"
     shell:
-        "python {scripts_dir}/egglib_LocusExtraStats.py --input {input} --output {output}"
+        "module purge ; python {scripts_dir}/egglib_LocusExtraStats.py --input {input} --output {output}"
 
 
 rule Filter_Loci_2:
@@ -105,8 +107,6 @@ rule Filter_Loci_2:
         config["BCFTOOLS_LOCUS_FILTERING2_OPTIONS"]
     shell:
         "bcftools filter -Ou -sFilter2 -i '{params}' {input} | bcftools view -f 'PASS' > {output}"
-
-
 
 
 rule Build_StatsReports:
