@@ -93,7 +93,14 @@ This file is used to pass all the information and tools parameters that will be 
 **INPUT FILES**  
 - *TRIM_DIRS:*&nbsp;&nbsp;&nbsp;The path(s) to the directory or directories containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files. To provide several directories, separate them with spaces, e.g.: "/home/user/trim_dir1 /home/user/trim_dir2". Be careful to provide them between quotes.   
 - *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
+
+*If you set CREATE_SUB_BAMS to TRUE, you either have to provide a bed file:*
 - *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optionnal: can be left blank ("").  
+
+*Or to provide ALL of the three following parameters to automatically create a bed file containing the genomic regions with enough coverage in your dataset:*
+- *BED_MIN_MEAN_COV:*&nbsp;&nbsp;&nbsp;The minimum mean coverage per sample to keep a genomic region. Optionnal: can be left blank ("").
+- *BED_MAX_DIST:*&nbsp;&nbsp;&nbsp;The maximum distance between two regions. If several regions are separated by a smaller distance than this, they will be merged into a single one. Optionnal: can be left blank ("").
+- *BED_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;The minimum length to keep a region after merging. Optionnal: can be left blank ("").
 
 **MAPPING PARAMETERS**  
 - *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
