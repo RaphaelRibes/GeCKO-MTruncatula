@@ -98,7 +98,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optionnal: can be left blank ("").  
 
 *Or to provide ALL of the three following parameters to automatically create a bed file containing the genomic regions with enough coverage in your dataset:*
-- *BED_MIN_MEAN_COV:*&nbsp;&nbsp;&nbsp;The minimum mean coverage per sample to keep a genomic region. Optionnal: can be left blank ("").
+- *BED_MIN_MEAN_COV:*&nbsp;&nbsp;&nbsp;The minimum mean depth per sample (number of reads per base) to keep a genomic region. Optionnal: can be left blank ("").
 - *BED_MAX_DIST:*&nbsp;&nbsp;&nbsp;The maximum distance between two regions. If several regions are separated by a smaller distance than this, they will be merged into a single one. Optionnal: can be left blank ("").
 - *BED_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;The minimum length to keep a region after merging. Optionnal: can be left blank ("").
 
