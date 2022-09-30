@@ -10,8 +10,8 @@ It can be used to process:
 1) An index of the provided reference is created if it does not exist yet.
 2) Reads are mapped to the reference, the resulting bams are sorted, the duplicates are removed if needed, and the final bams are indexed.
 3) Bams reads are counted.
-4) [Optionnal] For each genomic region provided in a bed file, reads are counted in each sample. A heatmap representing this data is generated.
-5) [Optionnal] The reads that mapped to these regions are extracted and sub-bams are created. A corresponding sub-reference is also produced.
+4) [Optional] For each genomic region provided in a bed file, reads are counted in each sample. A heatmap representing this data is generated.
+5) [Optional] The reads that mapped to these regions are extracted and sub-bams are created. A corresponding sub-reference is also produced.
 6) Two MultiQC reports are created, showing the reads numbers and quality after mapping, both before and after extracting reads from regions of interest.
 
 
@@ -95,12 +95,12 @@ This file is used to pass all the information and tools parameters that will be 
 - *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
 
 *If you set CREATE_SUB_BAMS to TRUE, you either have to provide a bed file:*
-- *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optionnal: can be left blank ("").  
+- *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optional: can be left blank ("").  
 
 *Or to provide ALL of the three following parameters to automatically create a bed file containing the genomic regions with enough coverage in your dataset:*
-- *BED_MIN_MEAN_COV:*&nbsp;&nbsp;&nbsp;The minimum mean depth per sample (number of reads per base) to keep a genomic region. Optionnal: can be left blank ("").
-- *BED_MAX_DIST:*&nbsp;&nbsp;&nbsp;The maximum distance between two regions. If several regions are separated by a smaller distance than this, they will be merged into a single one. Optionnal: can be left blank ("").
-- *BED_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;The minimum length to keep a region after merging. Optionnal: can be left blank ("").
+- *BED_MIN_MEAN_COV:*&nbsp;&nbsp;&nbsp;The minimum mean depth per sample (number of reads per base) to keep a genomic region. Optional: can be left blank ("").
+- *BED_MAX_DIST:*&nbsp;&nbsp;&nbsp;The maximum distance between two regions. If several regions are separated by a smaller distance than this, they will be merged into a single one. Optional: can be left blank ("").
+- *BED_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;The minimum length to keep a region after merging. Optional: can be left blank ("").
 
 **MAPPING PARAMETERS**  
 - *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
