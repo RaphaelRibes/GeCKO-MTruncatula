@@ -10,7 +10,7 @@ This VARIANTS_CALLING workflow generates a vcf file from bam files obtained afte
 4) Variants calling by sample is performed with the GATK HaplotypeCaller function
 5) A database from variants calling by sample is generated with the GATK GenomicsDBImport function, and a list of the reference's chromosomes or contigs is created
 6) Variants calling for all samples (population) is performed with the GATK GenotypeGVCFs function, creating a single vcf file
-7) [ Optional ] (if extracting bams in a sub reference): convert the positions of the variants in the variant file (vcf file) with the positions given in the genomic reference
+7) [Optional] (if extracting bams in a sub reference): convert the positions of the variants in the variant file (vcf file) with the positions given in the genomic reference
 8) Based on the variant statistics calculated by GATK, histograms are created to estimate the quality of the variant calling before filtration
 
 
