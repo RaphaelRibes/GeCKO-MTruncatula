@@ -1,6 +1,6 @@
 __default__:
     cpus-per-task: 1
-    partition: agap_short
+    partition: agap_normal
     mem-per-cpu: 2G
     job-name: RM.{rule}
     output: Logs_ReadsMappingWorkflow/{rule}.%j.out.txt
@@ -8,11 +8,13 @@ __default__:
 
 Mapping_PairedEndFastqs:
     cpus-per-task: "{threads}"
+    mem-per-cpu: 5G
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Mapping_SingleEndFastqs:
     cpus-per-task: "{threads}"
+    mem-per-cpu: 5G
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
