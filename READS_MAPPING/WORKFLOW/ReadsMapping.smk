@@ -138,7 +138,7 @@ rule FinalTargets:
         mapping_dir+"/bams_list.txt",
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv",
         subref_dir+"/"+ref_name+"_zones.fasta",
-        expand("{subbams_dir}/{sample}.bam.bai", sample=samples, subbams_dir=subbams_dir),
+        expand("{subbams_dir}/{sample}.bam.csi", sample=samples, subbams_dir=subbams_dir),
         subbams_reports_dir+"/nb_reads_per_sample.tsv",
         subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html",
         mapping_dir+"/subbams_list.txt",
@@ -222,20 +222,20 @@ rule Index_Bams:
     input:
         bam = bams_dir+"/{base}.bam"
     output:
-        bai = bams_dir+"/{base}.bam.bai"
+        csi = bams_dir+"/{base}.bam.csi"
     conda:
         "ENVS/conda_tools.yml"
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
-        "samtools index {params.samtools_index_options} {input.bam};"
+        "samtools index -c {params.samtools_index_options} {input.bam};"
         "rm -rf {bams_dir}/TMP"
 
 
 rule Stats_Bams:
     input:
         bam = bams_dir+"/{base}.bam",
-        bai = bams_dir+"/{base}.bam.bai"
+        csi = bams_dir+"/{base}.bam.csi"
     output:
         bams_stats_reports_dir+"/stats_{base}"
     conda:
@@ -280,7 +280,7 @@ rule Create_BamsList:
 rule Create_BedFile:
     input:
         expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir),
-        expand("{bams_dir}/{sample}.bam.bai", sample=samples, bams_dir=bams_dir)
+        expand("{bams_dir}/{sample}.bam.csi", sample=samples, bams_dir=bams_dir)
     output:
         bed_to_create
     conda:
@@ -296,7 +296,7 @@ rule Create_BedFile:
 rule CountReadsZones_Bams:
     input:
         bams = expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir),
-        bais = expand("{bams_dir}/{sample}.bam.bai", sample=samples, bams_dir=bams_dir),
+        csis = expand("{bams_dir}/{sample}.bam.csi", sample=samples, bams_dir=bams_dir),
         bed = bed_to_create if create_bed else existing_bed
     output:
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv"
@@ -373,18 +373,20 @@ rule Index_ExtractedReads:
     input:
         bam = subbams_dir+"/{base}.bam"
     output:
-        bai = subbams_dir+"/{base}.bam.bai"
+        csi = subbams_dir+"/{base}.bam.csi"
     conda:
         "ENVS/conda_tools.yml"
+    params:
+        samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
-        "samtools index {input.bam};"
+        "samtools index -c {params.samtools_index_options} {input.bam};"
         "rm -rf {subbams_dir}/TMP"
 
 
 rule Stats_Subbams:
     input:
         bam = subbams_dir+"/{base}.bam",
-        bai = subbams_dir+"/{base}.bam.bai"
+        csi = subbams_dir+"/{base}.bam.csi"
     output:
         subbams_stats_reports_dir+"/stats_{base}"
     conda:
