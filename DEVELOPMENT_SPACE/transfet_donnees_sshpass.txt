@@ -1,0 +1,2 @@
+
+sbatch --partition=agap_normal --job-name=CP --wrap="sshpass -p mot-de-passe rsync -vzr --progress  --stats file_folder data-ardisson@147.99.78.235:/volume1/data-ge2pop/data-diversite-durum/"
