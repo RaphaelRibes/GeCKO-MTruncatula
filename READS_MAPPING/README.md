@@ -162,7 +162,7 @@ This workflow will create a "READS_MAPPING" directory in the "WORKFLOWS_OUTPUTS"
 - *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
 
 **BAMS directory**  
-- *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads mapped to the provided reference along with the associated index file (.bai).  
+- *bams files*:&nbsp;&nbsp;&nbsp;One file per sample, reads mapped to the provided reference along with the associated index file (.csi).  
 
 **BAMS/REPORTS directory**  
 - *nb_reads_per_sample.tsv*:&nbsp;&nbsp;&nbsp;Number of reads per sample after mapping  
