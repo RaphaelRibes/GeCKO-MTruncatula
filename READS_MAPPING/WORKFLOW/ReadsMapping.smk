@@ -229,7 +229,7 @@ rule Index_Bams:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
         "samtools index -c {params.samtools_index_options} {input.bam};"
-        "rm -rf {bams_dir}/TMP"
+#        "rm -rf {bams_dir}/TMP"
 
 
 rule Stats_Bams:
@@ -352,7 +352,7 @@ rule Extract_Reads:
         "CrossMap.py bam -t 500 {input.chain} {output.primary} {subbams_dir}/{wildcards.base}_CM;"
 
 
-rule MarkDuplicates_ExtractedReads:
+rule MarkDuplicates_Subbams:
     input:
         CM_sorted_bam = subbams_dir+"/{base}_CM.sorted.bam"
     output:
@@ -369,7 +369,7 @@ rule MarkDuplicates_ExtractedReads:
         "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {output.coordsorted_bam} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES FALSE -M {output.metrics}"
 
 
-rule Index_ExtractedReads:
+rule Index_Subbams:
     input:
         bam = subbams_dir+"/{base}.bam"
     output:
@@ -380,7 +380,7 @@ rule Index_ExtractedReads:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
         "samtools index -c {params.samtools_index_options} {input.bam};"
-        "rm -rf {subbams_dir}/TMP"
+#        "rm -rf {subbams_dir}/TMP"
 
 
 rule Stats_Subbams:

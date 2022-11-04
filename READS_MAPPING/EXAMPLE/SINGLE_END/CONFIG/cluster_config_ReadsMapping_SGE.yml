@@ -34,11 +34,11 @@ Extract_Reads:
     o: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
     e: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
 
-MarkDuplicates_ExtractedReads:
+MarkDuplicates_Subbamss:
     o: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     e: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
-Index_ExtractedReads:
+Index_Subbams:
     o: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     e: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 

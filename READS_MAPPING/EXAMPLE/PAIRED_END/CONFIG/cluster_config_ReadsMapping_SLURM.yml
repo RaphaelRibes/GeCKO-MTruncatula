@@ -34,11 +34,11 @@ Extract_Reads:
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
-MarkDuplicates_ExtractedReads:
+MarkDuplicates_Subbams:
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
-Index_ExtractedReads:
+Index_Subbams:
     output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
