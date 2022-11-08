@@ -228,8 +228,7 @@ rule Index_Bams:
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
-        "samtools index -c {params.samtools_index_options} {input.bam};"
-#        "rm -rf {bams_dir}/TMP"
+        "samtools index -c {params.samtools_index_options} {input.bam}"
 
 
 rule Stats_Bams:
@@ -250,7 +249,8 @@ rule Summarize_BamsReadsCount:
     output:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
     shell:
-        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {bams_stats_reports_dir} --output {output}"
+        "{scripts_dir}/summarize_stats.sh {end} --stats_folder {bams_stats_reports_dir} --output {output};"
+        "rm -rf {bams_dir}/TMP"
 
 
 rule MultiQC_Bams:
@@ -379,8 +379,7 @@ rule Index_Subbams:
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     shell:
-        "samtools index -c {params.samtools_index_options} {input.bam};"
-#        "rm -rf {subbams_dir}/TMP"
+        "samtools index -c {params.samtools_index_options} {input.bam}"
 
 
 rule Stats_Subbams:
@@ -402,6 +401,7 @@ rule Summarize_SubbamsReadsCount:
         subbams_reports_dir+"/nb_reads_per_sample.tsv"
     shell:
         "{scripts_dir}/summarize_stats.sh {end} --stats_folder {subbams_stats_reports_dir} --output {output};"
+        "rm -rf {subbams_dir}/TMP"
 
 
 rule MultiQC_Subbams:
