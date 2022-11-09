@@ -28,7 +28,7 @@ Needed files:
 
 
 For example, if you need to launch the workflow on our VCF example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```../../runSnakemakeWorkflow.sh --workflow VariantsCalling --workflow-path ../../../CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```../../runSnakemakeWorkflow.sh --workflow VcfFiltering --workflow-path ../../../CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
