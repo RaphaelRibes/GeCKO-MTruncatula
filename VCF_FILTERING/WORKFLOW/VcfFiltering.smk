@@ -27,6 +27,7 @@ VCF_reports_dir = outputs_directory+"/REPORTS"
 
 rule FinalTargets:
     input:
+        VCF_reports_dir+"/variants_stats_histograms_VF.pdf",
         VCF_reports_dir+"/multiQC_VcfFiltering_report.html",
         outputs_directory+"/workflow_info.txt"
 
@@ -145,6 +146,26 @@ rule Build_Report:
         "ENVS/conda_tools.yml"
     shell:
         "multiqc {input} -o {VCF_reports_dir} -n multiQC_VcfFiltering_report"
+
+
+rule Summarize_FinalVCFVariables:
+    input:
+        outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
+    output:
+        VCF_reports_dir+"/variants_stats_VF.tsv"
+    shell:
+        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output} {VCF_reports_dir}"
+
+
+rule Plot_FinalVCFVariablesHistograms:
+    input:
+        VCF_reports_dir+"/variants_stats_VF.tsv"
+    output:
+        VCF_reports_dir+"/variants_stats_histograms_VF.pdf"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
 
 
 rule Metadata:

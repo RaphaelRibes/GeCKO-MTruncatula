@@ -55,11 +55,11 @@ fi
 
 
 # Merge all bams into one
-samtools merge ${OUTPUT_DIR}/all_merged.bam ${INPUT_BAMS_DIR}/*bam
+samtools merge ${OUTPUT_DIR}/all_merged.bam ${INPUT_BAMS_DIR}/*bam || { (>&2 echo 'The bed creation failed (bams merging step)') ; exit 1; }
 
 
 # Compute coverage and only keep zones with enough reads
-bedtools genomecov -ibam ${OUTPUT_DIR}/all_merged.bam -bg | awk -v m=$MIN_COV '{if ($4>=m) print $0}' > ${OUTPUT_DIR}/all_covered_zones_mincov.bed
+bedtools genomecov -ibam ${OUTPUT_DIR}/all_merged.bam -bg | awk -v m=$MIN_COV '{if ($4>=m) print $0}' > ${OUTPUT_DIR}/all_covered_zones_mincov.bed || { (>&2 echo 'The bed creation failed (genomecov step)') ; exit 1; }
 
 
 # Merge overlapping and close enough zones
@@ -71,11 +71,11 @@ awk -v M=$MAX_DIST 'BEGIN{OFS="\t"; chr=0; start=0; end=0}{
     if(end !=0) {print chr, start, end} ;
     chr=$1 ; start=$2 ; end=$3
   }
-} END{if(end !=0) {print chr, start, end}}' ${OUTPUT_DIR}/all_covered_zones_mincov.bed > ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed
+} END{if(end !=0) {print chr, start, end}}' ${OUTPUT_DIR}/all_covered_zones_mincov.bed > ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed || { (>&2 echo 'The bed creation failed (zones merging step)') ; exit 1; }
 
 
 # Remove zones that are too short
-awk -v m=$MIN_LENGTH '{if ($3-$2+1 >= m){print $0}}' ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed > ${OUTPUT_DIR}/zones.bed
+awk -v m=$MIN_LENGTH '{if ($3-$2+1 >= m){print $0}}' ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed > ${OUTPUT_DIR}/zones.bed || { (>&2 echo 'The bed creation failed (removing short zones step)') ; exit 1; }
 
 
 rm ${OUTPUT_DIR}/all_merged.bam ${OUTPUT_DIR}/all_covered_zones_mincov.bed ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed
