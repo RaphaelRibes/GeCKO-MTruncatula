@@ -29,6 +29,7 @@ rule FinalTargets:
     input:
         VCF_reports_dir+"/variants_stats_histograms_VF.pdf",
         VCF_reports_dir+"/multiQC_VcfFiltering_report.html",
+        VCF_reports_dir+"/missing_data_per_sample.txt",
         outputs_directory+"/workflow_info.txt"
 
 
@@ -167,6 +168,18 @@ rule Plot_FinalVCFVariablesHistograms:
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
 
+rule Compute_MissingDataPerSample:
+    input:
+        outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
+    output:
+        VCF_reports_dir+"/missing_data_per_sample.txt"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "echo -e \"Sample\tNA_fraction\" > {output};"
+        "paste <(bcftools query -f '[%SAMPLE\t]\n' {input} | head -1 | tr '\t' '\n')"
+        " <(bcftools query -f '[%GT\t]\n' {input} | awk -v OFS=\"\t\" '{{for (i=1;i<=NF;i++) if (($i == \"./.\") || ($i == \".|.\")) sum[i]+=1 }} END {{for (i in sum) print i, sum[i] / NR }}' | sort -k1,1n | cut -f 2)"
+        " | awk 'NF' >> {output};"
 
 rule Metadata:
     output:
