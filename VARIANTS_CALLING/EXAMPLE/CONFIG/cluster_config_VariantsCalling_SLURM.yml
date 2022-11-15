@@ -16,3 +16,5 @@ HaplotypeCaller:
 GenomicsDBImport:
     cpus-per-task: "{threads}"
 
+Plot_GVCFVariablesHistograms:
+    mem-per-cpu: 4G

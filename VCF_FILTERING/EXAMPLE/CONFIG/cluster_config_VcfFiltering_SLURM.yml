@@ -6,3 +6,5 @@ __default__:
     output: Logs_VcfFilteringWorkflow/{rule}.%j.out.txt
     error: Logs_VcfFilteringWorkflow/{rule}.%j.err.txt
 
+Plot_FinalVCFVariablesHistograms:
+    mem-per-cpu: 4G

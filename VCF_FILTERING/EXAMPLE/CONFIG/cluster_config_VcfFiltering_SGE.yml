@@ -6,3 +6,5 @@ __default__:
     o: Logs_VcfFilteringWorkflow/{rule}.$JOB_ID.out.txt
     e: Logs_VcfFilteringWorkflow/{rule}.$JOB_ID.err.txt
 
+Plot_FinalVCFVariablesHistograms:
+    h_vmem: 4G

@@ -16,3 +16,5 @@ HaplotypeCaller:
 GenomicsDBImport:
     pe: smp {threads}
 
+Plot_GVCFVariablesHistograms:
+    h_vmem: 4G
