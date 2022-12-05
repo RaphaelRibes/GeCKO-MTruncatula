@@ -6,7 +6,7 @@
 # module purge
 # module load snakemake/5.13.0
 # module load anaconda/python3.8
- 
+
 
 ### ^ WRITE YOUR MODULE LOADS HERE ^ ###
 
@@ -135,7 +135,7 @@ absolutePath () {
 if [[ -z "$WORKFLOW_PATH" || "$WORKFLOW_PATH" = --* || "$WORKFLOW_PATH" = -* ]] ; then
 	echo -e "\nERROR: the --workflow-path parameter is missing, please include it in your command."
 	echo "As a reminder:"
-	echo "--workflow-path [...]: the path to the directory containing the workflow's Snakemake (.smk) file. If the directory was cloned from GitHub, it should end with /WORKFLOW)"
+	echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /CAPTURE_SNAKEMAKE_WORKFLOWS"
 	echo -e "\nExiting.\n"
 	exit 1
 fi
@@ -145,7 +145,7 @@ if [ ! -d "$WORKFLOW_PATH" ] ; then
   echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /CAPTURE_SNAKEMAKE_WORKFLOWS"
 	echo -e "\nExiting.\n"
 	exit 1
-fi 
+fi
 
 WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
 

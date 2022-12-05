@@ -4,9 +4,11 @@
 if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" ]] ; then
   echo -e "\nINFO: Paired end data is expected (PAIRED_END set to TRUE)\n"
   model_config="${workflow_folder}/SCRIPTS/model_files/config_DataCleaning_PE.yml"
+  PAIRED="TRUE"
 else
   echo -e "\nINFO: Single end data is expected (PAIRED_END set to FALSE)\n"
   model_config="${workflow_folder}/SCRIPTS/model_files/config_DataCleaning_SE.yml"
+  PAIRED="FALSE"
 fi
 
 
@@ -194,7 +196,6 @@ if [[ ! -z "$BARCODE_FILE" ]] ; then
   fi
 fi
 
-
 if [[ -z "$ADAPT_FILE" ]] ; then
   echo -e "\nERROR: An ADAPT_FILE must be provided in the config file."
   echo -e "\nExiting.\n"
@@ -222,6 +223,61 @@ elif [[ "$WORKFLOW_SMK" = "${WORKFLOW}_SingleEnd.smk" && $nb_col_adapt_file != 2
   echo -e "\nExiting.\n"
   exit 1
 fi
+
+if [[ ! -z "$DEMULT_DIR" ]] ; then
+  samples=$(cut -f1 $ADAPT_FILE)
+  if [[ $PAIRED = "TRUE" ]] ; then
+    for sample in $samples ; do
+      fastq_R1="${DEMULT_DIR}/${sample}.R1.fastq.gz"
+      fastq_R2="${DEMULT_DIR}/${sample}.R2.fastq.gz"
+      if [[ ! -f "$fastq_R1" || ! -f "$fastq_R2" ]] ; then
+        echo -e "\nERROR: the ${sample} R1 and R2 fastq.gz could not be found in ${DEMULT_DIR}. Please make sure the names match and the fastq files are named in the following format: ${sample}.R1.fastq.gz, ${sample}.R2.fastq.gz."
+        echo -e "\nExiting.\n"
+        exit 1
+      fi
+    done
+    for fastq_R1 in $(ls ${DEMULT_DIR}/*.R1.fastq.gz) ; do
+      sample=$(basename $fastq_R1 .R1.fastq.gz)
+      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l)
+      if [[ $nb_row_sample -eq 0 ]] ; then
+        echo -e "\nERROR: ${sample} could not be found in your ADAPT_FILE. Please make sure all your samples appear in your ADAPT_FILE."
+        echo -e "\nExiting.\n"
+        exit 1
+      fi
+    done
+  fi
+  if [[ $PAIRED = "FALSE" ]] ; then
+    for sample in $samples ; do
+      fastq="${DEMULT_DIR}/${sample}.fastq.gz"
+      if [[ ! -f "$fastq" ]] ; then
+        echo -e "\nERROR: the ${sample} fastq.gz could not be found in ${DEMULT_DIR}. Please make sure the names match and the fastq file is named in the following format: ${sample}.fastq.gz."
+        echo -e "\nExiting.\n"
+        exit 1
+      fi
+    done
+    for fastq in $(ls ${DEMULT_DIR}/*fastq.gz) ; do
+      sample=$(basename $fastq .fastq.gz)
+      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l)
+      if [[ $nb_row_sample -eq 0 ]] ; then
+        echo -e "\nERROR: ${sample} could not be found in your ADAPT_FILE. Please make sure all your samples appear in your ADAPT_FILE."
+        echo -e "\nExiting.\n"
+        exit 1
+      fi
+    done
+  fi
+fi
+
+# check that BARCODE_FILE and ADAPT_FILE contain the same samples
+if [[ ! -z $BARCODE_FILE ]] ; then
+  nb_uniq_adapt=$(grep -F -x -v -f <(cut -f1 $BARCODE_FILE | sort) <(cut -f1 $ADAPT_FILE | sort) | wc -l)
+  nb_uniq_barcode=$(grep -F -x -v -f <(cut -f1 $ADAPT_FILE | sort) <(cut -f1 $BARCODE_FILE | sort) | wc -l)
+  if [[ $nb_uniq_adapt -gt 0 || $nb_uniq_barcode -gt 0 ]] ; then
+    echo -e "\nERROR: The samples names given in the ADAPT_FILE and the BARCODE_FILE do not match. Please make sure that they are the same."
+    echo -e "\nExiting.\n"
+    exit 1
+  fi
+fi
+
 
 # TRIMMING_CPUS_PER_TASK, TRIMMING_QUAL, TRIMMING_MIN_LENGTH and TRIMMING_CORES
 TRIMMING_CPUS_PER_TASK=$(grep "^TRIMMING_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
