@@ -29,7 +29,7 @@ infos = infos.select_dtypes(include=numerics)
 # Reformat non-numeric columns to try and make it numeric
 others_converted_to_float = {}
 for column in others:
-    list_of_list_of_values = [values.split(',') for values in others[column].tolist()]
+    list_of_list_of_values = [str(values).split(',') for values in others[column].tolist()]
     list_of_values = [value for elem in list_of_list_of_values for value in elem]
     isFloatColumn = True
     list_of_float_values = []
