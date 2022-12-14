@@ -10,7 +10,7 @@ It can be used to process:
 1) An index of the provided reference is created if it does not exist yet.
 2) Reads are mapped to the reference, the resulting bams are sorted, the duplicates are removed if needed, and the final bams are indexed.
 3) Bams reads are counted.
-4) [Optional] For each genomic region provided in a bed file, reads are counted in each sample. A heatmap representing this data is generated.
+4) [Optional] For each genomic region provided in a bed file, reads are counted in each sample.
 5) [Optional] The reads that mapped to these regions are extracted and sub-bams are created. A corresponding sub-reference is also produced.
 6) Two MultiQC reports are created, showing the reads numbers and quality after mapping, both before and after extracting reads from regions of interest.
 
