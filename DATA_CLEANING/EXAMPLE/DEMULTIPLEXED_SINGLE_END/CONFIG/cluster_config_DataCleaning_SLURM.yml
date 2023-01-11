@@ -13,3 +13,11 @@ Trimming_DemultFastqs:
     cpus-per-task: "{threads}"
     output: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Fastqc_DemultFastqs:
+    output: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Fastqc_TrimmedFastqs:
+    output: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_DataCleaningWorkflow/{rule}.{wildcards.base}.%j.err.txt
