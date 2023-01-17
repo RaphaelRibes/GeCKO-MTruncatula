@@ -30,7 +30,7 @@ infos = infos.select_dtypes(include=numerics)
 others_converted_to_float = {}
 for column in others:
     list_of_list_of_values = [str(values).split(',') for values in others[column].tolist()]
-    list_of_values = [value for elem in list_of_list_of_values for value in elem]
+    list_of_values = ['NaN' if value=="." else value for elem in list_of_list_of_values for value in elem]
     isFloatColumn = True
     list_of_float_values = []
     for value in list_of_values:
@@ -53,10 +53,17 @@ elif (nb_rows < 400):
 else:
     bins = 100
 
+
+# Are there Qual values less than 1
+transform_with_log = True
+if (hasattr(infos, 'Qual') and min(infos["Qual"]) < 1):
+    transform_with_log = False
+
+
 # Plot one histogram per column and save it to the output pdf
 with PdfPages(pdf_output) as pdf:
     for column in infos:
-        if (column == "Qual"):
+        if (column == "Qual" and transform_with_log):
             fig, ax = plt.subplots()
             plt.hist(numpy.log10(infos["Qual"]), bins=bins)
             y_min, y_max = plt.gca().get_ylim()
