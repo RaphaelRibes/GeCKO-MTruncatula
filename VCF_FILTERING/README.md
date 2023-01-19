@@ -129,7 +129,7 @@ Loci are filtered with the following command:
 ```bcftools filter -i ‘[BCFTOOLS_LOCUS_FILTERING1_OPTIONS]’```  
 At this step, you can filter loci using all the common GATK metrics given in the VCF INFO field (DP, InbreedingCoeff, etc.), the QUAL column, or the metrics/info that can be computed on the fly by bcftools (F_MISSING, MAF, TYPE, etc. See the bcftools documentation for an exhaustive list).  
 For example, if you want to keep only biallelic SNP sites with quality above 30 and less than 50% missing values, here is what you could write in your config file:  
-*BCFTOOLS_ LOCUS_FILTERING1_OPTIONS: "N_ALT=1 & TYPE="snp" & QUAL >= 30 & F_MISSING <= 0.5"*
+*BCFTOOLS_ LOCUS_FILTERING1_OPTIONS: "N_ALT=1 & TYPE=\\"snp\\" & QUAL >= 30 & F_MISSING <= 0.5"*
 
 - **Loci filtering (second step)**  
 After filtering out samples, loci can be filtered a second time with:  
