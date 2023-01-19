@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy
+import seaborn as sns
 
 ## Arguments
 parser = argparse.ArgumentParser(description="Plot histograms of numeric variables from vcf infos")
@@ -14,12 +15,13 @@ args = parser.parse_args()
 tsv_input = args.tsv
 pdf_output = args.pdf
 
-
 ## Read input file
 infos = pd.read_csv(tsv_input, sep="\t")
 
-# Remove contig and pos columns
+# Remove contig, pos, SNP and INDEL columns
 infos.drop(columns = infos.columns[[0,1]], axis = 1, inplace= True)
+unwanted_columns = infos.filter(['SNP', 'INDEL'])
+infos.drop(unwanted_columns, axis = 1, inplace= True)
 
 # Only keep numeric columns
 numerics = ['float64', 'int64']
@@ -44,42 +46,44 @@ for column in others:
         others_converted_to_float[column] = list_of_float_values
 
 
-# Choose the bins number depending on the number of variants
-nb_rows = len(infos.index)
-if (nb_rows < 200):
-    bins = 20
-elif (nb_rows < 400):
-    bins = 50
-else:
-    bins = 100
-
-
 # Are there Qual values less than 1
 transform_with_log = True
 if (hasattr(infos, 'Qual') and min(infos["Qual"]) < 1):
     transform_with_log = False
 
+# How many SNPs in the file
+nb_SNPs = infos.shape[0]
+footnote_text = "The histograms are based on data from "+str(nb_SNPs)+" positions. If the input vcf file contained more\nthan 100000 positions, approximately 100000 loci were randomly sampled to plot the histograms from."
 
 # Plot one histogram per column and save it to the output pdf
 with PdfPages(pdf_output) as pdf:
     for column in infos:
+        plt.figure()
         if (column == "Qual" and transform_with_log):
             fig, ax = plt.subplots()
-            plt.hist(numpy.log10(infos["Qual"]), bins=bins)
+            histplot = sns.histplot(numpy.log10(infos[column]), kde=True)
             y_min, y_max = plt.gca().get_ylim()
             plt.text(0, 1.1, "Qual thresholds", color="#2F4F4F", transform = ax.transAxes)
-            for i in 10, 20, 30, 40:
-              plt.axvline(numpy.log10(i), color="#2F4F4F", linestyle='dashed', linewidth=1)
-              plt.text(1.01*numpy.log10(i), i/100*y_max, i, color="#2F4F4F")
+            for qual in 10, 20, 30, 40:
+                plt.axvline(numpy.log10(qual), color="#2F4F4F", linestyle='dashed', linewidth=1)
+                plt.text(1.01*numpy.log10(qual), qual/100*y_max, qual, color="#2F4F4F")
             plt.title("log10(Qual)")
-            pdf.savefig(fig)
         else:
-            fig, ax = plt.subplots()
-            infos.hist(column, ax=ax, bins=bins)
-            pdf.savefig(fig)
+            histplot = sns.histplot(infos[column], kde=True)
+            plt.title(column)
+        histplot.set(xlabel=None)
+        if (len(histplot.lines) > 0):
+            histplot.lines[0].set_color('#e67300')
+        plt.figtext(0.5, 0.01, footnote_text, horizontalalignment='center', fontsize=8)
+        plt.subplots_adjust(left=None, bottom=0.14, right=None, top=None, wspace=None, hspace=None)
+        pdf.savefig(histplot.get_figure())
     for key in others_converted_to_float.keys():
-        fig, ax = plt.subplots()
+        plt.figure()
         np_arr = numpy.array(others_converted_to_float[key])
-        plt.hist(np_arr, bins=bins)
+        histplot = sns.histplot(np_arr, kde=True)
         plt.title(key)
-        pdf.savefig(fig)
+        if (len(histplot.lines) > 0):
+            histplot.lines[0].set_color('#e67300')
+        plt.figtext(0.5, 0.01, footnote_text, horizontalalignment='center', fontsize=8)
+        plt.subplots_adjust(left=None, bottom=0.14, right=None, top=None, wspace=None, hspace=None)
+        pdf.savefig(histplot.get_figure())
