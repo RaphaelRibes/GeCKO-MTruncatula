@@ -158,7 +158,7 @@ rule MultiQC_DemultFastqs:
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_reports_dir};"
-        "multiqc {input.fastqc} -o {demult_reports_dir} -n multiQC_Demult_Report -c {demult_reports_dir}/config_multiQC.yaml"
+        "multiqc {input.fastqc} -o {demult_reports_dir} -n multiQC_Demult_Report -c {demult_reports_dir}/config_multiQC.yaml -i Demultiplexing_Report"
 
 
 
@@ -239,7 +239,7 @@ rule MultiQC_TrimmedFastqs:
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_trim_reports_dir};"
-        "multiqc {input.cutadapt} {input.fastqc} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report -c {demult_trim_reports_dir}/config_multiQC.yaml"
+        "multiqc {input.cutadapt} {input.fastqc} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report -c {demult_trim_reports_dir}/config_multiQC.yaml -i Trimming_Report"
 
 
 rule Concatenate_TrimmedFastqs:
@@ -282,7 +282,7 @@ rule MultiQC_Global:
     shell:
         "sum_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T}}' {demult_trim_reports_dir}/Reads_Count_DemultTrim.txt | sed 's/\..*//');"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_keepTrim.yaml --nb_reads ${{sum_nb_reads}} --output_dir {outputs_directory};"
-        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report -c {outputs_directory}/config_multiQC.yaml"
+        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report -c {outputs_directory}/config_multiQC.yaml -i DataCleaning_Report -b 'WARNING: In this report the %Dups is overestimated and not really meaningful because the data results from merging several individual samples.'"
 
 
 
