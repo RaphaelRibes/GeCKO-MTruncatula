@@ -26,7 +26,7 @@ awk -v nvar=$nvar -F"\t|;" '{
     print $1"\t"$2"\t"$3 ;
     for(j=1;j<=nvar;j++){
       for(i=4;i<=NF;i++){
-        if($i ~ vars[j]) {sub(vars[j]"=","",$i); print $i; break} else if (i == NF){print "NA"}
+        if($i ~ "^"vars[j]"=") {sub(vars[j]"=","",$i); print $i; break} else if (i == NF){print "NA"}
       }
     }
   }
