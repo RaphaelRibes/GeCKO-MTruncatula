@@ -147,7 +147,7 @@ rule Build_Report:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "multiqc {input} -o {VCF_reports_dir} -n multiQC_VcfFiltering_report"
+        "multiqc {input} -o {VCF_reports_dir} -n multiQC_VcfFiltering_report -i VcfFiltering_report"
 
 
 rule Summarize_FinalVCFVariables:
