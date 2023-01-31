@@ -189,8 +189,8 @@ rule Summarize_GVCFVariables:
         )
     output:
         stats_tsv = GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv",
-        DP_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_VC.tsv",
-        GT_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv"
+        DP_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_VC.tsv"),
+        GT_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv")
     conda:
         "ENVS/conda_tools.yml"
     shell:

@@ -156,8 +156,8 @@ rule Summarize_FinalVCFVariables:
         outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
     output:
         stats_tsv = VCF_reports_dir+"/variants_stats_VF.tsv",
-        DP_tsv = VCF_reports_dir+"/genotypes_DP_VF.tsv",
-        GT_tsv = VCF_reports_dir+"/genotypes_GT_VF.tsv"
+        DP_tsv = temp(VCF_reports_dir+"/genotypes_DP_VF.tsv"),
+        GT_tsv = temp(VCF_reports_dir+"/genotypes_GT_VF.tsv")
     conda:
         "ENVS/conda_tools.yml"
     shell:
