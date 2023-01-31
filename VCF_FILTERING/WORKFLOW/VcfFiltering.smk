@@ -28,6 +28,7 @@ VCF_reports_dir = outputs_directory+"/REPORTS"
 rule FinalTargets:
     input:
         VCF_reports_dir+"/variants_stats_histograms_VF.pdf",
+        VCF_reports_dir+"/genotypes_DP_boxplot_VF.pdf",
         VCF_reports_dir+"/multiQC_VcfFiltering_report.html",
         VCF_reports_dir+"/missing_data_per_sample.txt",
         outputs_directory+"/workflow_info.txt"
@@ -154,9 +155,13 @@ rule Summarize_FinalVCFVariables:
     input:
         outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
     output:
-        VCF_reports_dir+"/variants_stats_VF.tsv"
+        stats_tsv = VCF_reports_dir+"/variants_stats_VF.tsv",
+        DP_tsv = VCF_reports_dir+"/genotypes_DP_VF.tsv",
+        GT_tsv = VCF_reports_dir+"/genotypes_GT_VF.tsv"
+    conda:
+        "ENVS/conda_tools.yml"
     shell:
-        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output} {VCF_reports_dir}"
+        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {VCF_reports_dir}"
 
 
 rule Plot_FinalVCFVariablesHistograms:
@@ -168,6 +173,19 @@ rule Plot_FinalVCFVariablesHistograms:
         "ENVS/conda_tools.yml"
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
+
+
+rule Plot_VCFDPBoxplot:
+    input:
+        DP_tsv = VCF_reports_dir+"/genotypes_DP_VF.tsv",
+        GT_tsv = VCF_reports_dir+"/genotypes_GT_VF.tsv"
+    output:
+        VCF_reports_dir+"/genotypes_DP_boxplot_VF.pdf"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
+
 
 rule Compute_MissingDataPerSample:
     input:

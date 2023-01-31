@@ -61,6 +61,7 @@ def buildExpectedFiles(filesNames, isExpected):
 rule FinalTargets:
     input:
         GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf",
+        GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf",
         vc_dir+"/workflow_info.txt"
 
 
@@ -187,9 +188,13 @@ rule Summarize_GVCFVariables:
         [ not performConvertPositions, performConvertPositions ]
         )
     output:
-        GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv"
+        stats_tsv = GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv",
+        DP_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_VC.tsv",
+        GT_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv"
+    conda:
+        "ENVS/conda_tools.yml"
     shell:
-        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output} {GenotypeGVCFs_REPORTS_dir}"
+        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {GenotypeGVCFs_REPORTS_dir}"
 
 
 rule Plot_GVCFVariablesHistograms:
@@ -201,6 +206,18 @@ rule Plot_GVCFVariablesHistograms:
         "ENVS/conda_tools.yml"
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
+
+
+rule Plot_VCFDPBoxplot:
+    input:
+        DP_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_VC.tsv",
+        GT_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv"
+    output:
+        GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
 
 
 rule Metadata:

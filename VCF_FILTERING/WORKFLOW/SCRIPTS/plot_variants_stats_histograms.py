@@ -18,10 +18,11 @@ pdf_output = args.pdf
 ## Read input file
 infos = pd.read_csv(tsv_input, sep="\t")
 
-# Remove contig, pos, SNP and INDEL columns
+# Remove contig and pos columns and columns with the same value for all variants
 infos.drop(columns = infos.columns[[0,1]], axis = 1, inplace= True)
-unwanted_columns = infos.filter(['SNP', 'INDEL'])
-infos.drop(unwanted_columns, axis = 1, inplace= True)
+nunique = infos.nunique()
+cols_to_drop = nunique[nunique == 1].index
+infos.drop(cols_to_drop, axis=1, inplace= True)
 
 # Only keep numeric columns
 numerics = ['float64', 'int64']
