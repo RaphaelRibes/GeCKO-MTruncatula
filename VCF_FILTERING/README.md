@@ -4,7 +4,7 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 
 
 ### The VCF_FILTERING workflow's steps
-1) The first filter applies to **genotypes** (Loci x Sample). What we call ‘genotype’ here is the single-locus genotype assigned to a sample at a given position. Genotypes that don't pass the given thresholds (e.g. FMT/GQ>=15; FMT/DP>=5) are replaced by missing data. Loci that have become monomorphic or fully ungenotyped as a result of this first step are eliminated.
+1) The first filter applies to **genotypes** (Locus x Sample). What we call ‘genotype’ here is the single-locus genotype assigned to a sample at a given position. Genotypes that don't pass the given thresholds (e.g. FMT/GQ>=15; FMT/DP>=5) are replaced by missing data. Loci that have become monomorphic or fully ungenotyped as a result of this first step are eliminated.
 2) Next, **loci** that do not pass the given thresholds (QUAL>=30; F_MISSING<=0.5) are removed. At this step, all site level statistics that are provided in GATK VCF outputs can be used to filter out unwanted loci.
 3) You can now decide to remove poorly covered **samples** if their proportion of ungenotyped loci is above a given threshold. 
 4) Additional site level statistics are then computed: general information (SNP or INDEL, number of alleles, MAF…) and population genetics statistics (Fis, He) are added to the VCF ‘INFO’ field for each variant.
