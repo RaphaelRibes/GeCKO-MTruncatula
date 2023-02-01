@@ -132,13 +132,13 @@ Alternatively, you can use a symbolic link to have the .conda folder in your hom
 To do so:  
 ```
 mv   /home/username/.conda   /path/to/appropriate/directory/.conda
-ln -nfs /path/to/appropriate/directory/.conda /home/username/.conda
+ln -nfs /path/to/appropriate/directory/.conda   /home/username/.conda
 ```
 
 Sometimes you will also need to create a symbolic link for your .cache folder:  
 ```
 mv   /home/username/.cache   /path/to/appropriate/directory/.cache
-ln -nfs /path/to/appropriate/directory/.cache /home/username/.cache
+ln -nfs /path/to/appropriate/directory/.cache   /home/username/.cache
 ```
 
 ### 5/ Expected outputs  
