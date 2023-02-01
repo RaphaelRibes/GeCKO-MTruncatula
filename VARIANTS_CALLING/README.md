@@ -169,9 +169,13 @@ This workflow will create a "VARIANTS_CALLING" directory in the "WORKFLOWS_OUTPU
 
 ## Tools
 This workflow uses the following tools: 
-- [gatk 4.2.5.0](https://github.com/broadinstitute/gatk/)
-- [samtools 1.15](https://github.com/samtools/samtools/)
-- [bcftools 1.15](https://samtools.github.io/bcftools/bcftools.html)
+- [gatk v4.2.5.0](https://github.com/broadinstitute/gatk/)
+- [samtools v1.14](https://github.com/samtools/samtools/)
+- [bcftools v1.15](https://samtools.github.io/bcftools/bcftools.html)
+- [seaborn v0.12.2](https://seaborn.pydata.org/)
+- [matplotlib v3.2.1](https://matplotlib.org/)
+- [pandas v1.3.5](https://pandas.pydata.org/)
+- [numpy v1.23.1](https://numpy.org/)
 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
@@ -190,8 +194,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | ConvertPositions                  | Convert the positions of the variants (in vcf file) on the genomic reference    |                               |
 | Summarize_GVCFVariables           | Recovery and summarize GATK locus statistics                                    | bcftools query                |
 | Plot_GVCFVariablesHistograms      | Creating histograms based on GATK locus statistics                              | seaborn, pyplot               |
-| Plot_VCFDPBoxplot                 | Creating a boxplot of the depth at each genotype                                | pyplot                        |
-
+| Plot_GVCFDPBoxplot                | Creating a boxplot of the depth at each genotype                                | pyplot                        |
 
 
 ![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VariantsCalling_Workflow.jpg?raw=true)
