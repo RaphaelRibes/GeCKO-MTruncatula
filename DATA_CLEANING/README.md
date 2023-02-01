@@ -313,19 +313,23 @@ These tools are loaded in a CONDA environment from the conda-forge and bioconda 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
 
-| **Rule name**              | **Description**                                                            | **Tools** |
-|:--------------------------:|:--------------------------------------------------------------------------:|:---------:|
-| Fastqc_RawFastqs           | Runing FastQC on raw fastq files                                           | FastQC    |
-| CountReads_RawFastqs       | Counting reads in raw fastq files                                          |           |
-| Demultiplex_RawFastqs      | Demultiplexing raw fastq files                                             | Cutadapt  |
-| CountReads_DemultFastqs    | Counting reads in demultiplexed fastq files                                |           |
-| Trimming_DemultFastqs      | Trimming demultiplexed fastq files                                         | Cutadapt  |
-| CountReads_TrimmedFastqs   | Counting reads in trimmed fastq files                                      |           |
-| Fastqc_TrimmedFastqs       | Runing FastQC on trimmed fastq files                                       | FastQC    |
-| MultiQC_TrimmedFastqs      | Runing MultiQC on trimmed fastq files                                      | MultiQC   |
-| Concatenate_TrimmedFastqs  | Concatenating all trimmed fastq files to compute global quality statistics |           |
-| Fastqc_ConcatTrimmedFastqs | Runing FastQC on concatenated trimmed fastq files                          | FastQC    |
-| MultiQC_Global             | Runing MultiQC on raw and concatenated trimmed fastq files                 | MultiQC   |
+| **Rule name**              | **Description**                                                                  | **Tools** |
+|:--------------------------:|:--------------------------------------------------------------------------------:|:---------:|
+| Fastqc_RawFastqs           | Runing FastQC on raw fastq files                                                 | FastQC    |
+| CountReads_RawFastqs       | Counting reads in raw fastq files                                                |           |
+| Demultiplex_RawFastqs      | Demultiplexing raw fastq files                                                   | Cutadapt  |
+| CountReads_DemultFastqs    | Counting reads in demultiplexed fastq files                                      |           |
+| Fastqc_DemultFastqs        | Runing FastQC on demultiplexed fastq files                                       | FastQC    |
+| MultiQC_DemultFastqs       | Runing MultiQC on demultiplexed fastq files                                      | MultiQC   |
+| Concatenate_DemultFastqs   | Concatenating all demultiplexed fastq files to compute global quality statistics |           |
+| Fastqc_ConcatDemultFastqs  | Runing FastQC on concatenated demultiplexed fastq files                          | FastQC    |
+| Trimming_DemultFastqs      | Trimming demultiplexed fastq files                                               | Cutadapt  |
+| CountReads_TrimmedFastqs   | Counting reads in trimmed fastq files                                            |           |
+| Fastqc_TrimmedFastqs       | Runing FastQC on trimmed fastq files                                             | FastQC    |
+| MultiQC_TrimmedFastqs      | Runing MultiQC on trimmed fastq files                                            | MultiQC   |
+| Concatenate_TrimmedFastqs  | Concatenating all trimmed fastq files to compute global quality statistics       |           |
+| Fastqc_ConcatTrimmedFastqs | Runing FastQC on concatenated trimmed fastq files                                | FastQC    |
+| MultiQC_Global             | Runing MultiQC on raw and concatenated trimmed fastq files                       | MultiQC   |
 
 
 
