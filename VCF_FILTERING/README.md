@@ -10,7 +10,7 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 4) Additional site level statistics are then computed: general information (SNP or INDEL, number of alleles, MAF…) and population genetics statistics (Fis, He) are added to the VCF ‘INFO’ field for each variant.
 5) The statistics from step 4. (along with all other GATK stats) can be used in a second **loci** filtering step.
 6) A MultiQC report is created, showing variants information/statistics after each filtering step.
-7) Based on the variant statistics, histograms are created to estimate the quality of the variant calling after filtering, as well as a boxplot of the observed depth at each genotye (Locus x Sample)
+7) Based on the variant statistics, histograms are created to estimate the quality of the variant calling after filtering, as well as a boxplot of the observed depth at each genotype (Locus x Sample)
 
 
 ## QUICK START
@@ -198,6 +198,7 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 This workflow uses the following tools: 
 - [bcftools 1.15](https://samtools.github.io/bcftools/bcftools.html)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
+- [egglib 3.1.0](https://www.egglib.org/)
 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
@@ -208,13 +209,14 @@ Name, description and tools used for each of the snakemake workflow rules:
 |:----------------------------:|:-----------------------------------------------------------------------------------------:|:---------------:|
 | Filter_Genotypes             | Filtering variants by genotype (locus X sample)                                           | bcftools filter |
 | Filter_Loci_1                | Filtering variants by locus - first step                                                  | bcftools filter |
-| Filter_Samples               | Filtering variants by sample (Removing samples that have too many loci with missing data) | bcftools        |
+| Filter_Samples               | Filtering variants by sample (Removing samples that have too many loci with missing data) | bcftools view   |
 | Calculate_LocusExtraStats    | Calculating additional site level statistics (e.g. FIS, He, MAF)                          | Egglib          |
 | Filter_Loci_2                | Filtering variants based on additional site level statistics (e.g. FIS, He, MAF)          | bcftools filter |
 | Build_StatsReport            | Building statistics reports for unfiltered variants and each filtering step               | bcftools stats  |
 | Build_Report                 | Running MultiQC on unfiltered variants and each filtering step                            | MultiQC         |
-| Summarize_GVCFVariables      | Recovery and summarize locus statistics                                                   |                 |
-| Plot_GVCFVariablesHistograms | Creating histograms based on locus statistics                                             |                 |
+| Summarize_GVCFVariables      | Recovery and summarize locus statistics                                                   | bcftools query  |
+| Plot_GVCFVariablesHistograms | Creating histograms based on locus statistics                                             | seaborn, pyplot |
+| Plot_VCFDPBoxplot            | Creating a boxplot of the depth at each genotype                                          | pyplot          |
 
 
 
