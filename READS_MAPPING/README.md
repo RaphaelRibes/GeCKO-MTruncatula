@@ -207,11 +207,9 @@ This workflow uses the following tools:
 - [minimap2 v2.24](https://github.com/lh3/minimap2)
 - [samtools v1.14](http://www.htslib.org/)
 - [picard v2.26.10](https://broadinstitute.github.io/picard/)
-- [seaborn v0.11.2](https://seaborn.pydata.org/)
-- [matplotlib v3.5.1](https://matplotlib.org/)
-- [pandas v1.3.5](https://pandas.pydata.org/)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
 - [crossmap v0.6.3](http://crossmap.sourceforge.net/)
+- [bedtools v2.30.0](https://github.com/arq5x/bedtools2)
 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
