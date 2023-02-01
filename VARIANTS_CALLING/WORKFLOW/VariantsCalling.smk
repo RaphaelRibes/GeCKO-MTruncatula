@@ -208,7 +208,7 @@ rule Plot_GVCFVariablesHistograms:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
 
 
-rule Plot_VCFDPBoxplot:
+rule Plot_GVCFDPBoxplot:
     input:
         DP_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_VC.tsv",
         GT_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv"
