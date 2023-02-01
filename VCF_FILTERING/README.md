@@ -205,9 +205,13 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 
 ## Tools
 This workflow uses the following tools: 
-- [bcftools 1.15](https://samtools.github.io/bcftools/bcftools.html)
+- [bcftools v1.15](https://samtools.github.io/bcftools/bcftools.html)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
-- [egglib 3.1.0](https://www.egglib.org/)
+- [egglib v3.1.0](https://www.egglib.org/)
+- [seaborn v0.12.2](https://seaborn.pydata.org/)
+- [matplotlib v3.2.1](https://matplotlib.org/)
+- [pandas v1.3.5](https://pandas.pydata.org/)
+- [numpy v1.23.1](https://numpy.org/)
 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
 
