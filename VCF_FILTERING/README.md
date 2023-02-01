@@ -192,7 +192,7 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 - *multiQC_VcfFiltering_report.html*:&nbsp;&nbsp;&nbsp;graphic representation of the variants informations/statistics after each filtering step
 - *variants_stats_VF.tsv*:&nbsp;&nbsp;&nbsp; file that summarizes the statistics per locus present in the vcf file after filtering
 - *variants_stats_histograms_VF.pdf*:&nbsp;&nbsp;&nbsp; file with histograms based on locus statistics after filtering
-
+- *genotypes_DP_boxplot_VF.pdf*:&nbsp;&nbsp;&nbsp; file with a boxplot of the observed depth at each genotype, along with the percentage of missing values in the vcf file
 
 ## Tools
 This workflow uses the following tools: 
