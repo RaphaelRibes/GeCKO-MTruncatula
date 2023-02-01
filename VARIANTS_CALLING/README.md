@@ -124,11 +124,22 @@ When called for the first time, the VARIANTS_CALLING Snakemake workflow will dow
 The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
 ```
 envs_dirs:  
-    - /home/username/path/to/appropriate/folder/env  
+    - /path/to/appropriate/directory/env  
 pkgs_dirs:  
-    - /home/username/path/to/appropriate/folder/pkgs  
+    - /path/to/appropriate/directory/pkgs  
 ```
-Alternatively,
+Alternatively, you can use a symbolic link to have the .conda folder in your home directory point to another folder where you would rather have Conda store its files.  
+To do so:  
+```
+mv   /home/username/.conda   /path/to/appropriate/directory/.conda
+ln -nfs /path/to/appropriate/directory/.conda /home/username/.conda
+```
+
+Sometimes you will also need to create a symbolic link for your .cache folder:  
+```
+mv   /home/username/.cache   /path/to/appropriate/directory/.cache
+ln -nfs /path/to/appropriate/directory/.cache /home/username/.cache
+```
 
 ### 5/ Expected outputs  
 
