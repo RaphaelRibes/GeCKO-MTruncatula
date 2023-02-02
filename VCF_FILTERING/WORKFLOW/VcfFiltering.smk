@@ -178,7 +178,7 @@ rule Plot_FinalVCFVariablesHistograms:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
 
 
-rule Plot_VCFDPBoxplot:
+rule Plot_FinalVCFDPBoxplot:
     input:
         DP_tsv = VCF_reports_dir+"/genotypes_DP_VF.tsv",
         GT_tsv = VCF_reports_dir+"/genotypes_GT_VF.tsv"
@@ -190,7 +190,7 @@ rule Plot_VCFDPBoxplot:
         "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
 
 
-rule Plot_GVCFVariantsAlongGenome:
+rule Plot_FinalVCFVariantsAlongGenome:
     input:
         pos_tsv = VCF_reports_dir+"/variants_pos.tsv",
         lengths_tsv = VCF_reports_dir+"/contigs_lengths.tsv"
