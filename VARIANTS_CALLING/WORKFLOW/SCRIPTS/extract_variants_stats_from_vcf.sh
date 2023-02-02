@@ -4,7 +4,17 @@ vcf_gz_input=$1
 stats_tsv_output=$2
 DP_tsv_output=$3
 GT_tsv_output=$4
-outdir=$5
+variants_pos_tsv_output=$5
+contigs_lengths_tsv_output=$6
+outdir=$7
+
+# Write the list of variants positions
+echo -e "contig\tpos" > $variants_pos_tsv_output
+zcat $vcf_gz_input | grep -v '#' | cut -f1,2 >> $variants_pos_tsv_output
+
+# Write the lengths of the reference contigs
+echo -e "contig\tlength" > $contigs_lengths_tsv_output
+zcat $vcf_gz_input | grep '##contig=<' | sed 's/##contig=<ID=//' | sed 's/,length=/\t/' | sed 's/>//' >> $contigs_lengths_tsv_output
 
 # if the file is very big, sample 100000 rows
 nb_rows=$(zcat $vcf_gz_input | grep -c -v '#')
@@ -38,6 +48,7 @@ awk -v nvar=$nvar -F"\t|;" '{
 # Extract DP values
 zcat $vcf_gz_input | bcftools query -f '%CHROM\t%POS[\t%DP]\n' > $DP_tsv_output
 zcat $vcf_gz_input | bcftools query -f '%CHROM\t%POS[\t%GT]\n' > $GT_tsv_output
+
 
 
 rm ${outdir}/tmp_variables

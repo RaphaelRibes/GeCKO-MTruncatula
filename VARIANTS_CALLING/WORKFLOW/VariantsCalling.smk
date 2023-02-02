@@ -62,6 +62,7 @@ rule FinalTargets:
     input:
         GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf",
         GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf",
+        GenotypeGVCFs_REPORTS_dir+"/variants_along_genome_VC.pdf",
         vc_dir+"/workflow_info.txt"
 
 
@@ -190,11 +191,13 @@ rule Summarize_GVCFVariables:
     output:
         stats_tsv = GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv",
         DP_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_VC.tsv"),
-        GT_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv")
+        GT_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv"),
+        pos_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/variants_pos.tsv"),
+        lengths_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/contigs_lengths.tsv")
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {GenotypeGVCFs_REPORTS_dir}"
+        "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {output.pos_tsv} {output.lengths_tsv} {GenotypeGVCFs_REPORTS_dir}"
 
 
 rule Plot_GVCFVariablesHistograms:
@@ -218,6 +221,18 @@ rule Plot_GVCFDPBoxplot:
         "ENVS/conda_tools.yml"
     shell:
         "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
+
+
+rule Plot_GVCFVariantsAlongGenome:
+    input:
+        pos_tsv = GenotypeGVCFs_REPORTS_dir+"/variants_pos.tsv",
+        lengths_tsv = GenotypeGVCFs_REPORTS_dir+"/contigs_lengths.tsv"
+    output:
+        GenotypeGVCFs_REPORTS_dir+"/variants_along_genome_VC.pdf"
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "python {scripts_dir}/plot_variants_along_genome.py --snp-pos {input.pos_tsv} --contigs-lengths {input.lengths_tsv} --output {output}"
 
 
 rule Metadata:

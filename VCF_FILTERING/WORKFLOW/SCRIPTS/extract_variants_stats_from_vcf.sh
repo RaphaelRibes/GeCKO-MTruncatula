@@ -4,7 +4,18 @@ vcf_input=$1
 stats_tsv_output=$2
 DP_tsv_output=$3
 GT_tsv_output=$4
-outdir=$5
+variants_pos_tsv_output=$5
+contigs_lengths_tsv_output=$6
+outdir=$7
+
+# Write the list of variants positions
+echo -e "contig\tpos" > $variants_pos_tsv_output
+grep -v '#' $vcf_input | cut -f1,2 >> $variants_pos_tsv_output
+
+# Write the lengths of the reference contigs
+echo -e "contig\tlength" > $contigs_lengths_tsv_output
+grep '##contig=<' $vcf_input | sed 's/##contig=<ID=//' | sed 's/,length=/\t/' | sed 's/>//' >> $contigs_lengths_tsv_output
+
 
 # if the file is very big, sample 100000 rows
 nb_rows=$(grep -c -v '#' $vcf_input)
