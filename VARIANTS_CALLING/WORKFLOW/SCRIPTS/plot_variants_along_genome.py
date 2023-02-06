@@ -38,7 +38,7 @@ plt.yticks(range(1, nb_contigs+1), contigs_lengths["contig"])
 for i, contig in enumerate(contigs_lengths["contig"]):
     snp_contig = snp_pos.loc[snp_pos["contig"] == contig]
     for pos in snp_contig["pos"]:
-        ax.plot([pos, pos], [i+1-0.3, i+1+0.3], color = "#990033", linewidth = 0.8, alpha = 0.6)
+        ax.plot([pos, pos], [i+1-0.3, i+1+0.3], color = "#990033", linewidth = 0.1, alpha = 0.8)
 
 plt.title("Representation of the detected variants along the reference chromosomes", fontsize = 10)
 plt.xlabel("Position (pb)")
