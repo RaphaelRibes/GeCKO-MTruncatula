@@ -1,4 +1,4 @@
 DataCleaning	DATA_CLEANING
-ReadsMapping	READS_MAPPING
-VariantsCalling	VARIANTS_CALLING
+ReadMapping	READ_MAPPING
+VariantCalling	VARIANT_CALLING
 VcfFiltering	VCF_FILTERING

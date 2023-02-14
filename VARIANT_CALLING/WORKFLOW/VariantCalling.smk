@@ -41,7 +41,7 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ## Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VARIANTS_CALLING"
+outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VARIANT_CALLING"
 vc_dir = outputs_directory+vc_subfolder
 HaplotypeCaller_dir = vc_dir+"/HAPLOTYPE_CALLER"
 GenomicsDBImport_dir = vc_dir+"/GENOMICS_DB_IMPORT"
@@ -148,8 +148,8 @@ rule GenotypeGVCFs:
         reference = reference,
         DB = GenomicsDBImport_dir
     output:
-        vcf_gz = GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
-        vcf_gz_tbi = GenotypeGVCFs_dir+"/variants_calling.vcf.gz.tbi",
+        vcf_gz = GenotypeGVCFs_dir+"/variant_calling.vcf.gz",
+        vcf_gz_tbi = GenotypeGVCFs_dir+"/variant_calling.vcf.gz.tbi",
         tmp_GVCF = temp(directory(GenotypeGVCFs_dir+"/tmp_dir_GVCF"))
     params:
         java_options = config["GATK_GENOTYPE_GVCFS_JAVA_OPTIONS"],
@@ -163,19 +163,19 @@ rule GenotypeGVCFs:
 
 rule ConvertPositions:
     input:
-        vcf_gz = GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
-        vcf_gz_tbi = GenotypeGVCFs_dir+"/variants_calling.vcf.gz.tbi",
+        vcf_gz = GenotypeGVCFs_dir+"/variant_calling.vcf.gz",
+        vcf_gz_tbi = GenotypeGVCFs_dir+"/variant_calling.vcf.gz.tbi",
         reference_chr_size = reference_chr_size
     output:
-        vcf = temp(GenotypeGVCFs_dir+"/variants_calling.vcf"),
-        vcf_converted_gz = GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz",
-        vcf_converted_gz_csi = GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz.csi"
+        vcf = temp(GenotypeGVCFs_dir+"/variant_calling.vcf"),
+        vcf_converted_gz = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz",
+        vcf_converted_gz_csi = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz.csi"
     conda:
         "ENVS/conda_tools.yml"
     shell:
         "gunzip {input.vcf_gz};"
-        "python3 {scripts_dir}/convert_vcf_positions.py --vcf {output.vcf} --chr_size {input.reference_chr_size} --vcf_converted {GenotypeGVCFs_dir}/variants_calling_converted.vcf;"
-        "bgzip {GenotypeGVCFs_dir}/variants_calling_converted.vcf;"
+        "python3 {scripts_dir}/convert_vcf_positions.py --vcf {output.vcf} --chr_size {input.reference_chr_size} --vcf_converted {GenotypeGVCFs_dir}/variant_calling_converted.vcf;"
+        "bgzip {GenotypeGVCFs_dir}/variant_calling_converted.vcf;"
         "tabix --csi {output.vcf_converted_gz};"
         "rm {input.vcf_gz_tbi}"
 
@@ -183,8 +183,8 @@ rule ConvertPositions:
 rule Summarize_GVCFVariables:
     input:
         buildExpectedFiles(
-        [GenotypeGVCFs_dir+"/variants_calling.vcf.gz",
-        GenotypeGVCFs_dir+"/variants_calling_converted.vcf.gz"],
+        [GenotypeGVCFs_dir+"/variant_calling.vcf.gz",
+        GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz"],
 
         [ not performConvertPositions, performConvertPositions ]
         )
@@ -243,6 +243,6 @@ rule Metadata:
         "Date=$(date);"
         "echo -e \"${{Date}}\\n\" >> {vc_dir}/workflow_info.txt;"
         "echo -e \"Workflow:\" >> {vc_dir}/workflow_info.txt;"
-        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/VARIANTS_CALLING\\n\" >> {vc_dir}/workflow_info.txt;"
+        "echo -e \"https://github.com/GE2POP/GeCKO/tree/main/VARIANT_CALLING\\n\" >> {vc_dir}/workflow_info.txt;"
         "cd {snakefile_dir};"
         "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {vc_dir}/workflow_info.txt; git rev-parse HEAD >> {vc_dir}/workflow_info.txt ; fi"

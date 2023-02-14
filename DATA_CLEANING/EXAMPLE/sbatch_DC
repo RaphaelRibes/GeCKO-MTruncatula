@@ -1,5 +1,5 @@
 
-sbatch --partition=agap_normal --mem=10G --job-name=DC --wrap="/home/ardissonm/replicated/CAPTURE_SNAKEMAKE_WORKFLOWS/runSnakemakeWorkflow.sh --workflow DataCleaning --workflow-path /storage/replicated/cirad_users/ardissonm/CAPTURE_SNAKEMAKE_WORKFLOWS --jobs 50 --job-scheduler SLURM"
+sbatch --partition=agap_normal --mem=10G --job-name=DC --wrap="/home/ardissonm/replicated/GeCKO/runGeCKO.sh --workflow DataCleaning --workflow-path /home/ardissonm/replicated/GeCKO --jobs 50 --job-scheduler SLURM"
 
 
 

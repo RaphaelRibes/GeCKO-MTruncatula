@@ -86,7 +86,7 @@ else:
 
 
 ### Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/READS_MAPPING"
+outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/READ_MAPPING"
 mapping_dir = outputs_directory+mapping_subfolder
 bams_dir = mapping_dir+"/BAMS"
 bams_reports_dir = bams_dir+"/REPORTS"
@@ -133,14 +133,14 @@ rule FinalTargets:
     input:
         buildExpectedFiles(
         [ mapping_dir+"/workflow_info.txt",
-        bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html",
+        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
         bams_reports_dir+"/nb_reads_per_sample.tsv",
         mapping_dir+"/bams_list.txt",
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv",
         subref_dir+"/"+ref_name+"_zones.fasta",
         expand("{subbams_dir}/{sample}.bam.csi", sample=samples, subbams_dir=subbams_dir),
         subbams_reports_dir+"/nb_reads_per_sample.tsv",
-        subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html",
+        subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
         mapping_dir+"/subbams_list.txt",
         mapping_dir+"/reference_chr_size.txt" ],
         [ True, True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
@@ -258,14 +258,14 @@ rule MultiQC_Bams:
         stats_files = expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir),
         nb_reads = bams_reports_dir+"/nb_reads_per_sample.tsv"
     output:
-        bams_reports_dir+"/multiQC_ReadsMapping_Bams_Report.html",
+        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
         temp(bams_reports_dir+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//') ;"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_clean_names.yaml --nb_reads ${{mean_nb_reads}} --output_dir {bams_reports_dir};"
-        "multiqc {input.stats_files} -c {bams_reports_dir}/config_multiQC.yaml -o {bams_reports_dir} -n multiQC_ReadsMapping_Bams_Report -i ReadsMapping_Bams_Report"
+        "multiqc {input.stats_files} -c {bams_reports_dir}/config_multiQC.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report"
 
 
 rule Create_BamsList:
@@ -409,14 +409,14 @@ rule MultiQC_Subbams:
         stats_files = expand("{subbams_stats_reports_dir}/stats_{sample}", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir),
         nb_reads = subbams_reports_dir+"/nb_reads_per_sample.tsv"
     output:
-        subbams_reports_dir+"/multiQC_ReadsMapping_SubBams_Report.html",
+        subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
         temp(subbams_reports_dir+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_clean_names.yaml --nb_reads ${{mean_nb_reads}} --output_dir {subbams_reports_dir};"
-        "multiqc {input.stats_files} -c {subbams_reports_dir}/config_multiQC.yaml -o {subbams_reports_dir} -n multiQC_ReadsMapping_SubBams_Report -i ReadsMapping_SubBams_Report"
+        "multiqc {input.stats_files} -c {subbams_reports_dir}/config_multiQC.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report"
 
 
 rule Create_SubbamsList:
@@ -449,8 +449,8 @@ rule Metadata:
         "Date=$(date);"
         "echo -e \"${{Date}}\\n\" >> {mapping_dir}/workflow_info.txt;"
         "echo -e \"Workflow:\" >> {mapping_dir}/workflow_info.txt;"
-        "echo -e \"https://github.com/BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS/tree/main/READS_MAPPING\\n\" >> {mapping_dir}/workflow_info.txt;"
+        "echo -e \"https://github.com/GE2POP/GeCKO/tree/main/READ_MAPPING\\n\" >> {mapping_dir}/workflow_info.txt;"
         "cd {snakefile_dir};"
         "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {mapping_dir}/workflow_info.txt; git rev-parse HEAD >> {mapping_dir}/workflow_info.txt ; fi"
 
-#sbatch --partition=agap_short --wrap="/home/girodollej/scratch/CAPTURE_SNAKEMAKE_WORKFLOWS/runSnakemakeWorkflow.sh --workflow ReadsMapping --workflow-path /home/girodollej/scratch/CAPTURE_SNAKEMAKE_WORKFLOWS --jobs 50 --job-scheduler SLURM"
+#sbatch --partition=agap_short --wrap="/home/girodollej/scratch/GeCKO/runGeCKO.sh --workflow ReadMapping --workflow-path /home/girodollej/scratch/GeCKO --jobs 50 --job-scheduler SLURM"

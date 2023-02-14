@@ -81,7 +81,7 @@ if [[ -d ${workflow_envs_folder} ]] ; then
 	    fi
 	done
 else
-	echo -e "\nERROR: No ${workflow_folder_name}/WORKFLOW/ENVS folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE containing all sub-directories."
+	echo -e "\nERROR: No ${workflow_folder_name}/WORKFLOW/ENVS folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
   	echo -e "\nExiting.\n"
 	exit 1
 fi
