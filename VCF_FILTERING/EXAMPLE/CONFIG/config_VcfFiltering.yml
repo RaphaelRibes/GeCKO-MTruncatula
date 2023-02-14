@@ -11,7 +11,7 @@ VCF_FILE: "VCF/variants_calling_converted.vcf.gz"
 
 ### VCF FILTERING PARAMETERS ###
 
-## 1. Genotype filtering parameters passed to bcftools filter
+## 01_GENOTYPE_FILTERING: Genotype filtering parameters passed to bcftools filter
 # Any genotype not meeting these conditions will be assigned a missing value. Be careful to provide them between quotes.
 # e.g.: “FMT/DP >= 5 & FMT/GQ >= 15” to set to “.” (<=> NA) any genotype that does not pass DP >= 5 AND GQ >= 15.
 # Common metrics used for filtering:
@@ -21,7 +21,7 @@ VCF_FILE: "VCF/variants_calling_converted.vcf.gz"
 BCFTOOLS_GENOTYPES_FILTERING_OPTIONS: "FMT/DP >= 5 & FMT/GQ >= 15"
 
 
-## 2. Locus filtering parameters passed to bcftools filter
+## 02_LOCUS_FILTERING: Locus filtering parameters passed to bcftools filter
 # Any locus not meeting these conditions will be removed. Be careful to provide them between quotes.
 # e.g.: "N_ALT=1 & TYPE=\"snp\" & QUAL >= 30 & F_MISSING <= 0.5" to keep only biallelic SNP sites with quality above 30 and less than 50% missing values.
 # Common metrics used for filtering:
@@ -36,12 +36,12 @@ BCFTOOLS_GENOTYPES_FILTERING_OPTIONS: "FMT/DP >= 5 & FMT/GQ >= 15"
 BCFTOOLS_LOCUS_FILTERING1_OPTIONS: "QUAL >= 30 & F_MISSING <= 0.5"
 
 
-## 3. The maximum proportion of allowed missing data per sample. Samples above the threshold will be removed. Between 0 and 1. Set to "1" for no filtering.
+## 03_SAMPLE_FILTERING: The maximum proportion of allowed missing data per sample. Samples above the threshold will be removed. Between 0 and 1. Set to "1" for no filtering.
 
 MAX_NA_PER_SAMPLE: "1"
 
 
-## 4. Locus filtering parameters passed to bcftools filter after removing poorly covered samples and computing additional site level statistics
+## 04_LOCUS FILTERING: Locus filtering parameters passed to bcftools filter after removing poorly covered samples and computing additional site level statistics
 # Any locus not meeting these conditions will be removed. Be careful to provide them between quotes.
 # e.g.: "F_MISSING <= 0.5 & INFO/MinHomo >= 2" to make sure all variants still have less than 50% missing data and present at least two homozygous genotypes of each allele among the remaining samples.
 # The additional available metrics:

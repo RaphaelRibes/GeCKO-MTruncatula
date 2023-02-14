@@ -3,11 +3,11 @@ This repository provides several workflows to clean sequenced reads, map them to
 
 You will find the different workflows in the corresponding folders:
 - DATA_CLEANING
-- READS_MAPPING
-- VARIANTS_CALLING 
+- READ_MAPPING
+- VARIANT_CALLING 
 - VCF_FILTERING 
 
-These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each workflow produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runSnakemakeWorkflow.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
+These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each workflow produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runGeCKO.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
 
 To execute one of the workflows, follow the steps:  
 
@@ -32,29 +32,29 @@ or
 
 - Make sure Snakemake and Conda are available to your working environment.  
 Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.  
-    - For clusters using module environment, you can add the 'module load' lines inside runSnakemakeWorkflow.sh: you will find a dedicated zone "WRITE YOUR MODULE LOADS HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the needed modules, use the 'module avail' command. The modules will be loaded every time you execute the script.  
+    - For clusters using module environment, you can add the 'module load' lines inside runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOADS HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the needed modules, use the 'module avail' command. The modules will be loaded every time you execute the script.  
     - For clusters using Conda environment, Conda will likely be readily available, and you will only need to conda activate Snakemake. To find out the precise name of the snakemake module, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.  
 
 &nbsp;
 ### Using the workflow
 
-The following section describes the different workflow actions and parameters. The /PATH/TO/GeCKO path refers to the directory you cloned from GitHub, e.g  /home/vranwez/GeCKO.
+The following section describes the different workflow actions and parameters. The /PATH/TO/GeCKO path refers to the directory you cloned from GitHub, e.g  /home/jgirodolle/GeCKO.
 
 &nbsp;
 #### QUICK START:  
 There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning```
+```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning```
 
 On my computer this will look like:
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning```
+```./runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning```
 
 The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml. The same folder can also contain the cluster_config_WorkflowName.yml file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
-```./runSnakemakeWorkflow.sh --workflow-path /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
+```./runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
 
 &nbsp;
 
@@ -62,25 +62,25 @@ To use the full resource of my HPC environment (Slurm), and allow up to 100 subm
 The launcher's default behavior is to run the workflow, but other actions can be called instead:
 
 **--help**&nbsp;&nbsp;&nbsp;*print the help*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --help```  
+```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --help```  
 
 **--dryrun**&nbsp;&nbsp;&nbsp;*only dryrun the workflow (and detect potential errors) without actually running it*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow WorkflowName --dryrun```  
+```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --dryrun```  
 
 **--report**&nbsp;&nbsp;&nbsp;*write an html report of the workflow's last run*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --report```  
+```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning --report```  
 
 **--diagram**&nbsp;&nbsp;&nbsp;*write an svg diagram of the workflow*  
-```./runSnakemakeWorkflow.sh --workflow-path /PATH/TO/WORKFLOW --workflow DataCleaning --diagram```  
+```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning --diagram```  
 
 &nbsp;
 
 #### MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):  
 **--workflow-path [...]**&nbsp;&nbsp;&nbsp;*the path to the directory you cloned from GitHub*  
-If the directory was cloned from GitHub, it should end with /CAPTURE_SNAKEMAKE_WORKFLOWS  
+If the directory was cloned from GitHub, it should end with /GeCKO  
 
 **--workflow [...]**&nbsp;&nbsp;&nbsp;*name of the workflow you want to run*  
-Current existing options are 'DataCleaning', 'ReadsMapping', 'VariantsCalling' and 'VcfFiltering'  
+Current existing options are 'DataCleaning', 'ReadMapping', 'VariantCalling' and 'VcfFiltering'  
 
 &nbsp;
 

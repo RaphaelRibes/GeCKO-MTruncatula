@@ -15,25 +15,25 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 
 ## QUICK START
 
-To easily launch the workflow, use our runSnakemakeWorkflow.sh launcher:  
-```./runSnakemakeWorkflow.sh --workflow VcfFiltering --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS```  
+To easily launch the workflow, use our runGeCKO.sh launcher:  
+```./runGeCKO.sh --workflow VcfFiltering --workflow-path PATH/TO/GeCKO```  
 
 Needed files:  
-- the full CAPTURE_SNAKEMAKE_WORKFLOWS/ folder  
-- the runSnakemakeWorkflow.sh launcher  
-- your variants calling .vcf.gz files
+- the full GeCKO/ folder  
+- the runGeCKO.sh launcher  
+- your variant calling .vcf.gz files
 - the cluster_config_VcfFiltering.yml (in case you work on a cluster) and config_VcfFiltering.yml files in a CONFIG folder  
 
 &nbsp;
 
 
 For example, if you need to launch the workflow on our VCF example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```../../runSnakemakeWorkflow.sh --workflow VcfFiltering --workflow-path ../../../CAPTURE_SNAKEMAKE_WORKFLOWS --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```../../runGeCKO.sh --workflow VcfFiltering --workflow-path ../../../GeCKO --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VcfFiltering_4elements.png)
+![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/VcfFiltering_4elements.png)
 
 
 ## How to use the VCF_FILTERING workflow
@@ -52,9 +52,9 @@ The input data is the .vcf file obtained after the variants calling step (varian
 
 ### 2/ Clone our GitHub repository
 
-The CAPTURE_SNAKEMAKE_WORKFLOWS folder must be fully copied in a workspace/storage of your choice.  
+The GeCKO folder must be fully copied in a workspace/storage of your choice.  
 For example, you can clone the repository with:  
-```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS.git```   
+```git clone git@github.com:GE2POP/GeCKO.git```   
 
 
 ### 3/ Prepare the config files
@@ -145,15 +145,15 @@ For example, if you want to make sure all variants still have less than 50% miss
 You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
 
 **Launching**  
-To launch the VCF_FILTERING workflow, you can use our launching script runSnakemakeWorkflow.sh with the option --workflow VcfFiltering:  
-```./runSnakemakeWorkflow.sh --workflow VcfFiltering --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS```  
+To launch the VCF_FILTERING workflow, you can use our launching script runGeCKO.sh with the option --workflow VcfFiltering:  
+```./runGeCKO.sh --workflow VcfFiltering --workflow-path PATH/TO/GeCKO```  
 
 For more help on how to use it, see our GitHub's general README file or run:  
-```./runSnakemakeWorkflow.sh --help --workflow-path PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS```  
+```./runGeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
 
 **Notes on Conda**  
 The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
-When called for the first time, the VARIANTS_CALLING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runSnakemakeWorkflow.sh launcher.  
+When called for the first time, the VARIANTS_CALLING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
 
 The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
 ```
@@ -178,7 +178,7 @@ ln -nfs /path/to/appropriate/directory/.cache   /home/username/.cache
 ### 5/ Expected outputs  
 This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
 
-<img src="https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/OutputsTree_VcfFiltering.png" width="600"/>
+<img src="https://github.com/GE2POP/GeCKO/blob/main/readme_img/OutputsTree_VcfFiltering.png" width="600"/>
 
 
 
@@ -235,6 +235,6 @@ Name, description and tools used for each of the snakemake workflow rules:
 
 
 
-![](https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/VcfFiltering_Workflow.jpg?raw=true)
+![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/VcfFiltering_Workflow.jpg?raw=true)
 
 
