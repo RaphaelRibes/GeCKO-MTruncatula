@@ -242,6 +242,6 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Create_RefChrSizeFile       | Creating file with the name and size of each chromosome in the genomic reference                                                    | samtools faidx                                                                                                                         |
 
 
-![](https://github.com/GE2POP/CAPTURE_PIPELINES_SNAKEMAKE/blob/main/readme_img/ReadMapping_Workflow.jpg?raw=true)
+![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/ReadMapping_Workflow.jpg?raw=true)
 
 
