@@ -12,23 +12,23 @@ These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/)
 To execute one of the workflows, follow the steps:  
 
 1) Clone or copy this repository (and all its contents) to your environment, for example:   
-```git clone git@github.com:BioInfo-GE2POP-BLE/CAPTURE_SNAKEMAKE_WORKFLOWS.git```  
+```git clone git@github.com:GE2POP/GeCKO.git```  
 
 2) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
 It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.yml  
 
-3) Use the launcher script runSnakemakeWorkflow.sh to run the workflow.  
+3) Use the launcher script runGeCKO.sh to run the workflow.  
 
 &nbsp;
 ### Installation  
 - Make the script executable with:  
-```chmod 755 runSnakemakeWorkflow.sh```  
+```chmod 755 runGeCKO.sh```  
 
 - If the script was open on a Windows system and you will execute it on a Linux system, you may need to remove windows carriage returns ('\r') with:  
-```dos2unix runSnakemakeWorkflow.sh```  
+```dos2unix runGeCKO.sh```  
 or  
-```sed -i 's/\r$//g' runSnakemakeWorkflow.sh ; sed -i 's/\r/\n/g' runSnakemakeWorkflow.sh```  
+```sed -i 's/\r$//g' runGeCKO.sh ; sed -i 's/\r/\n/g' runGeCKO.sh```  
 
 - Make sure Snakemake and Conda are available to your working environment.  
 Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.  
@@ -38,7 +38,7 @@ Either install them on your computer, or if you are working on a cluster, you ma
 &nbsp;
 ### Using the workflow
 
-The following section describes the different workflow actions and parameters. The /PATH/TO/CAPTURE_SNAKEMAKE_WORKFLOWS path refers to the directory you cloned from GitHub, e.g  /home/vranwez/CAPTURE_SNAKEMAKE_WORKFLOWS.
+The following section describes the different workflow actions and parameters. The /PATH/TO/GeCKO path refers to the directory you cloned from GitHub, e.g  /home/vranwez/GeCKO.
 
 &nbsp;
 #### QUICK START:  
