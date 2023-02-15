@@ -48,7 +48,7 @@ rule Filter_Genotypes:
     conda:
         "ENVS/conda_tools.yml"
     params:
-        config["BCFTOOLS_GENOTYPES_FILTERING_OPTIONS"]
+        config["BCFTOOLS_GENOTYPE_FILTERING_OPTIONS"]
     shell:
         "bcftools filter -Ou -i '{params}' -S . {input} | bcftools view -Ou --exclude-uncalled --trim-alt-alleles | bcftools view -m2 -o {output}"
 
