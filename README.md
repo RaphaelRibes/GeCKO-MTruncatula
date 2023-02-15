@@ -68,10 +68,10 @@ The launcher's default behavior is to run the workflow, but other actions can be
 ```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --dryrun```  
 
 **--report**&nbsp;&nbsp;&nbsp;*write an html report of the workflow's last run*  
-```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning --report```  
+```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --report```  
 
 **--diagram**&nbsp;&nbsp;&nbsp;*write an svg diagram of the workflow*  
-```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning --diagram```  
+```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --diagram```  
 
 &nbsp;
 
