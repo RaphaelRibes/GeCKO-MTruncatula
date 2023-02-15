@@ -63,7 +63,7 @@ For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END da
 
 ### 1/ Prepare your input data
 
-The input data must be sequences from an Illumina sequencer (Miseq / Hiseq).  
+The input data must be sequences from an Illumina sequencer (Miseq/Hiseq/Novaseq/...).  
 
 Input sequences can be multiplexed:  
 - single-end sequences (SE): you must provide one fastq file named in the format \*name\*.fastq.gz  
