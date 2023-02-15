@@ -86,7 +86,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta) used for the mapping. 
 - *GENOMIC_REFERENCE_CHR_SIZE:*&nbsp;&nbsp;&nbsp;If your input bams result from an extraction of the reads mapping to specific genomic zones (i.e. CREATE_SUB_BAMS was set to TRUE during the mapping step) and you want the variants positions in this workflow's output vcf file to be given in the whole genomic reference, then please provide here the path to the reference_chr_size.txt file containing your genomic reference chromosomes sizes. This file is automatically created by the READ_MAPPING workflow when CREATE_SUB_BAMS is set to TRUE, and stored in WORKFLOWS_OUTPUTS/READ_MAPPING. Otherwise leave blank ("").  
 
-**VARIANTS CALLING PARAMETERS**  
+**VARIANT CALLING PARAMETERS**  
 For each of the three GATK steps, two options fields are available: options related to the use of java (JAVA_OPTIONS) and step-specific options (EXTRA_OPTIONS) , if not leave blank: ""
 
 - *GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK HaplotypeCaller function (eg: "-Xmx4g"). Be careful to provide them between quotes.
