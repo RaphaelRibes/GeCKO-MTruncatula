@@ -234,10 +234,10 @@ You can run this workflow on a computer or on a computer cluster. You will need 
 
 **Launching**  
 To launch the DATA_CLEANING workflow, you can use our launching script run GeCKO.sh with the option --workflow DataCleaning:  
-```./run GeCKO.sh --workflow DataCleaning --workflow-path PATH/TO/GeCKO```  
+```./runGeCKO.sh --workflow DataCleaning --workflow-path PATH/TO/GeCKO```  
 
 For more help on how to use it, see our GitHub's general README file or run:  
-```./run GeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
+```./runGeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
 
 **Notes on Conda**  
 The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
