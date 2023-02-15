@@ -135,14 +135,14 @@ absolutePath () {
 if [[ -z "$WORKFLOW_PATH" || "$WORKFLOW_PATH" = --* || "$WORKFLOW_PATH" = -* ]] ; then
 	echo -e "\nERROR: the --workflow-path parameter is missing, please include it in your command."
 	echo "As a reminder:"
-	echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /CAPTURE_SNAKEMAKE_WORKFLOWS"
+	echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
 	echo -e "\nExiting.\n"
 	exit 1
 fi
 if [ ! -d "$WORKFLOW_PATH" ] ; then
 	echo -e "\nERROR: the path given in the --workflow-path parameter is not valid. Please make sure the directory exists and the path is correctly written."
 	echo "As a reminder:"
-  echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /CAPTURE_SNAKEMAKE_WORKFLOWS"
+  echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
 	echo -e "\nExiting.\n"
 	exit 1
 fi
@@ -154,7 +154,7 @@ WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
 
 ### Check if folder exists
 if [[ ! -d "${WORKFLOW_PATH}/scripts/" ]] ; then
-  echo -e "\nERROR: No scripts/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/BioInfo-GE2POP-BLE/CAPTURE_PIPELINES_SNAKEMAKE containing all sub-directories."
+  echo -e "\nERROR: No scripts/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
   echo -e "\nExiting.\n"
   exit 1
 fi
