@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Model config file
-model_config="${workflow_folder}/SCRIPTS/model_files/config_VariantsCalling.yml"
+model_config="${workflow_folder}/SCRIPTS/model_files/config_VariantCalling.yml"
 
 
 # Config file variables

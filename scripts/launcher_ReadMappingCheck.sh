@@ -2,7 +2,7 @@
 
 
 # Model config file
-model_config="${workflow_folder}/SCRIPTS/model_files/config_ReadsMapping.yml"
+model_config="${workflow_folder}/SCRIPTS/model_files/config_ReadMapping.yml"
 
 
 # Config file variables

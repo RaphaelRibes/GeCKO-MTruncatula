@@ -452,5 +452,3 @@ rule Metadata:
         "echo -e \"https://github.com/GE2POP/GeCKO/tree/main/READ_MAPPING\\n\" >> {mapping_dir}/workflow_info.txt;"
         "cd {snakefile_dir};"
         "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {mapping_dir}/workflow_info.txt; git rev-parse HEAD >> {mapping_dir}/workflow_info.txt ; fi"
-
-#sbatch --partition=agap_short --wrap="/home/girodollej/scratch/GeCKO/runGeCKO.sh --workflow ReadMapping --workflow-path /home/girodollej/scratch/GeCKO --jobs 50 --job-scheduler SLURM"

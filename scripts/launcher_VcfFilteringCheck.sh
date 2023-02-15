@@ -30,7 +30,7 @@ done
 VCF_FILE=$(grep "^VCF_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 if [[ -z "$VCF_FILE" ]] ; then
-  echo -e "\nERROR: The VCF_FILE variable is missing in your config file (${CONFIG}). Please provide the vcf file produced by your variants caller."
+  echo -e "\nERROR: The VCF_FILE variable is missing in your config file (${CONFIG}). Please provide the vcf file produced by your variant caller."
   echo -e "\nExiting.\n"
   exit 1
 elif [[ ! -f "$VCF_FILE" ]] ; then
