@@ -6,7 +6,7 @@ FILTERING_SUBFOLDER: ""
 #### INPUT FILES ###
 
 ## Provide the VCF file to be filtered. The vcf need to be gzipped
-VCF_FILE: "VCF/variants_calling_converted.vcf.gz"
+VCF_FILE: "VCF/variant_calling_converted.vcf.gz"
 
 
 ### VCF FILTERING PARAMETERS ###
@@ -18,7 +18,7 @@ VCF_FILE: "VCF/variants_calling_converted.vcf.gz"
 # - FMT/DP = Approximate read depth (reads with MQ=255 or with bad mates are filtered)
 # - FMT/GQ = Genotype Quality
 
-BCFTOOLS_GENOTYPES_FILTERING_OPTIONS: "FMT/DP >= 5 & FMT/GQ >= 15"
+BCFTOOLS_GENOTYPE_FILTERING_OPTIONS: "FMT/DP >= 5 & FMT/GQ >= 15"
 
 
 ## 02_LOCUS_FILTERING: Locus filtering parameters passed to bcftools filter
