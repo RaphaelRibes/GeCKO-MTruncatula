@@ -78,11 +78,11 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 This file is used to pass all the information and tools parameters that will be used by the VCF_FILTERING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
 **INPUT FILES**  
-- *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variants calling file in zipped vcf format (.vcf.gz).
+- *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variant calling file in zipped vcf format (.vcf.gz).
 
 **VCF FILTERING PARAMETERS**  
 
-- *BCFTOOLS_GENOTYPES_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; Genotype filtering parameters passed to bcftools filter (e.g. “FMT/DP >= 5 & FMT/GQ >= 15”). Any genotype not meeting these conditions will be assigned a missing value. Be careful to provide them between quotes.  
+- *BCFTOOLS_GENOTYPE_FILTERING_OPTIONS:*&nbsp;&nbsp;&nbsp; Genotype filtering parameters passed to bcftools filter (e.g. “FMT/DP >= 5 & FMT/GQ >= 15”). Any genotype not meeting these conditions will be assigned a missing value. Be careful to provide them between quotes.  
 - *BCFTOOLS_LOCUS_FILTERING1_OPTIONS:*&nbsp;&nbsp;&nbsp; Locus filtering parameters passed to bcftools filter (e.g. "QUAL >= 30 & F_MISSING <= 0.5"). Any locus not meeting these conditions will be removed. Be careful to provide them between quotes.  
 - *MAX_NA_PER_SAMPLE:*&nbsp;&nbsp;&nbsp; The maximum proportion of allowed missing data per sample. Samples above the threshold will be removed. Between 0 and 1. Set to "1" for no filtering.  
 - *BCFTOOLS_LOCUS_FILTERING2_OPTIONS:*&nbsp;&nbsp;&nbsp; Locus filtering parameters passed to bcftools filter after removing poorly covered samples and computing additional site level statistics:  
@@ -111,27 +111,27 @@ This file is used to pass all the information and tools parameters that will be 
 
 **UNDERSTANDING HOW TO USE THE PREVIOUS VARIABLES TO FILTER VARIANTS WITH BCFTOOLS**  
 
-The genotypes and loci filtering steps are performed with the [bcftools’ filter function](https://samtools.github.io/bcftools/bcftools.html#filter). The options you will pass to bcftools are the conditions that must be met for the genotypes or loci to be retained (--include). For more information on the syntax of the expressions that can be passed to bcftools filter, see [this page](https://samtools.github.io/bcftools/bcftools.html#expressions).  
+The genotype and locus filtering steps are performed with the [bcftools’ filter function](https://samtools.github.io/bcftools/bcftools.html#filter). The options you will pass to bcftools are the conditions that must be met for the genotypes or loci to be retained (--include). For more information on the syntax of the expressions that can be passed to bcftools filter, see [this page](https://samtools.github.io/bcftools/bcftools.html#expressions).  
 In a VCF file, metrics can relate either to a genotype (sample x locus) or to a locus. Some metrics (e.g. DP = reads depth) can relate to both (e.g. genotype level reads depth or site level reads depth across all samples). To differentiate between the genotype’s DP and the locus’ DP, we need to specify **FORMAT**/DP (or **FMT**/DP) for the genotype or **INFO**/DP for the locus.  
 
-- **Genotypes filtering**  
+- **Genotype filtering**  
 Genotypes are filtered with the following bcftools command:  
 ```bcftools filter -i ‘[BCFTOOLS_GENOTYPES_FILTERING_OPTIONS]’ -S .```  
 For this step you will have to use ‘FMT/’ in front of the metrics you want to use for filtering.  
 For example, if you wrote in your config file:  
-*BCFTOOLS_GENOTYPES_FILTERING_OPTIONS: "FMT/DP >= 5 & FMT/GQ >= 15"*  
+*BCFTOOLS_GENOTYPE_FILTERING_OPTIONS: "FMT/DP >= 5 & FMT/GQ >= 15"*  
 Then the command will be:  
 ```bcftools filter -i ‘FMT/DP >= 5 & FMT/GQ >= 15’ -S .```  
 Which will set to “.” (meaning NA in a VCF file) any genotype that does not pass DP >= 5 **AND** GQ >= 15.
 
-- **Loci filtering (first step)**  
+- **Locus filtering (first step)**  
 Loci are filtered with the following command:  
 ```bcftools filter -i ‘[BCFTOOLS_LOCUS_FILTERING1_OPTIONS]’```  
 At this step, you can filter loci using all the common GATK metrics given in the VCF INFO field (DP, InbreedingCoeff, etc.), the QUAL column, or the metrics/info that can be computed on the fly by bcftools (F_MISSING, MAF, TYPE, etc. See the bcftools documentation for an exhaustive list).  
 For example, if you want to keep only biallelic SNP sites with quality above 30 and less than 50% missing values, here is what you could write in your config file:  
 *BCFTOOLS_ LOCUS_FILTERING1_OPTIONS: "N_ALT=1 & TYPE=\\"snp\\" & QUAL >= 30 & F_MISSING <= 0.5"*
 
-- **Loci filtering (second step)**  
+- **Locus filtering (second step)**  
 After filtering out samples, loci can be filtered a second time with:  
 ```bcftools filter -i ‘[BCFTOOLS_LOCUS_FILTERING2_OPTIONS]’```  
 At this step, you can use all the previously mentioned GATK and bcftools metrics, as well as some newly computed metrics listed above in the BCFTOOLS_LOCUS_FILTERING2_OPTIONS description. Some of them are redundant with the bcftools metrics but we thought it could be useful to have them written down in the final VCF file. Also, you may want to filter loci again after possibly removing some samples from your dataset to make sure that all loci still pass your desired thresholds.  
@@ -153,7 +153,7 @@ For more help on how to use it, see our GitHub's general README file or run:
 
 **Notes on Conda**  
 The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
-When called for the first time, the VARIANTS_CALLING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
+When called for the first time, the VCF_FILTERING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
 
 The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
 ```
