@@ -8,3 +8,9 @@ __default__:
 
 Plot_FinalVCFVariablesHistograms:
     mem-per-cpu: 4G
+
+Plot_VCFDPBoxplot:
+    mem-per-cpu: 4G
+    
+Plot_GVCFVariantsAlongGenome:
+    mem-per-cpu: 4G
