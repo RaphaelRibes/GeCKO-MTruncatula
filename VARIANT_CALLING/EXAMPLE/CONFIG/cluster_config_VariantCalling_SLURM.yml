@@ -18,3 +18,9 @@ GenomicsDBImport:
 
 Plot_GVCFVariablesHistograms:
     mem-per-cpu: 4G
+
+Plot_GVCFDPBoxplot:
+    mem-per-cpu: 4G
+    
+Plot_GVCFVariantsAlongGenome:
+    mem-per-cpu: 4G

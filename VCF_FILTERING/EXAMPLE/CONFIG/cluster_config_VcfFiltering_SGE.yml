@@ -9,8 +9,8 @@ __default__:
 Plot_FinalVCFVariablesHistograms:
     h_vmem: 4G
 
-Plot_VCFDPBoxplot:
+Plot_FinalVCFDPBoxplot:
     h_vmem: 4G
     
-Plot_GVCFVariantsAlongGenome:
+Plot_FinalVCFVariantsAlongGenome:
     h_vmem: 4G

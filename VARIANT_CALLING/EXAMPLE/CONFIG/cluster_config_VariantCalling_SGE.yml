@@ -18,3 +18,9 @@ GenomicsDBImport:
 
 Plot_GVCFVariablesHistograms:
     h_vmem: 4G
+
+Plot_GVCFDPBoxplot:
+    h_vmem: 4G
+    
+Plot_GVCFVariantsAlongGenome:
+    h_vmem: 4G
