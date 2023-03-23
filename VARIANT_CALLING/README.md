@@ -117,30 +117,6 @@ To launch the VARIANT_CALLING workflow, you can use our launching script runGeCK
 For more help on how to use it, see our GitHub's general README file or run:  
 ```./runGeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
 
-**Notes on Conda**  
-The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
-When called for the first time, the VARIANT_CALLING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
-
-The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
-```
-envs_dirs:  
-    - /path/to/appropriate/directory/env  
-pkgs_dirs:  
-    - /path/to/appropriate/directory/pkgs  
-```
-Alternatively, you can use a symbolic link to have the .conda folder in your home directory point to another folder where you would rather have Conda store its files.  
-To do so:  
-```
-mv   /home/username/.conda   /path/to/appropriate/directory/.conda
-ln -nfs /path/to/appropriate/directory/.conda   /home/username/.conda
-```
-
-Sometimes you will also need to create a symbolic link for your .cache folder:  
-```
-mv   /home/username/.cache   /path/to/appropriate/directory/.cache
-ln -nfs /path/to/appropriate/directory/.cache   /home/username/.cache
-```
-
 ### 5/ Expected outputs  
 
 This workflow will create a "VARIANT_CALLING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
