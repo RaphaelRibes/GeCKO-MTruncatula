@@ -3,47 +3,47 @@ __default__:
     partition: agap_normal
     mem-per-cpu: 2G
     job-name: RM.{rule}
-    output: Logs_ReadsMappingWorkflow/{rule}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.%j.err.txt
 
 Mapping_PairedEndFastqs:
     cpus-per-task: "{threads}"
     mem-per-cpu: 5G
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Mapping_SingleEndFastqs:
     cpus-per-task: "{threads}"
     mem-per-cpu: 5G
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 MarkDuplicates_Bams:
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Index_Bams:
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Stats_Bams:
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Extract_Reads:
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 MarkDuplicates_Subbams:
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Index_Subbams:
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Stats_Subbams:
-    output: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadsMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 
