@@ -22,8 +22,6 @@ It is advised to place these files in a CONFIG folder in your working directory,
 
 &nbsp;
 ### Installation  
-- Make the script executable with:  
-```chmod 755 runGeCKO.sh```  
 
 - If the script was open on a Windows system and you will execute it on a Linux system, you may need to remove windows carriage returns ('\r') with:  
 ```dos2unix runGeCKO.sh```  
@@ -44,17 +42,17 @@ The following section describes the different workflow actions and parameters. T
 #### QUICK START:  
 There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
-```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning```
+```bash runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning```
 
 On my computer this will look like:
 
-```./runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning```
+```bash runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning```
 
 The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml. The same folder can also contain the cluster_config_WorkflowName.yml file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
-```./runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
+```bash runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
 
 &nbsp;
 
@@ -62,16 +60,16 @@ To use the full resource of my HPC environment (Slurm), and allow up to 100 subm
 The launcher's default behavior is to run the workflow, but other actions can be called instead:
 
 **--help**&nbsp;&nbsp;&nbsp;*print the help*  
-```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --help```  
+```bash runGeCKO.sh --workflow-path /PATH/TO/GeCKO --help```  
 
 **--dryrun**&nbsp;&nbsp;&nbsp;*only dryrun the workflow (and detect potential errors) without actually running it*  
-```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --dryrun```  
+```bash runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --dryrun```  
 
 **--report**&nbsp;&nbsp;&nbsp;*write an html report of the workflow's last run*  
-```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --report```  
+```bash runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --report```  
 
 **--diagram**&nbsp;&nbsp;&nbsp;*write an svg diagram of the workflow*  
-```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --diagram```  
+```bash runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --diagram```  
 
 &nbsp;
 
