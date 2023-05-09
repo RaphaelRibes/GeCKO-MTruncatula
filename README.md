@@ -14,7 +14,7 @@ These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/)
 To execute one of the workflows, follow the steps:  
 
 
-1) 
+1) [Generate your SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
 
 2) Clone or copy this repository (and all its contents) to your environment, for example:   
 ```git clone git@github.com:GE2POP/GeCKO.git```  
