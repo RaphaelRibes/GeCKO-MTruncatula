@@ -13,14 +13,17 @@ These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/)
 
 To execute one of the workflows, follow the steps:  
 
-1) Clone or copy this repository (and all its contents) to your environment, for example:   
+
+1) 
+
+2) Clone or copy this repository (and all its contents) to your environment, for example:   
 ```git clone git@github.com:GE2POP/GeCKO.git```  
 
-2) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
+3) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
 It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.yml  
 
-3) Use the launcher script runGeCKO.sh to run the workflow.  
+4) Use the launcher script runGeCKO.sh to run the workflow.  
 
 &nbsp;
 ### Installation  
