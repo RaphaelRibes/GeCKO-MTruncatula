@@ -21,7 +21,6 @@ To execute one of the workflows, follow the steps:
 
 3) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
-It is advised to place these files in a CONFIG folder in your working directory, under the names config_WorkflowName.yml and cluster_config_WorkflowName.yml  
 
 4) Use the launcher script runGeCKO.sh to run the workflow.  
 
