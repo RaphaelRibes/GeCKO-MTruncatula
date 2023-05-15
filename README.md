@@ -16,7 +16,7 @@ To execute one of the workflows, follow the steps:
 
 1) If it is the first time you clone a GitHub repository, you will first need to [generate your SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key) and [add it to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
 
-2) Clone or copy this repository (and all its contents) to your environment, for example:   
+2) Clone or copy this repository (and all its contents) to your environment:   
 ```git clone git@github.com:GE2POP/GeCKO.git```  
 
 3) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
