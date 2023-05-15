@@ -40,17 +40,14 @@ Either install them on your computer, or if you are working on a cluster, you ma
 &nbsp;
 ### Using the workflow
 
-The following section describes the different workflow actions and parameters. The /PATH/TO/GeCKO path refers to the directory you cloned from GitHub, e.g  /home/jgirodolle/GeCKO.
+The following section describes the different workflow actions and parameters. The /home/user/GeCKO path refers to the directory you cloned from GitHub.
 
 &nbsp;
 #### QUICK START:  
 There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
-```bash runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow DataCleaning```
+```bash runGeCKO.sh --workflow-path /home/user/GeCKO --workflow DataCleaning```
 
-On my computer this will look like:
-
-```bash runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning```
 
 The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml. The same folder can also contain the cluster_config_WorkflowName.yml file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
 
