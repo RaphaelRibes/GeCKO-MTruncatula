@@ -9,7 +9,7 @@ You will find the different workflows in the corresponding folders:
 
 Each corresponding folder has a specific README to explain the use of the workflow, its various options and settings, as well as an EXAMPLE subfolder with a small dataset and appropriate config files to test it.
 
-Each workflow produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runGeCKO.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. 
+We provide a bash launcher called runGeCKO.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. Each workflow will produce an html report (generating thanks to [multiQC](https://multiqc.info/)) summarizing key information for this step.
 
 To execute one of the workflows, follow the steps:  
 
