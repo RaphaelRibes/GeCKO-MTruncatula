@@ -9,20 +9,57 @@ You will find the different workflows in the corresponding folders:
 
 Each corresponding folder has a specific README to explain the use of the workflow, its various options and settings, as well as an EXAMPLE subfolder with a small dataset and appropriate config files to test it.
 
-These workflows rely on [snakemake](https://snakemake.readthedocs.io/en/stable/), which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and [conda](https://docs.conda.io/en/latest/) available on your environment. Each workflow produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runGeCKO.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. SGE and Slurm job schedulers are currently supported.
+Each workflow produces an html report (generating thanks to [multiQC](https://multiqc.info/)) which summarizes key information for this step. Finally, we provide a bash launcher called runGeCKO.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. 
 
 To execute one of the workflows, follow the steps:  
 
 
 1) If it is the first time you clone a GitHub repository, you will first need to [generate your SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key) and [add it to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
 
-2) Clone or copy this repository (and all its contents) to your environment:   
+2) Clone this repository in your environment:   
 ```git clone git@github.com:GE2POP/GeCKO.git```  
+This will create a GeCKO directory, for example /home/user/GeCKO.
 
 3) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
 
 4) Use the launcher script runGeCKO.sh to run the workflow.  
+
+&nbsp;
+### Environment  
+These workflows rely on snakemake, which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and conda available on your environment. 
+
+#### Snakemake
+[snakemake](https://snakemake.readthedocs.io/en/stable/)
+
+#### Conda 
+The workflow will download and find the [tools it needs](#tools) through [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html), which means you do not need to have them installed in your working environment behorehand.  
+When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
+
+The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
+```
+envs_dirs:  
+    - /path/to/appropriate/directory/env  
+pkgs_dirs:  
+    - /path/to/appropriate/directory/pkgs  
+```
+Alternatively, you can use a symbolic link to have the .conda folder in your home directory point to another folder where you would rather have Conda store its files.  
+To do so:  
+```
+mv   /home/user/.conda   /path/to/appropriate/directory/.conda
+ln -nfs /path/to/appropriate/directory/.conda   /home/user/.conda
+```
+
+Sometimes you will also need to create a symbolic link for your .cache folder:  
+```
+mv   /home/user/.cache   /path/to/appropriate/directory/.cache
+ln -nfs /path/to/appropriate/directory/.cache   /home/user/.cache
+```
+
+#### Cluster's environment
+SGE and Slurm job schedulers are currently supported.
+
+
 
 &nbsp;
 ### Installation  
@@ -118,30 +155,6 @@ If specified, the environment will only be built once in this folder (the first 
 **--extra-snakemake-options ["..."]**&nbsp;&nbsp;&nbsp;*any list of other Snakemake options that you may want to pass to the Snakemake command*  
 Be careful to provide them between quotes. For an exhaustive list of Snakemake options see https://snakemake.readthedocs.io/en/stable/index.html.  
 
-
-### Using Conda 
-The workflow will download and make available the [tools it needs](#tools) through Conda, which means you do not need to have them installed in your working environment behorehand.  
-When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
-
-The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
-```
-envs_dirs:  
-    - /path/to/appropriate/directory/env  
-pkgs_dirs:  
-    - /path/to/appropriate/directory/pkgs  
-```
-Alternatively, you can use a symbolic link to have the .conda folder in your home directory point to another folder where you would rather have Conda store its files.  
-To do so:  
-```
-mv   /home/username/.conda   /path/to/appropriate/directory/.conda
-ln -nfs /path/to/appropriate/directory/.conda   /home/username/.conda
-```
-
-Sometimes you will also need to create a symbolic link for your .cache folder:  
-```
-mv   /home/username/.cache   /path/to/appropriate/directory/.cache
-ln -nfs /path/to/appropriate/directory/.cache   /home/username/.cache
-```
 
 
 
