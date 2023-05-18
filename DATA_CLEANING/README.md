@@ -30,7 +30,7 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 ## QUICK START
 
 To easily launch the workflow, use our runGeCKO.sh launcher:  
-```./runGeCKO.sh --workflow DataCleaning --workflow-path PATH/TO/GeCKO```  
+```bash runGeCKO.sh --workflow DataCleaning --workflow-path /home/user/GeCKO```  
 
 Needed files:  
 - the full GeCKO/ folder  
@@ -42,7 +42,7 @@ Needed files:
 &nbsp;
 
 For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:  
-```../../../runGeCKO.sh --workflow DataCleaning --workflow-path ../../../../GeCKO --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_DataCleaning_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```bash ../../../runGeCKO.sh --workflow DataCleaning --workflow-path ../../../../GeCKO --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_DataCleaning_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
