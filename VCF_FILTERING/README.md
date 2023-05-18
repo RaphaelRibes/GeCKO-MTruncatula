@@ -16,7 +16,7 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 ## QUICK START
 
 To easily launch the workflow, use our runGeCKO.sh launcher:  
-```./runGeCKO.sh --workflow VcfFiltering --workflow-path PATH/TO/GeCKO```  
+```bash runGeCKO.sh --workflow VcfFiltering --workflow-path /home/user/GeCKO```  
 
 Needed files:  
 - the full GeCKO/ folder  
@@ -28,7 +28,7 @@ Needed files:
 
 
 For example, if you need to launch the workflow on our VCF example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```../../runGeCKO.sh --workflow VcfFiltering --workflow-path ../../../GeCKO --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```bash ../../runGeCKO.sh --workflow VcfFiltering --workflow-path ../../../GeCKO --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
