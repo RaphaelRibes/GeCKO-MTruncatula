@@ -19,7 +19,7 @@ It can be used to process:
 ## QUICK START
 
 To easily launch the workflow, use our runGeCKO.sh launcher:  
-```./runGeCKO.sh --workflow ReadMapping --workflow-path PATH/TO/GeCKO```  
+```bash runGeCKO.sh --workflow ReadMapping --workflow-path /home/user/GeCKO```  
 
 Needed files:  
 - the full GeCKO/ folder  
@@ -32,7 +32,7 @@ Needed files:
 &nbsp;
 
 For example, if you need to launch the workflow on our example PAIRED_END DEMULT_TRIM dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/PAIRED_END directory:  
-```../../../runGeCKO.sh --workflow ReadMapping --workflow-path ../../../../GeCKO --config-file CONFIG/config_ReadMapping.yml --cluster-config CONFIG/cluster_config_ReadMapping_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```bash ../../../runGeCKO.sh --workflow ReadMapping --workflow-path ../../../../GeCKO --config-file CONFIG/config_ReadMapping.yml --cluster-config CONFIG/cluster_config_ReadMapping_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
 
 &nbsp;
