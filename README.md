@@ -30,7 +30,8 @@ For more information on this step, see the more detailed README placed in each w
 These workflows rely on snakemake, which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and conda available on your environment. 
 
 #### Snakemake
-[snakemake](https://snakemake.readthedocs.io/en/stable/)
+We chose to utilize [snakemake](https://snakemake.readthedocs.io/en/stable/) as our workflow management system because of its many advantages. First, Snakemake ensures reproducibility by natively supporting conda, allowing to encapsulate software environments and dependencies for accurate result replication. In addition, it allows for the optimization of resource utilization and performance by intelligently distributing jobs across multiple cores or nodes, enabling efficient handling of complex pipelines. Finally, Snakemake's portability allows workflows to be executed on different systems, facilitating collaboration and flexibility in scientific projects.
+We made dedicated efforts to extensively document the usage of our workflows, ensuring they are user-friendly and accessible to non-bioinformatician biologists. Our aim was to empower them to benefit from the numerous advantages of Snakemake without requiring any coding expertise on their part.
 
 #### Conda 
 The workflow will download and find the [tools it needs](#tools) through [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html), which means you do not need to have them installed in your working environment behorehand.  
