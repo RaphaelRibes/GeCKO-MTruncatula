@@ -128,6 +128,8 @@ def buildExpectedFiles(filesNames, isExpected):
 
 
 ### PIPELINE ###
+ruleorder: Remapping_PairedEndExtractedFastqs > MarkDuplicates_Subbams
+ruleorder: Remapping_SingleEndExtractedFastqs > MarkDuplicates_Subbams
 
 rule FinalTargets:
     input:
@@ -319,42 +321,87 @@ rule Create_SubReference:
     shell:
         "awk '{{print $1\":\"$2\"-\"$3}}' {input.bed} > {output.tmp_bed} ;"
         "samtools faidx {input.ref} --region-file {output.tmp_bed} > {output.subref};"
-        "sed -i 's/:/_/g ; s/-/_/g' {output.subref}"
+        "sed -i 's/:/_/g ; s/-/_/g' {output.subref} ;"
+        "{scripts_dir}/index_ref.sh {output.subref} {mapper}"
 
 
-rule Create_ChainFile:
-    input:
-        ref = ref,
-        bed = bed_to_create if create_bed else existing_bed
-    output:
-        chain = temp(subref_dir+"/zones.chain")
-    conda:
-        "ENVS/conda_tools.yml"
-    shell:
-        "ln -s {input.ref} {subref_dir}/ref.fasta && samtools faidx {subref_dir}/ref.fasta;"
-        "awk '{{if(NR==FNR){{lg[$1]=$2}} else{{ print \"chain 4900 \"$1\" \"lg[$1]\" + \"$2\" \"$3\" \"$1\"_\"$2\"_\"$3\" \"$3-$2+1\" + 1 \"$3-$2+1\"\\n\"$3-$2+1 }}}}' {subref_dir}/ref.fasta.fai {input.bed} > {subref_dir}/zones.chain ;"
-        "rm {subref_dir}/ref.fasta*"
-
-
-rule Extract_Reads:
+rule Extract_PairedEndReads:
     input:
         bams = bams_dir+"/{base}.bam",
-        chain = subref_dir+"/zones.chain"
+        bed = bed_to_create if create_bed else existing_bed
     output:
-        primary = temp(subbams_dir+"/{base}_primary.bam"),
-        CM_bam = temp(subbams_dir+"/{base}_CM.bam"),
-        CM_sorted_bam = temp(subbams_dir+"/{base}_CM.sorted.bam"),
-        CM_sorted_bai = temp(subbams_dir+"/{base}_CM.sorted.bam.bai")
+        tmp_extract_bams = temp(subbams_dir+"/{base}_extract.bam"),
+        tmp_extracted_fastq_paired_R1 = temp(subbams_dir+"/{base}_extract.R1.fastq.gz"),
+        tmp_extracted_fastq_paired_R2 = temp(subbams_dir+"/{base}_extract.R2.fastq.gz"),
+        tmp_extracted_fastq_unpaired = temp(subbams_dir+"/{base}_extract.U.fastq.gz")
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "samtools view -b -F 0x800 -F 0x100 {input.bams} > {output.primary} ;"
-        "CrossMap.py bam -t 500 {input.chain} {output.primary} {subbams_dir}/{wildcards.base}_CM;"
+        "samtools view -F 4 -b -L {input.bed} {input.bams} > {output.tmp_extract_bams} ;"
+        "picard SamToFastq -I {output.tmp_extract_bams} -F {subbams_dir}/{wildcards.base}_extract.R1.fastq -F2 {subbams_dir}/{wildcards.base}_extract.R2.fastq -FU {subbams_dir}/{wildcards.base}_extract.U.fastq -VALIDATION_STRINGENCY SILENT ;"
+        "gzip {subbams_dir}/{wildcards.base}_extract.R1.fastq {subbams_dir}/{wildcards.base}_extract.R2.fastq {subbams_dir}/{wildcards.base}_extract.U.fastq"
+
+
+rule Remapping_PairedEndExtractedFastqs:
+    input:
+        fastq_paired_R1 = subbams_dir+"/{base}_extract.R1.fastq.gz",
+        fastq_paired_R2 = subbams_dir+"/{base}_extract.R2.fastq.gz",
+        fastq_unpaired = subbams_dir+"/{base}_extract.U.fastq.gz",
+        subref = subref_dir+"/"+ref_name+"_zones.fasta",
+        #subref_index = subref_index
+    output:
+        buildExpectedFiles([temp(subbams_dir+"/{base}.fix.bam")],[paired_end])
+    conda:
+        "ENVS/conda_tools.yml"
+    threads: config["MAPPING_CPUS_PER_TASK"]
+    params:
+        mapper = mapper,
+        extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
+        technology = config["SEQUENCING_TECHNOLOGY"]
+    shell:
+        "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" --fastq_U \"{input.fastq_unpaired}\" "
+        "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
+        "--output_dir {subbams_dir} --sample {wildcards.base}"
+
+
+rule Extract_SingleEndReads:
+    input:
+        bams = bams_dir+"/{base}.bam",
+        bed = bed_to_create if create_bed else existing_bed
+    output:
+        tmp_extract_bams = temp(subbams_dir+"/{base}_extract.bam"),
+        tmp_extracted_fastq = temp(subbams_dir+"/{base}_extract.fastq.gz"),
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        "samtools view -F 4 -b -L {input.bed} {input.bams} > {output.tmp_extract_bams} ;"
+        "picard SamToFastq -I {output.tmp_extract_bams} -F {subbams_dir}/{wildcards.base}_extract.fastq -VALIDATION_STRINGENCY SILENT ;"
+        "gzip {subbams_dir}/{wildcards.base}_extract.fastq"
+
+
+rule Remapping_SingleEndExtractedFastqs:
+    input:
+        fastq_single = subbams_dir+"/{base}_extract.fastq.gz",
+        subref = subref_dir+"/"+ref_name+"_zones.fasta",
+        #subref_index = subref_index
+    output:
+        buildExpectedFiles([temp(subbams_dir+"/{base}.fix.bam")],[not paired_end])
+    conda:
+        "ENVS/conda_tools.yml"
+    threads: config["MAPPING_CPUS_PER_TASK"]
+    params:
+        mapper = mapper,
+        extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
+        technology = config["SEQUENCING_TECHNOLOGY"]
+    shell:
+        "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
+        "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
+        "--output_dir {subbams_dir} --sample {wildcards.base}"
 
 
 rule MarkDuplicates_Subbams:
     input:
-        CM_sorted_bam = subbams_dir+"/{base}_CM.sorted.bam"
+        subbams_dir+"/{base}.fix.bam"
     output:
         coordsorted_bam = temp(subbams_dir+"/{base}.sortcoord.bam"),
         MD_bam = subbams_dir+"/{base}.bam",
@@ -365,8 +412,8 @@ rule MarkDuplicates_Subbams:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {input.CM_sorted_bam} -O {output.coordsorted_bam} -SO coordinate -VALIDATION_STRINGENCY SILENT;"
-        "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {output.coordsorted_bam} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES FALSE -M {output.metrics}"
+        "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {input} -O {output.coordsorted_bam} -SO coordinate -VALIDATION_STRINGENCY SILENT;"
+        "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {output.coordsorted_bam} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES {rm_dup} -M {output.metrics}"
 
 
 rule Index_Subbams:

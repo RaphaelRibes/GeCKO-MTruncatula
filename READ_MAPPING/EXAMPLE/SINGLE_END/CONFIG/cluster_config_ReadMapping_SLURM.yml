@@ -30,7 +30,23 @@ Stats_Bams:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
-Extract_Reads:
+Extract_PairedEndReads:
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Remapping_PairedEndExtractedFastqs:
+    cpus-per-task: "{threads}"
+    mem-per-cpu: 5G
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Extract_SingleEndReads:
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Remapping_SingleEndExtractedFastqs:
+    cpus-per-task: "{threads}"
+    mem-per-cpu: 5G
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
