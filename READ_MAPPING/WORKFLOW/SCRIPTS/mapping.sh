@@ -70,6 +70,11 @@ do
     shift # past argument
     shift # past value
     ;;
+    --filters)
+    SAMTOOLS_VIEW_FILTERS="$2"
+    shift # past argument
+    shift # past value
+    ;;
 esac
 done
 
@@ -99,12 +104,12 @@ if [ "${MAPPER}" = "bwa-mem2_mem" ] ; then
     bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}_paired.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
     if [ ! -z "$FASTQ_U" ] ; then
       bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_U} > ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     fi
   else
-    bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
+    bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.raw.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
   fi
 fi
 
@@ -113,12 +118,12 @@ if [ "${MAPPER}" = "bwa_mem" ] ; then
     bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}_paired.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
     if [ ! -z "$FASTQ_U" ] ; then
       bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_U} > ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     fi
   else
-    bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
+    bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.raw.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
   fi
 fi
 
@@ -128,12 +133,12 @@ if [ "${MAPPER}" = "bowtie2" ] ; then
     bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}_paired.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
     if [ ! -z "$FASTQ_U" ] ; then
       bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ_U} -S ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     fi
   else
-    bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
+    bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.raw.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
   fi
 fi
 
@@ -143,28 +148,16 @@ if [ "${MAPPER}" = "minimap2" ] ; then
     minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_R1} -2 ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}_paired.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
     if [ ! -z "$FASTQ_U" ] ; then
       minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_U} > ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
     fi
   else
-    minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
+    minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.raw.sam || { (>&2 echo 'The mapping of ${SAMPLE} failed') ; exit 1; }
   fi
 fi
 
 
 
-samtools view -Sb -o ${OUTPUT_DIR}/${SAMPLE}.bam ${OUTPUT_DIR}/${SAMPLE}.sam || { (>&2 echo 'The transformation of ${SAMPLE} sam to bam failed') ; exit 1; }
-rm -f ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam ${OUTPUT_DIR}/${SAMPLE}.sam
-
-# Fill in mate information
-samtools sort -n ${OUTPUT_DIR}/${SAMPLE}.bam -o ${OUTPUT_DIR}/${SAMPLE}.sortn.bam || { (>&2 echo 'The samtools sort command of ${SAMPLE} failed') ; exit 1; }
-
-if [ "${MAPPER}" = "bowtie2" ] ; then
-  mv ${OUTPUT_DIR}/${SAMPLE}.sortn.bam ${OUTPUT_DIR}/${SAMPLE}.fix.bam
-else
-  #samtools fixmate -m ${OUTPUT_DIR}/${SAMPLE}.sortn.bam ${OUTPUT_DIR}/${SAMPLE}.fix.bam || { (>&2 echo 'The fixmate command of ${SAMPLE} failed') ; exit 1; }
-  #rm ${OUTPUT_DIR}/${SAMPLE}.sortn.bam
-  mv ${OUTPUT_DIR}/${SAMPLE}.sortn.bam ${OUTPUT_DIR}/${SAMPLE}.fix.bam
-fi
-rm ${OUTPUT_DIR}/${SAMPLE}.bam
+samtools view -Sb ${SAMTOOLS_VIEW_FILTERS} -o ${OUTPUT_DIR}/${SAMPLE}.filt.bam ${OUTPUT_DIR}/${SAMPLE}.raw.sam || { (>&2 echo 'The transformation of ${SAMPLE} sam to bam failed') ; exit 1; }
+rm -f ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam

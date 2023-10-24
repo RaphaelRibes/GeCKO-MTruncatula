@@ -100,8 +100,8 @@ subbams_stats_reports_dir = subbams_reports_dir+"/STATS"
 ### If the bed file needs to be generated
 #if (len(bed) == 0 and len(config["BED_MIN_MEAN_COV"]) > 0):
 #    bed=subref_dir+"/zones.bed"
-bed_to_create = subref_dir+"/zones.bed"
-
+bed_to_create = subref_dir+"/auto_zones.bed"
+clean_bed = subref_dir+"/user_clean.bed"
 
 ### Expected reference index
 if (mapper == "bwa-mem2_mem"):
@@ -169,18 +169,19 @@ rule Mapping_PairedEndFastqs:
         ref = ref,
         ref_index = ref_index
     output:
-        buildExpectedFiles([temp(bams_dir+"/{base}.fix.bam")],[paired_end])
+        buildExpectedFiles([ temp(bams_dir+"/{base}.filt.bam") ],[ paired_end ])
     conda:
         "ENVS/conda_tools.yml"
     threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
-        technology = config["SEQUENCING_TECHNOLOGY"]
+        technology = config["SEQUENCING_TECHNOLOGY"],
+        samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS1"]
     shell:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
-        "--output_dir {bams_dir} --sample {wildcards.base}"
+        "--output_dir {bams_dir} --sample {wildcards.base} --filters \"{params.samtools_view_filters}\""
 
 
 rule Mapping_SingleEndFastqs:
@@ -189,23 +190,24 @@ rule Mapping_SingleEndFastqs:
         ref = ref,
         ref_index = ref_index
     output:
-        buildExpectedFiles([temp(bams_dir+"/{base}.fix.bam")],[not paired_end])
+        buildExpectedFiles([ temp(bams_dir+"/{base}.filt.bam") ],[ not paired_end ])
     conda:
         "ENVS/conda_tools.yml"
     threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = config["MAPPER"],
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
-        technology = config["SEQUENCING_TECHNOLOGY"]
+        technology = config["SEQUENCING_TECHNOLOGY"],
+        samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS1"]
     shell:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
-        "--output_dir {bams_dir} --sample {wildcards.base}"
+        "--output_dir {bams_dir} --sample {wildcards.base} --filters \"{params.samtools_view_filters}\""
 
 
 rule MarkDuplicates_Bams:
     input:
-        bams_dir+"/{base}.fix.bam"
+        bams_dir+"/{base}.filt.bam"
     output:
         coordsorted_bam = temp(bams_dir+"/{base}.sortcoord.bam"),
         MD_bam = bams_dir+"/{base}.bam",
@@ -279,6 +281,27 @@ rule Create_BamsList:
         "ls -d {bams_dir}/*.bam > {output}"
 
 
+rule Clean_BedFile:
+    input:
+        existing_bed
+    output:
+        clean_bed
+    conda:
+        "ENVS/conda_tools.yml"
+    shell:
+        """
+        sort -k1,1 -k2,2n {input} | awk 'BEGIN{{OFS="\t"; chr=0; start=0; end=0}}{{
+          if ($1==chr && $2<=end) {{
+            end=$3
+          }}
+          else {{
+            if(end !=0) {{print chr, start, end}} ;
+            chr=$1 ; start=$2 ; end=$3
+          }}
+        }} END{{if(end !=0) {{print chr, start, end}}}}' > {output}
+        """
+
+
 rule Create_BedFile:
     input:
         expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir),
@@ -299,7 +322,7 @@ rule CountReadsZones_Bams:
     input:
         bams = expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir),
         csis = expand("{bams_dir}/{sample}.bam.csi", sample=samples, bams_dir=bams_dir),
-        bed = bed_to_create if create_bed else existing_bed
+        bed = bed_to_create if create_bed else clean_bed
     output:
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv"
     conda:
@@ -312,7 +335,7 @@ rule CountReadsZones_Bams:
 rule Create_SubReference:
     input:
         ref = ref,
-        bed = bed_to_create if create_bed else existing_bed
+        bed = bed_to_create if create_bed else clean_bed
     output:
         subref = subref_dir+"/"+ref_name+"_zones.fasta",
         tmp_bed = temp(subref_dir+"/tmp_zones.bed")
@@ -328,18 +351,15 @@ rule Create_SubReference:
 rule Extract_PairedEndReads:
     input:
         bams = bams_dir+"/{base}.bam",
-        bed = bed_to_create if create_bed else existing_bed
+        bed = bed_to_create if create_bed else clean_bed
     output:
-        tmp_extract_bams = temp(subbams_dir+"/{base}_extract.bam"),
         tmp_extracted_fastq_paired_R1 = temp(subbams_dir+"/{base}_extract.R1.fastq.gz"),
         tmp_extracted_fastq_paired_R2 = temp(subbams_dir+"/{base}_extract.R2.fastq.gz"),
         tmp_extracted_fastq_unpaired = temp(subbams_dir+"/{base}_extract.U.fastq.gz")
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "samtools view -F 4 -b -L {input.bed} {input.bams} > {output.tmp_extract_bams} ;"
-        "picard SamToFastq -I {output.tmp_extract_bams} -F {subbams_dir}/{wildcards.base}_extract.R1.fastq -F2 {subbams_dir}/{wildcards.base}_extract.R2.fastq -FU {subbams_dir}/{wildcards.base}_extract.U.fastq -VALIDATION_STRINGENCY SILENT ;"
-        "gzip {subbams_dir}/{wildcards.base}_extract.R1.fastq {subbams_dir}/{wildcards.base}_extract.R2.fastq {subbams_dir}/{wildcards.base}_extract.U.fastq"
+        "{scripts_dir}/extract_PEreads.sh --bam {input.bams} --sample {wildcards.base} --bed_file {input.bed} --output_dir {subbams_dir}"
 
 
 rule Remapping_PairedEndExtractedFastqs:
@@ -347,27 +367,27 @@ rule Remapping_PairedEndExtractedFastqs:
         fastq_paired_R1 = subbams_dir+"/{base}_extract.R1.fastq.gz",
         fastq_paired_R2 = subbams_dir+"/{base}_extract.R2.fastq.gz",
         fastq_unpaired = subbams_dir+"/{base}_extract.U.fastq.gz",
-        subref = subref_dir+"/"+ref_name+"_zones.fasta",
-        #subref_index = subref_index
+        subref = subref_dir+"/"+ref_name+"_zones.fasta"
     output:
-        buildExpectedFiles([temp(subbams_dir+"/{base}.fix.bam")],[paired_end])
+        buildExpectedFiles([temp(subbams_dir+"/{base}.filt.bam")],[paired_end])
     conda:
         "ENVS/conda_tools.yml"
     threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
-        technology = config["SEQUENCING_TECHNOLOGY"]
+        technology = config["SEQUENCING_TECHNOLOGY"],
+        samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS2"]
     shell:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" --fastq_U \"{input.fastq_unpaired}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
-        "--output_dir {subbams_dir} --sample {wildcards.base}"
+        "--output_dir {subbams_dir} --sample {wildcards.base} --filters \"{params.samtools_view_filters}\""
 
 
 rule Extract_SingleEndReads:
     input:
         bams = bams_dir+"/{base}.bam",
-        bed = bed_to_create if create_bed else existing_bed
+        bed = bed_to_create if create_bed else clean_bed
     output:
         tmp_extract_bams = temp(subbams_dir+"/{base}_extract.bam"),
         tmp_extracted_fastq = temp(subbams_dir+"/{base}_extract.fastq.gz"),
@@ -382,26 +402,26 @@ rule Extract_SingleEndReads:
 rule Remapping_SingleEndExtractedFastqs:
     input:
         fastq_single = subbams_dir+"/{base}_extract.fastq.gz",
-        subref = subref_dir+"/"+ref_name+"_zones.fasta",
-        #subref_index = subref_index
+        subref = subref_dir+"/"+ref_name+"_zones.fasta"
     output:
-        buildExpectedFiles([temp(subbams_dir+"/{base}.fix.bam")],[not paired_end])
+        buildExpectedFiles([temp(subbams_dir+"/{base}.filt.bam")],[not paired_end])
     conda:
         "ENVS/conda_tools.yml"
     threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
-        technology = config["SEQUENCING_TECHNOLOGY"]
+        technology = config["SEQUENCING_TECHNOLOGY"],
+        samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS2"]
     shell:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
-        "--output_dir {subbams_dir} --sample {wildcards.base}"
+        "--output_dir {subbams_dir} --sample {wildcards.base} --filters \"{params.samtools_view_filters}\""
 
 
 rule MarkDuplicates_Subbams:
     input:
-        subbams_dir+"/{base}.fix.bam"
+        subbams_dir+"/{base}.filt.bam"
     output:
         coordsorted_bam = temp(subbams_dir+"/{base}.sortcoord.bam"),
         MD_bam = subbams_dir+"/{base}.bam",
@@ -413,7 +433,7 @@ rule MarkDuplicates_Subbams:
         "ENVS/conda_tools.yml"
     shell:
         "picard SortSam --TMP_DIR {subbams_dir}/TMP -I {input} -O {output.coordsorted_bam} -SO coordinate -VALIDATION_STRINGENCY SILENT;"
-        "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {output.coordsorted_bam} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES {rm_dup} -M {output.metrics}"
+        "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {output.coordsorted_bam} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES FALSE -M {output.metrics}"
 
 
 rule Index_Subbams:

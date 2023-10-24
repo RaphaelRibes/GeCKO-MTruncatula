@@ -75,7 +75,7 @@ awk -v M=$MAX_DIST 'BEGIN{OFS="\t"; chr=0; start=0; end=0}{
 
 
 # Remove zones that are too short
-awk -v m=$MIN_LENGTH '{if ($3-$2+1 >= m){print $0}}' ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed > ${OUTPUT_DIR}/zones.bed || { (>&2 echo 'The bed creation failed (removing short zones step)') ; exit 1; }
+awk -v m=$MIN_LENGTH '{if ($3-$2+1 >= m){print $0}}' ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed > ${OUTPUT_DIR}/auto_zones.bed || { (>&2 echo 'The bed creation failed (removing short zones step)') ; exit 1; }
 
 
-rm ${OUTPUT_DIR}/all_merged.bam ${OUTPUT_DIR}/all_covered_zones_mincov.bed ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed
+#rm ${OUTPUT_DIR}/all_merged.bam ${OUTPUT_DIR}/all_covered_zones_mincov.bed ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed
