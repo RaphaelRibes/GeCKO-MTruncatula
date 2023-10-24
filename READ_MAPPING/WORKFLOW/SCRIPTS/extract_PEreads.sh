@@ -7,7 +7,7 @@
 # module load picard-tools/2.24.0-conda
 # module load samtools/1.14-bin
 
-set -e -u -o pipefail
+set -e -o pipefail
 
 
 #### ARGUMENTS:

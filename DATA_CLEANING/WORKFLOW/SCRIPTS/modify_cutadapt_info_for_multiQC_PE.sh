@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e -o pipefail
 
 info=$1
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e -o pipefail
+
 vcf_input=$1
 stats_tsv_output=$2
 DP_tsv_output=$3

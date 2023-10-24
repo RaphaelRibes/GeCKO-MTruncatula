@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e -o pipefail
+
 #---------------------------------------------------#
 #													#
 #    	   		fastq_read_count_PE .sh	   				#
@@ -58,11 +60,11 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 # Manage file and folder paths (if relative path change it to absolute path)
 
-if [[ ! "$FASTQ_DIR" = /* ]] ; then  
+if [[ ! "$FASTQ_DIR" = /* ]] ; then
   FASTQ_DIR=$(readlink -f $FASTQ_DIR) ;
 fi
-if [[ ! "$OUTPUT" = /* ]] ; then 	
-  OUTPUT=$(readlink -f $OUTPUT) ; 
+if [[ ! "$OUTPUT" = /* ]] ; then
+  OUTPUT=$(readlink -f $OUTPUT) ;
 fi
 
 

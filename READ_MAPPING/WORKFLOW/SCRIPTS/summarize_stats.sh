@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e -o pipefail
+
 while [[ $# -gt 0 ]]
 do
   key="$1"

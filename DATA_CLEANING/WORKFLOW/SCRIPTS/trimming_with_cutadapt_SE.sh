@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e -o pipefail
+
 #---------------------------------------------------#
 #													#
 #    	   	trimming_with_cutadapt_SE.sh	   		#
@@ -116,4 +118,4 @@ fi
 R_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f2)
 
 ## 2/ RUN CUTADAPT - TRIMMING
-cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}.fastq.gz ${R_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info || { (>&2 echo 'Trimming ${SAMPLE} with cutadapt failed') ; exit 1; }
+cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}.fastq.gz ${R_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

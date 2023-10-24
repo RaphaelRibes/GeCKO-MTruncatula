@@ -2,6 +2,8 @@
 
 #{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_reports_dir}
 
+set -e -o pipefail
+
 while [[ $# -gt 0 ]]
 do
 key="$1"

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e -o pipefail
+
 #---------------------------------------------------#
 #													#
 #    		demultiplex_with_cutadapt_SE.sh			#
@@ -101,7 +103,7 @@ mkdir ${DEMULT_DIR}/Cutadapt_tmp
 awk '{print ">"$1"\n^"$2}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta
 
 ## 2/ RUN CUTADAPT - DEMULTIPLEXING
-cutadapt -e ${SUBSTITUTIONS} --no-indels --cores ${CORES} -g file:${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.fastq.gz  ${R} > ${DEMULT_DIR}/demultiplexing_cutadapt.info || { (>&2 echo 'Demultiplexing with cutadapt failed') ; exit 1; }
+cutadapt -e ${SUBSTITUTIONS} --no-indels --cores ${CORES} -g file:${DEMULT_DIR}/Cutadapt_tmp/barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.fastq.gz  ${R} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
 
 ## 3/ REMOVE TMP FILES
 rm -r ${DEMULT_DIR}/Cutadapt_tmp
