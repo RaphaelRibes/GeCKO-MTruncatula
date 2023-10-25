@@ -48,6 +48,7 @@ To launch it on your own data, if you cloned the repository in /home/user and pl
  
 ![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/DataCleaning_4elements.png?raw=true)
 
+&nbsp;
 
 
 ## How to use the DATA_CLEANING workflow
