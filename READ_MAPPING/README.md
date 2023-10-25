@@ -38,7 +38,9 @@ To launch it on your own data, if you cloned the repository in /home/user and pl
 
 &nbsp;
 
-![](https://github.com/GE2POP/CAPTURE\_PIPELINES\_SNAKEMAKE/blob/main/readme\_img/ReadMapping\_4elements.png)
+![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/ReadMapping\_4elements.png)
+
+&nbsp;
 
 
 ## How to use the READ_MAPPING workflow
