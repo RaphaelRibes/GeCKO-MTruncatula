@@ -29,22 +29,20 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 
 ## QUICK START
 
-To easily launch the workflow, use our runGeCKO.sh launcher. If you cloned the repository in /home/user:  
-```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --workflow-path ${WORKFLOW_PATH}```  
-
 Needed files:  
-- the full GeCKO/ folder  
-- the runGeCKO.sh launcher  
+- the full GeCKO/ folder, including the runGeCKO.sh launcher  
 - your raw fastq.gz file(s)  
-- the cluster_config_DataCleaning.yml (in case you work on a cluster) and config_DataCleaning.yml files in a CONFIG folder  
+- the cluster_config_DataCleaning.yml (in case you work on a cluster) and config_DataCleaning.yml files  
 - a barcode file in case of multiplexed data and an adapter file  
 
 &nbsp;
 
-For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:  
+To easily launch the workflow, use our runGeCKO.sh launcher. For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:  
 ```../../../runGeCKO.sh --workflow DataCleaning --workflow-path ../../../../GeCKO --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_DataCleaning_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
+To launch it on your own data, if you cloned the repository in /home/user and placed your config_DataCleaning.yml and cluster_config_DataCleaning_SLURM.yml files in a CONFIG folder:  
+```WORKFLOW_PATH=/home/user/GeCKO```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM```  
 
 &nbsp;
  
@@ -53,16 +51,19 @@ For example, if you need to launch the workflow on our MULTIPLEXED_PAIRED_END da
 
 
 ## How to use the DATA_CLEANING workflow
- 
-1) [Prepare your input data](#1-prepare-your-input-data)  
-2) [Clone our GitHub repository](#2-clone-our-github-repository)  
+
+1) [Clone the GitHub repository](#1-clone-the-github-repository)  
+2) [Prepare your input data](#2-prepare-your-input-data)  
 3) [Prepare the CONFIG files](#3-prepare-the-config-files)  
 4) [Launch the analysis](#4-launch-the-analysis)  
 5) [Expected outputs](#5-expected-outputs)
 
 
+### 1/ Clone the GitHub repository
 
-### 1/ Prepare your input data
+Follow the procedure described [here](https://github.com/GE2POP/GeCKO/tree/main#readme) to have GeCKO ready to process your data.
+
+### 2/ Prepare your input data
 
 The input data must be sequences from an Illumina sequencer (Miseq/Hiseq/Novaseq/...).  
 
@@ -76,13 +77,6 @@ or already demultiplexed<sup>1</sup>:
 The demultiplexed sequences must be placed together in a folder to be specified in the config_file.txt.  
 
 <sup>1</sup> *either because there was no multiplexing involved, or because the demultiplexing was performed by the sequencer (as it is the case e.g. if your libraries were multiplexed with UDI adapters)*
-
-### 2/ Clone our GitHub repository
-
-The GeCKO folder must be fully copied in a workspace/storage of your choice.  
-For example, you can clone the repository with:  
-```git clone git@github.com:GE2POP/GeCKO.git```   
-
     
 ### 3/ Prepare the config files
 
@@ -234,11 +228,12 @@ Two-column file specifying the samples names (column 1) and technical sequences 
 You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
 
 **Launching**  
-To launch the DATA_CLEANING workflow, you can use our launching script run GeCKO.sh with the option --workflow DataCleaning:  
-```./runGeCKO.sh --workflow DataCleaning --workflow-path PATH/TO/GeCKO```  
+To launch the DATA_CLEANING workflow, use the launching script runGeCKO.sh with the option --workflow DataCleaning:  
+```WORKFLOW_PATH=/home/user/GeCKO```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM``` 
 
-For more help on how to use it, see our GitHub's general README file or run:  
-```./runGeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
+For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
+```${WORKFLOW_PATH}/runGeCKO.sh --help --workflow-path ${WORKFLOW_PATH}```  
 
 ### 5/ Expected outputs  
 
