@@ -3,9 +3,9 @@
 
 ### v WRITE YOUR MODULE LOADS HERE v ###
 
-# module purge
-# module load snakemake/7.15.1-conda
-# module load anaconda/python3.8
+module purge
+module load snakemake/7.15.1-conda
+module load anaconda/python3.8
 
 
 ### ^ WRITE YOUR MODULE LOADS HERE ^ ###
@@ -239,7 +239,7 @@ fi
 if [ "${USE_CONDA}" = "TRUE" ] ; then
   mkdir -p Logs_${WORKFLOW}Workflow
 
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} ${PROFILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} --config configfile_name=${CONFIG} clusterconfig_name=${CLUSTER_CONFIG} ${PROFILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command

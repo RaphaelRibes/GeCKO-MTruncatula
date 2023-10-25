@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import os,sys
+import os,sys,glob
 from itertools import compress
+from datetime import datetime
 
 
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
@@ -23,16 +24,26 @@ working_directory = os.getcwd()
 outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VCF_FILTERING"+filtering_subfolder
 VCF_reports_dir = outputs_directory+"/REPORTS"
 
+### Generate the workflow_info name
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+workflow_info_file = f"{outputs_directory}/workflow_info_{timestamp}.txt"
+
+
+### FUNCTIONS
+
+def find_latest_info_file(directory):
+    files = glob.glob(f"{directory}/workflow_info_*.txt")
+    if not files:
+        return ""
+    latest_file = max(files, key=os.path.getctime)
+    return latest_file
+
+
 ### PIPELINE ###
 
 rule FinalTargets:
     input:
-        VCF_reports_dir+"/variants_stats_histograms_VF.pdf",
-        VCF_reports_dir+"/genotypes_DP_boxplot_VF.pdf",
-        VCF_reports_dir+"/variants_along_genome_VF.pdf",
-        VCF_reports_dir+"/multiQC_VcfFiltering_report.html",
-        VCF_reports_dir+"/missing_data_per_sample.txt",
-        outputs_directory+"/workflow_info.txt"
+        outputs_directory+"/summary.sentinel"
 
 
 
@@ -215,14 +226,40 @@ rule Compute_MissingDataPerSample:
         " <(bcftools query -f '[%GT\t]\n' {input} | awk -v OFS=\"\t\" '{{for (i=1;i<=NF;i++) if (($i == \"./.\") || ($i == \".|.\")) sum[i]+=1 }} END {{for (i in sum) print i, sum[i] / NR }}' | sort -k1,1n | cut -f 2)"
         " | awk 'NF' >> {output};"
 
-rule Metadata:
+rule Write_Summary:
+    input:
+        VCF_reports_dir+"/variants_stats_histograms_VF.pdf",
+        VCF_reports_dir+"/genotypes_DP_boxplot_VF.pdf",
+        VCF_reports_dir+"/variants_along_genome_VF.pdf",
+        VCF_reports_dir+"/multiQC_VcfFiltering_report.html",
+        VCF_reports_dir+"/missing_data_per_sample.txt"
     output:
-        outputs_directory+"/workflow_info.txt"
+        temp(outputs_directory+"/summary.sentinel")
+    params:
+        latest_info_file = lambda wildcards: find_latest_info_file(outputs_directory),
+        new_info_file = workflow_info_file
     shell:
-        "echo -e \"Date and time:\" > {outputs_directory}/workflow_info.txt;"
-        "Date=$(date);"
-        "echo -e \"${{Date}}\\n\" >> {outputs_directory}/workflow_info.txt;"
-        "echo -e \"Workflow:\" >> {outputs_directory}/workflow_info.txt;"
-        "echo -e \"https://github.com/GE2POP/GeCKO/tree/main/VCF_FILTERING\\n\" >> {outputs_directory}/workflow_info.txt;"
-        "cd {snakefile_dir};"
-        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt; git rev-parse HEAD >> {outputs_directory}/workflow_info.txt ; fi"
+        """
+        if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
+
+        echo -e \"\\t\\t-----------------------------------------------------------------------------\\n\" >> {params.new_info_file}
+        echo -e \">>>DATE AND TIME:\" >> {params.new_info_file}
+        Date=$(date)
+        echo -e \"${{Date}}\\n\" >> {params.new_info_file}
+        echo -e \">>>WORKFLOW:\" >> {params.new_info_file}
+        echo -e \"https://github.com/GE2POP/GeCKO/tree/main/VCF_FILTERING\\n\" >> {params.new_info_file}
+        cd {snakefile_dir}
+        if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
+        cd -
+        echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[configfile_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[clusterconfig_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
+        snakemake --snakefile {snakefile_dir}/VcfFiltering.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+
+        touch {output}
+        """

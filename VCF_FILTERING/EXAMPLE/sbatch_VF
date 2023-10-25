@@ -1,3 +1,0 @@
-
-sbatch --partition=agap_normal --mem=10G --job-name=VF --wrap="/home/ardissonm/replicated/GeCKO/runGeCKO.sh --workflow VcfFiltering --workflow-path /home/ardissonm/replicated/GeCKO --jobs 50 --job-scheduler SLURM"
-

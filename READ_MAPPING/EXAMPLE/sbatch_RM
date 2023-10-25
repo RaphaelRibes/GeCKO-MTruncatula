@@ -1,7 +1,0 @@
-
-sbatch --partition=agap_long --mem=10G --job-name=RM --wrap="/home/ardissonm/replicated/GeCKO/runGeCKO.sh --workflow ReadMapping --workflow-path /home/ardissonm/replicated/GeCKO --jobs 200 --job-scheduler SLURM"
-
-
-
-
-

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import os,sys
+import os,sys,glob
 from itertools import compress
-
+from datetime import datetime
 
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
@@ -119,12 +119,22 @@ if mapper == "minimap2":
     ref_index=ref_base+".mmi"
 
 
+### Generate the workflow_info name
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+workflow_info_file = f"{mapping_dir}/workflow_info_{timestamp}.txt"
+
 
 ### FUNCTIONS
 def buildExpectedFiles(filesNames, isExpected):
     expectedFiles = list(compress(filesNames, isExpected))
     return(expectedFiles)
 
+def find_latest_info_file(directory):
+    files = glob.glob(f"{directory}/workflow_info_*.txt")
+    if not files:
+        return ""
+    latest_file = max(files, key=os.path.getctime)
+    return latest_file
 
 
 ### PIPELINE ###
@@ -133,19 +143,7 @@ ruleorder: Remapping_SingleEndExtractedFastqs > MarkDuplicates_Subbams
 
 rule FinalTargets:
     input:
-        buildExpectedFiles(
-        [ mapping_dir+"/workflow_info.txt",
-        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
-        bams_reports_dir+"/nb_reads_per_sample.tsv",
-        mapping_dir+"/bams_list.txt",
-        zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv",
-        subref_dir+"/"+ref_name+"_zones.fasta",
-        expand("{subbams_dir}/{sample}.bam.csi", sample=samples, subbams_dir=subbams_dir),
-        subbams_reports_dir+"/nb_reads_per_sample.tsv",
-        subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
-        mapping_dir+"/subbams_list.txt",
-        mapping_dir+"/reference_chr_size.txt" ],
-        [ True, True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
+        mapping_dir+"/summary.sentinel"
 
 # ------------------------------------------------------------------------------------------------------------- #
 
@@ -508,14 +506,47 @@ rule Create_RefChrSizeFile:
         "cut -f 1,2 {output.ref_fai} > {output.chr_size}"
 
 
-rule Metadata:
+rule Write_Summary:
+    input:
+        buildExpectedFiles(
+        [ bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
+        bams_reports_dir+"/nb_reads_per_sample.tsv",
+        mapping_dir+"/bams_list.txt",
+        zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv",
+        subref_dir+"/"+ref_name+"_zones.fasta",
+        expand("{subbams_dir}/{sample}.bam.csi", sample=samples, subbams_dir=subbams_dir),
+        subbams_reports_dir+"/nb_reads_per_sample.tsv",
+        subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
+        mapping_dir+"/subbams_list.txt",
+        mapping_dir+"/reference_chr_size.txt" ],
+        [ True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
     output:
-        mapping_dir+"/workflow_info.txt"
+        temp(mapping_dir+"/summary.sentinel")
+    params:
+        latest_info_file = lambda wildcards: find_latest_info_file(mapping_dir),
+        new_info_file = workflow_info_file
     shell:
-        "echo -e \"Date and time:\" > {mapping_dir}/workflow_info.txt;"
-        "Date=$(date);"
-        "echo -e \"${{Date}}\\n\" >> {mapping_dir}/workflow_info.txt;"
-        "echo -e \"Workflow:\" >> {mapping_dir}/workflow_info.txt;"
-        "echo -e \"https://github.com/GE2POP/GeCKO/tree/main/READ_MAPPING\\n\" >> {mapping_dir}/workflow_info.txt;"
-        "cd {snakefile_dir};"
-        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {mapping_dir}/workflow_info.txt; git rev-parse HEAD >> {mapping_dir}/workflow_info.txt ; fi"
+        """
+        if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
+
+        echo -e \"\\t\\t-----------------------------------------------------------------------------\\n\" >> {params.new_info_file}
+        echo -e \">>>DATE AND TIME:\" >> {params.new_info_file}
+        Date=$(date)
+        echo -e \"${{Date}}\\n\" >> {params.new_info_file}
+        echo -e \">>>WORKFLOW:\" >> {params.new_info_file}
+        echo -e \"https://github.com/GE2POP/GeCKO/tree/main/READ_MAPPING\\n\" >> {params.new_info_file}
+        cd {snakefile_dir}
+        if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
+        cd -
+        echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[configfile_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[clusterconfig_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
+        snakemake --snakefile {snakefile_dir}/ReadMapping.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+
+        touch {output}
+        """

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import os,sys
+import os,sys,glob
 from itertools import compress
+from datetime import datetime
 
 
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
@@ -60,29 +61,30 @@ demult_trim_cutadapt_reports_dir = demult_trim_reports_dir+"/CUTADAPT_INFOS"
 demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/FASTQC"
 
 
+### Generate the workflow_info name
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+workflow_info_file = f"{outputs_directory}/workflow_info_{timestamp}.txt"
+
+
 ### FUNCTIONS
 
 def buildExpectedFiles(filesNames, isExpected):
     expectedFiles = list(compress(filesNames, isExpected))
     return(expectedFiles)
 
+def find_latest_info_file(directory):
+    files = glob.glob(f"{directory}/workflow_info_*.txt")
+    if not files:
+        return ""
+    latest_file = max(files, key=os.path.getctime)
+    return latest_file
+
 
 ### PIPELINE ###
 
 rule FinalTargets:
     input:
-        buildExpectedFiles(
-        [rawdata_reports_dir+"/Reads_Count_RawData.txt",
-        demult_reports_dir+"/Reads_Count_Demult.txt",
-        demult_reports_dir+"/multiQC_Demult_Report.html",
-        demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt",
-        demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
-        outputs_directory+"/multiQC_DataCleaning_Report.html",
-        outputs_directory+"/workflow_info.txt"],
-
-        [performDemultiplexing, True, True, True, True, True, True]
-        )
-
+        outputs_directory+"/summary.sentinel"
 
  # ----------------------------------------------------------------------------------------------- #
 
@@ -285,15 +287,45 @@ rule MultiQC_Global:
         "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report -c {outputs_directory}/config_multiQC.yaml -i DataCleaning_Report -b 'WARNING: In this report the %Dups is overestimated and not really meaningful because the data results from merging several individual samples.'"
 
 
+rule Write_Summary:
+    input:
+        buildExpectedFiles(
+        [rawdata_reports_dir+"/Reads_Count_RawData.txt",
+        demult_reports_dir+"/Reads_Count_Demult.txt",
+        demult_reports_dir+"/multiQC_Demult_Report.html",
+        demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt",
+        demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
+        outputs_directory+"/multiQC_DataCleaning_Report.html"],
 
-rule Metadata:
+        [performDemultiplexing, True, True, True, True, True]
+        )
     output:
-        outputs_directory+"/workflow_info.txt"
+        temp(outputs_directory+"/summary.sentinel")
+    params:
+        latest_info_file = lambda wildcards: find_latest_info_file(outputs_directory),
+        new_info_file = workflow_info_file
     shell:
-        "echo -e \"Date and time:\" > {outputs_directory}/workflow_info.txt;"
-        "Date=$(date);"
-        "echo -e \"${{Date}}\\n\" >> {outputs_directory}/workflow_info.txt;"
-        "echo -e \"Workflow:\" >> {outputs_directory}/workflow_info.txt;"
-        "echo -e \"https://github.com/GE2POP/GeCKO/tree/main/DATA_CLEANING\\n\" >> {outputs_directory}/workflow_info.txt;"
-        "cd {snakefile_dir};"
-        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {outputs_directory}/workflow_info.txt; git rev-parse HEAD >> {outputs_directory}/workflow_info.txt ; fi"
+        """
+        if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
+
+        echo -e \"\\t\\t-----------------------------------------------------------------------------\\n\" >> {params.new_info_file}
+        echo -e \">>>DATE AND TIME:\" >> {params.new_info_file}
+        Date=$(date)
+        echo -e \"${{Date}}\\n\" >> {params.new_info_file}
+        echo -e \">>>WORKFLOW:\" >> {params.new_info_file}
+        echo -e \"https://github.com/GE2POP/GeCKO/tree/main/DATA_CLEANING\\n\" >> {params.new_info_file}
+        cd {snakefile_dir}
+        if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
+        cd -
+        echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[configfile_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[clusterconfig_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
+        snakemake --snakefile {snakefile_dir}/DataCleaning_SingleEnd.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+
+        touch {output}
+        """

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import os,sys
+import os,sys,glob
 from itertools import compress
+from datetime import datetime
 
 
 ### Variables from config file
@@ -48,10 +49,23 @@ GenomicsDBImport_dir = vc_dir+"/GENOMICS_DB_IMPORT"
 GenotypeGVCFs_dir = vc_dir+"/GENOTYPE_GVCFS"
 GenotypeGVCFs_REPORTS_dir = GenotypeGVCFs_dir+"/REPORTS"
 
+### Generate the workflow_info name
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+workflow_info_file = f"{vc_dir}/workflow_info_{timestamp}.txt"
+
+
+### FUNCTIONS
 
 def buildExpectedFiles(filesNames, isExpected):
     expectedFiles = list(compress(filesNames, isExpected))
     return(expectedFiles)
+
+def find_latest_info_file(directory):
+    files = glob.glob(f"{directory}/workflow_info_*.txt")
+    if not files:
+        return ""
+    latest_file = max(files, key=os.path.getctime)
+    return latest_file
 
 
  # ----------------------------------------------------------------------------------------------- #
@@ -60,10 +74,7 @@ def buildExpectedFiles(filesNames, isExpected):
 
 rule FinalTargets:
     input:
-        GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf",
-        GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf",
-        GenotypeGVCFs_REPORTS_dir+"/variants_along_genome_VC.pdf",
-        vc_dir+"/workflow_info.txt"
+        vc_dir+"/summary.sentinel"
 
 
 rule Index_Reference:
@@ -235,14 +246,38 @@ rule Plot_GVCFVariantsAlongGenome:
         "python {scripts_dir}/plot_variants_along_genome.py --snp-pos {input.pos_tsv} --contigs-lengths {input.lengths_tsv} --output {output}"
 
 
-rule Metadata:
+rule Write_Summary:
+    input:
+        GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf",
+        GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf",
+        GenotypeGVCFs_REPORTS_dir+"/variants_along_genome_VC.pdf"
     output:
-        vc_dir+"/workflow_info.txt"
+        temp(vc_dir+"/summary.sentinel")
+    params:
+        latest_info_file = lambda wildcards: find_latest_info_file(vc_dir),
+        new_info_file = workflow_info_file
     shell:
-        "echo -e \"Date and time:\" > {vc_dir}/workflow_info.txt;"
-        "Date=$(date);"
-        "echo -e \"${{Date}}\\n\" >> {vc_dir}/workflow_info.txt;"
-        "echo -e \"Workflow:\" >> {vc_dir}/workflow_info.txt;"
-        "echo -e \"https://github.com/GE2POP/GeCKO/tree/main/VARIANT_CALLING\\n\" >> {vc_dir}/workflow_info.txt;"
-        "cd {snakefile_dir};"
-        "if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \"Commit ID:\" >> {vc_dir}/workflow_info.txt; git rev-parse HEAD >> {vc_dir}/workflow_info.txt ; fi"
+        """
+        if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
+
+        echo -e \"\\t\\t-----------------------------------------------------------------------------\\n\" >> {params.new_info_file}
+        echo -e \">>>DATE AND TIME:\" >> {params.new_info_file}
+        Date=$(date)
+        echo -e \"${{Date}}\\n\" >> {params.new_info_file}
+        echo -e \">>>WORKFLOW:\" >> {params.new_info_file}
+        echo -e \"https://github.com/GE2POP/GeCKO/tree/main/VARIANT_CALLING\\n\" >> {params.new_info_file}
+        cd {snakefile_dir}
+        if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
+        cd -
+        echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[configfile_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
+        cat {config[clusterconfig_name]} >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+        echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
+        snakemake --snakefile {snakefile_dir}/VariantCalling.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
+        echo -e \"\\n\" >> {params.new_info_file}
+
+        touch {output}
+        """
