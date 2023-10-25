@@ -124,11 +124,14 @@ This file is used to pass all the information and tools parameters that will be 
 You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
 
 **Launching**  
-To launch the READ_MAPPING workflow, you can use our launching script runGeCKO.sh with the option --workflow ReadMapping:  
-```./runGeCKO.sh --workflow ReadMapping --workflow-path PATH/TO/GeCKO```  
+To launch the READ_MAPPING workflow, use the launching script runGeCKO.sh with the option --workflow ReadMapping:  
+```WORKFLOW_PATH=/home/user/GeCKO```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow ReadMapping --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM``` 
 
-For more help on how to use it, see our GitHub's general README file or run:  
-```./runGeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
+For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
+```${WORKFLOW_PATH}/runGeCKO.sh --help --workflow-path ${WORKFLOW_PATH}```  
+
+
 
 ### 5/ Expected outputs  
 
