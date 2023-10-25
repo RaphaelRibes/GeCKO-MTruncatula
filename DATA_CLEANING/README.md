@@ -29,7 +29,7 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 
 ## QUICK START
 
-To easily launch the workflow, use our runGeCKO.sh launcher. For example, if you cloned the repository in /home/user:  
+To easily launch the workflow, use our runGeCKO.sh launcher. If you cloned the repository in /home/user:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
 ```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --workflow-path ${WORKFLOW_PATH}```  
 
