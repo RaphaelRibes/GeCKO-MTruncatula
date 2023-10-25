@@ -29,8 +29,9 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 
 ## QUICK START
 
-To easily launch the workflow, use our runGeCKO.sh launcher:  
-```bash runGeCKO.sh --workflow DataCleaning --workflow-path /home/user/GeCKO```  
+To easily launch the workflow, use our runGeCKO.sh launcher: 
+```WORKFLOW_PATH=/home/user/GeCKO```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --workflow-path ${WORKFLOW_PATH}```  
 
 Needed files:  
 - the full GeCKO/ folder  
