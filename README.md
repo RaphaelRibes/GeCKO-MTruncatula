@@ -70,7 +70,7 @@ SGE and Slurm job schedulers are currently supported.
 or  
 ```sed -i 's/\r$//g' runGeCKO.sh ; sed -i 's/\r/\n/g' runGeCKO.sh```
 
-- Make the script executable:
+- Make the script executable with:  
 ```chmod u+x runGeCKO.sh```
 
 - Make sure Snakemake and Conda are available to your working environment.  
