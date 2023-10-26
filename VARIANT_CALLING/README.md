@@ -39,24 +39,20 @@ To launch it on your own data, if you cloned the repository in /home/user and pl
 
 ## How to use the VARIANT_CALLING workflow
  
-1) [Prepare your input data](#1-prepare-your-input-data)  
-2) [Clone our GitHub repository](#2-clone-our-github-repository)  
+1) [Clone the GitHub repository](#1-clone-the-github-repository)  
+2) [Prepare your input data](#2-prepare-your-input-data)  
 3) [Prepare the CONFIG files](#3-prepare-the-config-files)  
 4) [Launch the analysis](#4-launch-the-analysis)  
 5) [Expected outputs](#5-expected-outputs)
 
 
-### 1/ Prepare your input data
+### 1/ Clone the GitHub repository
+
+Follow the procedure described [here](https://github.com/GE2POP/GeCKO/tree/main#readme) to have GeCKO ready to process your data.
+
+### 2/ Prepare your input data
 
 The expected input data are .bam files and their associated index files (.bam.bai), along with the reference that was used for the mapping.  
-
-
-### 2/ Clone our GitHub repository
-
-The GeCKO folder must be fully copied in a workspace/storage of your choice.  
-For example, you can clone the repository with:  
-```git clone git@github.com:GE2POP/GeCKO.git```   
-
 
 ### 3/ Prepare the config files
 
