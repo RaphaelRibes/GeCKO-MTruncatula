@@ -31,3 +31,9 @@ PICARD_MARKDUPLICATES_JAVA_OPTIONS: ""
 
 SAMTOOLS_INDEX_OPTIONS: "" #besoin de "-c" quand mapping sur Svevo entier
 
+### BAM FILTERING ###
+# After the first mapping (options passed to 'samtools view')
+SAMTOOLS_VIEW_FILTERS1: ""
+
+# After the remapping (options passed to 'samtools view'). If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway)
+SAMTOOLS_VIEW_FILTERS2: ""
