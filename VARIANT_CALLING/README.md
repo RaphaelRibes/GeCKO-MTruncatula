@@ -107,11 +107,13 @@ For each of the three GATK steps, two options fields are available: options rela
 You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
 
 **Launching**  
-To launch the VARIANT_CALLING workflow, you can use our launching script runGeCKO.sh with the option --workflow VariantCalling:  
-```./runGeCKO.sh --workflow VariantCalling --workflow-path PATH/TO/GeCKO```  
+To launch the VARIANT_CALLING workflow, use the launching script runGeCKO.sh with the option --workflow VariantCalling:  
+```WORKFLOW_PATH=/home/user/GeCKO```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow VariantCalling --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM```   
 
-For more help on how to use it, see our GitHub's general README file or run:  
-```./runGeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
+For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
+```${WORKFLOW_PATH}/runGeCKO.sh --help --workflow-path ${WORKFLOW_PATH}```  
+
 
 ### 5/ Expected outputs  
 
