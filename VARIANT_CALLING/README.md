@@ -16,20 +16,20 @@ This VARIANT_CALLING workflow generates a vcf file from bam files obtained after
 
 ## QUICK START
 
-To easily launch the workflow, use the runGeCKO.sh launcher:  
-```bash runGeCKO.sh --workflow VariantCalling --workflow-path /home/user/GeCKO```  
-
 Needed files:  
-- the full GeCKO/ folder  
-- the runGeCKO.sh launcher  
+- the full GeCKO/ folder, including the runGeCKO.sh launcher  
 - your mapped .bam files
 - the reference file in fasta format that was used to map your reads
-- the cluster_config_VariantCalling.yml (in case you work on a cluster) and config_VariantCalling.yml files in a CONFIG folder  
+- the cluster_config_VariantCalling.yml (in case you work on a cluster) and config_VariantCalling.yml files
 
 &nbsp;
 
-For example, if you need to launch the workflow on our BAMS example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```bash ../../runGeCKO.sh --workflow VariantCalling --workflow-path ../../../GeCKO --config-file CONFIG/config_VariantCalling.yml --cluster-config CONFIG/cluster_config_VariantCalling_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+To easily launch the workflow, use the runGeCKO.sh launcher. For example, to launch the workflow on the BAMS example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
+```../../runGeCKO.sh --workflow VariantCalling --workflow-path ../../../GeCKO --config-file CONFIG/config_VariantCalling.yml --cluster-config CONFIG/cluster_config_VariantCalling_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+
+To launch it on your own data, if you cloned the repository in /home/user and placed your config_VariantCalling.yml and cluster_config_VariantCalling.yml files in a CONFIG folder:  
+```WORKFLOW_PATH=/home/user/GeCKO```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow VariantCalling --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM```  
 
 
 &nbsp;
