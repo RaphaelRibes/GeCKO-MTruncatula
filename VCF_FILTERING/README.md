@@ -139,12 +139,14 @@ For example, if you want to make sure all variants still have less than 50% miss
 You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
 
 **Launching**  
-To launch the VCF_FILTERING workflow, you can use our launching script runGeCKO.sh with the option --workflow VcfFiltering:  
-```./runGeCKO.sh --workflow VcfFiltering --workflow-path PATH/TO/GeCKO```  
+To launch the VCF_FILTERING workflow, use the launching script runGeCKO.sh with the option --workflow VcfFiltering:  
+```WORKFLOW_PATH=/home/user/GeCKO```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow VcfFiltering --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM``` 
+ 
+For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
+```${WORKFLOW_PATH}/runGeCKO.sh --help --workflow-path ${WORKFLOW_PATH}```  
 
-For more help on how to use it, see our GitHub's general README file or run:  
-```./runGeCKO.sh --help --workflow-path PATH/TO/GeCKO```  
-
+ 
 ### 5/ Expected outputs  
 This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS" directory. This directory is structured as follows and contains:  
 
