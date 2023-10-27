@@ -19,11 +19,12 @@ To execute one of the workflows, follow the steps:
 2) Clone this repository in your environment:   
 ```git clone git@github.com:GE2POP/GeCKO.git```  
 This will create a GeCKO directory, for example /home/user/GeCKO.
+Then follow the steps described [below]() to make GeCKO ready to be used on your data.
 
-3) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
+4) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
 
-4) Use the launcher script runGeCKO.sh to run the workflow.  
+5) Use the launcher script runGeCKO.sh to run the workflow.  
 
 &nbsp;
 ### Environment  
