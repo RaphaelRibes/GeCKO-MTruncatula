@@ -19,7 +19,7 @@ To execute one of the workflows, follow the steps:
 2) Clone this repository in your environment:   
 ```git clone git@github.com:GE2POP/GeCKO.git```  
 This will create a GeCKO directory, for example /home/user/GeCKO.
-Then follow the steps described [below]() to make GeCKO ready to be used on your data.
+Then follow the steps described [below](#installation) to make GeCKO ready to be used on your data.
 
 4) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
@@ -35,7 +35,7 @@ We chose to utilize [Snakemake](https://snakemake.readthedocs.io/en/stable/) as 
 We made dedicated efforts to extensively document the usage of our workflows, ensuring they are user-friendly and accessible to non-bioinformatician biologists. Our aim was to empower them to benefit from the numerous advantages of Snakemake without requiring any coding expertise on their part.
 
 #### Conda 
-The workflow will download and find the [tools it needs](#tools) through [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html), which means you do not need to have them installed in your working environment behorehand.  
+The workflow will download and find the tools it needs through [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html), which means you do not need to have them installed in your working environment behorehand.  
 When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
 
 The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
