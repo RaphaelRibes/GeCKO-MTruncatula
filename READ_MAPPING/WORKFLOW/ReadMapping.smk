@@ -22,10 +22,9 @@ if (len(config["TRIM_DIRS"]) == 0):
 
 if config["REMOVE_DUP"]:
     rm_dup = "TRUE"
-#    rm_dup_py = True
 else:
     rm_dup = "FALSE"
-#    rm_dup_py = False
+
 
 
 
@@ -102,8 +101,6 @@ subbams_reports_dir = subbams_dir+"/REPORTS"
 subbams_stats_reports_dir = subbams_reports_dir+"/STATS"
 
 ### If the bed file needs to be generated
-#if (len(bed) == 0 and len(config["BED_MIN_MEAN_COV"]) > 0):
-#    bed=subref_dir+"/zones.bed"
 bed_to_create = subref_dir+"/auto_zones.bed"
 clean_bed = subref_dir+"/user_clean.bed"
 
@@ -192,7 +189,6 @@ rule Mapping_PairedEndFastqs:
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
-        #samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS1"]
     shell:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
@@ -221,7 +217,6 @@ rule Mapping_SingleEndFastqs:
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
-        #samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS1"]
     shell:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
@@ -232,7 +227,6 @@ rule Mapping_SingleEndFastqs:
 rule Stats_Bams:
     input:
         bam = bams_dir+"/{base}_markedDup.bam",
-        #csi = bams_dir+"/{base}.bam.csi"
     output:
         bams_stats_reports_dir+"/stats_{base}"
     conda:
@@ -245,7 +239,6 @@ rule MarkDuplicates_Bams:
     input:
         bams_dir+"/{base}_markedDup.bam"
     output:
-        #coordsorted_bam = temp(bams_dir+"/{base}.sortcoord.bam"),
         MD_bam = temp(bams_dir+"/{base}_rmDup.bam"),
         metrics = bams_reports_dir+"/DUPLICATES_TMP/{base}.bam.metrics"
     conda:
@@ -254,8 +247,7 @@ rule MarkDuplicates_Bams:
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
     shell:
-        #"picard SortSam --TMP_DIR {bams_dir}/TMP -I {input} -O {output.coordsorted_bam} -SO coordinate -VALIDATION_STRINGENCY SILENT;"
-        "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {input} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES {rm_dup} -M {output.metrics}"
+        "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {input} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES TRUE -M {output.metrics}"
 
 
 rule Filter_Bams:
@@ -298,7 +290,7 @@ rule MultiQC_Bams:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//') ;"
+        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$3}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//') ;"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_clean_names.yaml --nb_reads ${{mean_nb_reads}} --output_dir {bams_reports_dir};"
         "multiqc {input.stats_files} -c {bams_reports_dir}/config_multiQC.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report"
 
@@ -430,7 +422,6 @@ rule Remapping_PairedEndExtractedFastqs:
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
-        #samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS2"]
     shell:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" --fastq_U \"{input.fastq_unpaired}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
@@ -473,7 +464,6 @@ rule Remapping_SingleEndExtractedFastqs:
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
-        #samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS2"]
     shell:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
@@ -483,8 +473,7 @@ rule Remapping_SingleEndExtractedFastqs:
 
 rule Stats_Subbams:
     input:
-        bam = subbams_dir+"/{base}_markedDup.bam",
-        #csi = bams_dir+"/{base}.bam.csi"
+        bam = subbams_dir+"/{base}_markedDup.bam"
     output:
         subbams_stats_reports_dir+"/stats_{base}"
     conda:
@@ -516,7 +505,6 @@ rule Summarize_SubbamsReadsCount:
         "ENVS/conda_tools.yml"
     shell:
         "{scripts_dir}/summarize_stats.sh --stats_folder {subbams_stats_reports_dir} --bams_folder {subbams_dir} --rmdup FALSE --output {output};"
-        #"rm -rf {subbams_reports_dir}/DUPLICATES_TMP"
 
 
 rule MultiQC_Subbams:
@@ -529,7 +517,7 @@ rule MultiQC_Subbams:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
+        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$3}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_clean_names.yaml --nb_reads ${{mean_nb_reads}} --output_dir {subbams_reports_dir};"
         "multiqc {input.stats_files} -c {subbams_reports_dir}/config_multiQC.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report"
 
@@ -613,11 +601,3 @@ rule Write_Summary:
 
         touch {output}
         """
-
-#stats sur {base}.markedDup.bam
-#MD markedDup.bam > rmDup.bam
-#Filter rmDup.bam > .bam
-
-#summarize fin mapping, après rm dup et après filtres > summary de nb de reads
-#multiQC sur les stats et qui dépend du summary de nb de reads
-#index .bam

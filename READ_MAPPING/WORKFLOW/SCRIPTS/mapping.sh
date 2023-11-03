@@ -173,10 +173,6 @@ fi
 
 
 
-#samtools view -Sb ${SAMTOOLS_VIEW_FILTERS} -o ${OUTPUT_DIR}/${SAMPLE}.filt.bam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
-
 samtools sort -o ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam ${OUTPUT_DIR}/${SAMPLE}_raw.sam
 
 picard ${MD_JAVA_OPTIONS} MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam -O ${OUTPUT_DIR}/${SAMPLE}_markedDup.bam -VALIDATION_STRINGENCY SILENT ${MD_OPTIONS} -REMOVE_DUPLICATES FALSE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
-
-#rm -f ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam ${OUTPUT_DIR}/${SAMPLE}_raw.sam ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam
