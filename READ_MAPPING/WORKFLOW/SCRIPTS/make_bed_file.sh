@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#{scripts_dir}/make_bed_file.sh --input_bams_dir $input_bams_dir --output_dir $output_dir --min_cov 190 --max_dist 100 --min_length 100
+#{scripts_dir}/make_bed_file.sh --input_bams_dir $input_bams_dir --output_dir $output_dir --min_cov 190 --min_dist 100 --min_length 100
 
 set -e -o pipefail
 
@@ -25,8 +25,8 @@ do
     shift
     shift
     ;;
-    --max_dist)
-    MAX_DIST="$2"
+    --min_dist)
+    MIN_DIST="$2"
     shift
     shift
     ;;
@@ -63,7 +63,7 @@ bedtools genomecov -ibam ${OUTPUT_DIR}/all_merged.bam -bg | awk -v m=$MIN_COV '{
 
 
 # Merge overlapping and close enough zones
-awk -v M=$MAX_DIST 'BEGIN{OFS="\t"; chr=0; start=0; end=0}{
+awk -v M=$MIN_DIST 'BEGIN{OFS="\t"; chr=0; start=0; end=0}{
   if ($1==chr && $2<=end+M) {
     end=$3
   }

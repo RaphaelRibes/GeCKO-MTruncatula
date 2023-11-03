@@ -2,20 +2,23 @@
 
 set -e -o pipefail
 
+
 while [[ $# -gt 0 ]]
 do
   key="$1"
   case $key in
-    --pairedEnd)
-    PAIRED="TRUE"
-    shift # past argument
-    ;;
-    --singleEnd)
-    PAIRED="FALSE"
-    shift # past argument
-    ;;
     --stats_folder)
     STATS_FOLDER="$2"
+    shift
+    shift
+    ;;
+    --bams_folder)
+    BAMS_FOLDER="$2"
+    shift
+    shift
+    ;;
+    --rmdup)
+    RM_DUP="$2"
     shift
     shift
     ;;
@@ -24,30 +27,33 @@ do
     shift
     shift
     ;;
-esac
+  esac
 done
 
-
-if [[ "$PAIRED" = "TRUE" ]] ; then
-  echo -e "Sample\tR1_mapped\tReads_mapped\t%_reads_mapped" > $OUTPUT
-  for stats in $(ls $STATS_FOLDER/stats_*) ; do
-    sample=$(basename $stats | sed 's/stats_//')
-    paired_mapped=$(cat $stats | grep 'mapped and paired:' | cut -f3)
-    R1_mapped=$(echo "$paired_mapped/2" | bc)
-    reads_mapped=$(cat $stats | grep 'reads mapped:' | cut -f3)
-    total_reads=$(cat $stats | grep 'raw total sequences:' | cut -f3)
-    prc_mapped=$(echo "scale=2; 100*$reads_mapped/$total_reads" | bc -l)
-    echo -e $sample"\t"$R1_mapped"\t"$reads_mapped"\t"$prc_mapped >> $OUTPUT
-  done
+dup_fields=""
+if [[ "$RM_DUP" = "TRUE" ]] ; then
+  dup_fields="\tReads_mapped_without_dup\t%_reads_mapped_without_dup"
 fi
 
-if [[ "$PAIRED" = "FALSE" ]] ; then
-  echo -e "Sample\tReads_mapped\t%_reads_mapped" > $OUTPUT
-  for stats in $(ls $STATS_FOLDER/stats_*) ; do
-    sample=$(basename $stats | sed 's/stats_//')
-    reads_mapped=$(cat $stats | grep 'reads mapped:' | cut -f3)
-    total_reads=$(cat $stats | grep 'raw total sequences:' | cut -f3)
-    prc_mapped=$(echo "scale=2; 100*$reads_mapped/$total_reads" | bc -l)
-    echo -e $sample"\t"$reads_mapped"\t"$prc_mapped >> $STATS_FOLDER/summary_stats.tsv
-  done
-fi
+echo -e "Sample\tTotal_seqs\tReads_mapped\t%_reads_mapped${dup_fields}\tReads_mapped_after_filtering\t%_reads_mapped_after_filtering" > $OUTPUT
+
+
+for MarkedDup_stats_file in $(ls $STATS_FOLDER/stats_*) ; do
+  sample=$(basename $MarkedDup_stats_file | sed 's/stats_//')
+  filtered_bam="${BAMS_FOLDER}/${sample}.bam"
+  reads_mapped=$(cat $MarkedDup_stats_file | grep 'reads mapped:' | cut -f3)
+  total_reads=$(cat $MarkedDup_stats_file | grep 'raw total sequences:' | cut -f3)
+  prc_mapped=$(echo "scale=2; 100*$reads_mapped/$total_reads" | bc -l)
+  reads_mapped_filt=$(samtools view -c -F 2308 $filtered_bam)
+
+  if [[ "$RM_DUP" = "TRUE" ]] ; then
+    rm_dup_bam="${BAMS_FOLDER}/${sample}_rmDup.bam"
+    reads_mapped_rmDup=$(samtools view -c -F 2308 $rm_dup_bam)
+    prc_rmDup_mapped=$(echo "scale=2; 100*$reads_mapped_rmDup/$reads_mapped" | bc -l)
+    prc_filt_mapped=$(echo "scale=2; 100*$reads_mapped_filt/$reads_mapped_rmDup" | bc -l)
+    echo -e $sample"\t"$total_reads"\t"$reads_mapped"\t"$prc_mapped"\t"$reads_mapped_rmDup"\t"$prc_rmDup_mapped"\t"$reads_mapped_filt"\t"$prc_filt_mapped >> $OUTPUT
+  elif [[ "$RM_DUP" = "FALSE" ]] ; then
+    prc_filt_mapped=$(echo "scale=2; 100*$reads_mapped_filt/$reads_mapped" | bc -l)
+    echo -e $sample"\t"$total_reads"\t"$reads_mapped"\t"$prc_mapped"\t"$reads_mapped_filt"\t"$prc_filt_mapped >> $OUTPUT
+  fi
+done

@@ -71,8 +71,18 @@ do
     shift # past argument
     shift # past value
     ;;
-    --filters)
-    SAMTOOLS_VIEW_FILTERS="$2"
+    --MD_options)
+    MD_OPTIONS="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --MD_java_options)
+    MD_JAVA_OPTIONS="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --reports_dir)
+    REPORTS_DIR="$2"
     shift # past argument
     shift # past value
     ;;
@@ -97,6 +107,9 @@ fi
 if [[ ! -z "$FASTQ" && ! "$FASTQ" = /* ]] ; then
   FASTQ=$(readlink -f $FASTQ) ;
 fi
+if [[ ! "$REPORTS_DIR" = /* ]] ; then
+  REPORTS_DIR=$(readlink -f $REPORTS_DIR) ;
+fi
 
 # Mapping
 
@@ -105,12 +118,12 @@ if [ "${MAPPER}" = "bwa-mem2_mem" ] ; then
     bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}_paired.sam
     if [ ! -z "$FASTQ_U" ] ; then
       bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_U} > ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     fi
   else
-    bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+    bwa-mem2 mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}_raw.sam
   fi
 fi
 
@@ -119,12 +132,12 @@ if [ "${MAPPER}" = "bwa_mem" ] ; then
     bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_R1} ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}_paired.sam
     if [ ! -z "$FASTQ_U" ] ; then
       bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ_U} > ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     fi
   else
-    bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+    bwa mem ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") ${REF} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}_raw.sam
   fi
 fi
 
@@ -134,12 +147,12 @@ if [ "${MAPPER}" = "bowtie2" ] ; then
     bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -1 ${FASTQ_R1} -2 ${FASTQ_R2} -S ${OUTPUT_DIR}/${SAMPLE}_paired.sam
     if [ ! -z "$FASTQ_U" ] ; then
       bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ_U} -S ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     fi
   else
-    bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+    bowtie2 ${MAPPER_OPTIONS} --rg-id ${SAMPLE} --rg "PL:${TECHNOLOGY}" --rg "SM:${SAMPLE}" -x ${REF_INDEX} -U ${FASTQ} -S ${OUTPUT_DIR}/${SAMPLE}_raw.sam
   fi
 fi
 
@@ -149,16 +162,21 @@ if [ "${MAPPER}" = "minimap2" ] ; then
     minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_R1} -2 ${FASTQ_R2} > ${OUTPUT_DIR}/${SAMPLE}_paired.sam
     if [ ! -z "$FASTQ_U" ] ; then
       minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ_U} > ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam
-      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      cat <(samtools view -h ${OUTPUT_DIR}/${SAMPLE}_paired.sam) <(samtools view ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam) > ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     else
-      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+      mv ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_raw.sam
     fi
   else
-    minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+    minimap2 ${MAPPER_OPTIONS} -R $(echo "@RG\tID:${SAMPLE}\tPL:${TECHNOLOGY}\tSM:${SAMPLE}") -a ${REF_INDEX} ${FASTQ} > ${OUTPUT_DIR}/${SAMPLE}_raw.sam
   fi
 fi
 
 
 
-samtools view -Sb ${SAMTOOLS_VIEW_FILTERS} -o ${OUTPUT_DIR}/${SAMPLE}.filt.bam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
-rm -f ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+#samtools view -Sb ${SAMTOOLS_VIEW_FILTERS} -o ${OUTPUT_DIR}/${SAMPLE}.filt.bam ${OUTPUT_DIR}/${SAMPLE}.raw.sam
+
+samtools sort -o ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam ${OUTPUT_DIR}/${SAMPLE}_raw.sam
+
+picard ${MD_JAVA_OPTIONS} MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam -O ${OUTPUT_DIR}/${SAMPLE}_markedDup.bam -VALIDATION_STRINGENCY SILENT ${MD_OPTIONS} -REMOVE_DUPLICATES FALSE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
+
+#rm -f ${OUTPUT_DIR}/${SAMPLE}_paired.sam ${OUTPUT_DIR}/${SAMPLE}_unpaired.sam ${OUTPUT_DIR}/${SAMPLE}_raw.sam ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam

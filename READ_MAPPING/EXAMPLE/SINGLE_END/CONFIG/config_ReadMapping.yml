@@ -34,7 +34,7 @@ SAMTOOLS_INDEX_OPTIONS: "" #use "-c" if mapping to a really big reference genome
 
 ### BAM FILTERING ###
 # After the first mapping (options passed to 'samtools view')
-SAMTOOLS_VIEW_FILTERS1: ""
+SAMTOOLS_VIEW_FILTERS1: "-F 256"
 
 # After the remapping (options passed to 'samtools view'). If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway)
-SAMTOOLS_VIEW_FILTERS2: ""
+SAMTOOLS_VIEW_FILTERS2: "-q 30"
