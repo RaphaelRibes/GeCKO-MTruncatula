@@ -1,5 +1,5 @@
 ### Project overview  
-This repository provides several workflows to clean sequenced reads, map them to the reference of your choice, call SNPs and filter VCF file with polymorphism data. They are especially appropriate for data sequenced after target enrichment capture, but can be used for other types of sequenced reads.
+This repository provides several workflows to clean sequenced reads, map them to the reference of your choice, call SNPs and filter VCF files with polymorphism data. They are especially appropriate for data sequenced after target enrichment capture, but can be used for other types of sequenced reads.
 
 You will find the different workflows in the corresponding folders:
 - DATA_CLEANING
@@ -36,7 +36,7 @@ We made dedicated efforts to extensively document the usage of our workflows, en
 
 #### Conda 
 The workflow will download and find the tools it needs through [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html), which means you do not need to have them installed in your working environment behorehand.  
-When called for the first time, the DATA_CLEANING Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
+When called for the first time, the Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
 
 The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda's standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
 ```
@@ -76,7 +76,7 @@ or
 
 - Make sure Snakemake and Conda are available to your working environment.  
 Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.  
-    - For clusters using module environment, you can add the 'module load' lines inside runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOADS HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the needed modules, use the 'module avail' command. The modules will be loaded every time you execute the script.  
+    - For clusters using module environment, you can add the 'module load' lines in runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOADS HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the needed modules, use the 'module avail' command. The modules will be loaded every time you execute the script.  
     - For clusters using Conda environment, Conda will likely be readily available, and you will only need to conda activate Snakemake. To find out the precise name of the snakemake environment, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.  
 
 &nbsp;
