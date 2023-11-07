@@ -34,7 +34,7 @@ SAMTOOLS_INDEX_OPTIONS: "" # param "-c" is already included in the samtools comm
 
 ### BAM FILTERING ###
 # After the first mapping (options passed to 'samtools view')
-SAMTOOLS_VIEW_FILTERS1: "-F 256 -f 2"
+SAMTOOLS_VIEW_FILTERS1: "-F 256 -F 2048 -f 2"
 
 # After the remapping (options passed to 'samtools view'). If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway)
 SAMTOOLS_VIEW_FILTERS2: "-q 30"
