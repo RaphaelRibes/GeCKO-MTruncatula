@@ -103,7 +103,7 @@ This file is used to pass all the information and tools parameters that will be 
 
 **MAPPING PARAMETERS**  
 - *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
-- *REMOVE_DUP:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after mapping. They will be marked either way. [TRUE or FALSE]  
+- *REMOVE_DUP:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after the mapping step. They will be marked either way. [TRUE or FALSE]  
 - *SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
 - *EXTRA_MAPPER_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the mapper command. Be careful to provide them between quotes. 
 - *MAPPING_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for each mapping task. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.  
@@ -117,6 +117,15 @@ This file is used to pass all the information and tools parameters that will be 
 <ins>Examples of config_ReadMapping.yml files can be found in the EXAMPLE/.../CONFIG folders</ins>.  
 
 &nbsp;
+
+#### *Filling the config file is you want to extract and remap reads from specific zones*
+- Bed file :  
+In case you provide your own bed file, We strongly recommend merging proximal regions. This will prevent the potential issue of initially properly paired reads being remapped into separate zones, which would result in them being erroneously flagged as improperly paired by the mapping software during the remapping step.  
+Please note that any overlapping regions present in your BED file will be automatically merged into a single contiguous region. The resultant BED file (user_clean.bed), featuring the merged zones, will be available in the WORKFLOWS_OUTPUTS/READ_MAPPING/*/EXTRACTED_BAMS/REFERENCE_zones/ output folder.  
+Should you prefer to have the workflow automatically identify regions of interest based on read depth, we advise setting the BED_MIN_DIST parameter to a value exceeding the difference between the insert size and twice the read sequencing length. For instance, with DNA fragments averaging 500bp and both R1 and R2 reads being 150bp, a BED_MIN_DIST value greater than 200 is recommended. The workflow will compute the read depth across the genome for all samples, and only retain zones that exceed the BED_MIN_MEAN_COV mean depth threshold. Subsequently, regions within a distance less than BED_MIN_DIST will be merged together, and any resulting regions shorter than BED_MIN_LENGTH will be excluded.
+
+- Filtering steps :
+
 
 ### 4/ Launch the analysis
 
