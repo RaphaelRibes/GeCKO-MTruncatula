@@ -18,15 +18,19 @@ Mapping_SingleEndFastqs:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
+Stats_Bams:
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
 MarkDuplicates_Bams:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
-Index_Bams:
+Filter_Bams:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
-
-Stats_Bams:
+    
+Index_Bams:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
@@ -50,15 +54,14 @@ Remapping_SingleEndExtractedFastqs:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
-MarkDuplicates_Subbams:
+Stats_Subbams:
+    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Filter_Subbams:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Index_Subbams:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
-
-Stats_Subbams:
-    output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
-    error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
-

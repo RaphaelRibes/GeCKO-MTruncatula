@@ -18,17 +18,21 @@ Mapping_SingleEndFastqs:
     o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
     e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
 
+Stats_Bams:
+    o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
+    e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
+
 MarkDuplicates_Bams:
+    o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
+    e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
+
+Filter_Bams:
     o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Index_Bams:
     o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
-
-Stats_Bams:
-    o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
-    e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
 
 Extract_PairedEndReads:
     o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
@@ -50,15 +54,15 @@ Remapping_SingleEndExtractedFastqs:
     o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
     e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
 
-MarkDuplicates_Subbams:
+Stats_Subbams:
+    o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
+    e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
+
+Filter_Subbams:
     o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
 Index_Subbams:
     o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
-
-Stats_Subbams:
-    o: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.out.txt
-    e: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.$JOB_ID.err.txt
 
