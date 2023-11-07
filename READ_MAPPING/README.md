@@ -112,8 +112,10 @@ This file is used to pass all the information and tools parameters that will be 
 - *SAMTOOLS_INDEX_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'samtools index' command. Be careful to provide them between quotes. For example, you may need to pass the "-c" option if you need to map your reads to a very big reference file.  
 
 **BAM FILTERING**
-- *SAMTOOLS_VIEW_FILTERS1:*&nbsp;&nbsp;&nbsp;Any list of filters you would like to pass to the 'samtools view' command after the mapping step. Eg: "-F 256 -f 2"  
+- *SAMTOOLS_VIEW_FILTERS1:*&nbsp;&nbsp;&nbsp;Any list of filters you would like to pass to the 'samtools view' command after the mapping step. Eg for CREATE_SUB_BAMS set to TRUE: "-F 256 -F 2048 -f 2" to discard unproperly paired, non primary and supplementary reads before the extraction step. Eg for CREATE_SUB_BAMS set to FALSE: "-q 30" to discard alignments with a mapping quality (MAPQ score) lower than 30.   
 - *SAMTOOLS_VIEW_FILTERS2:*&nbsp;&nbsp;&nbsp;Any list of filters you would like to pass to the 'samtools view' command after the remapping step. Eg: "-q 30" to discard alignments with a mapping quality (MAPQ score) lower than 30. If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway).
+
+See the samtools view documentation [here](https://www.htslib.org/doc/samtools-view.html) to read more about the options -F, -f, -q.
 
 &nbsp;
 
