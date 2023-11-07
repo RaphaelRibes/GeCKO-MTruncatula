@@ -121,8 +121,8 @@ This file is used to pass all the information and tools parameters that will be 
 
 &nbsp;
 
-#### *Filling the config file is you want to extract and remap reads from specific zones*
-- Bed file :  
+#### *Filling in the config file if you want to extract and remap reads from specific zones (CREATE_SUB_BAMS set to TRUE)*
+- Bed file:  
 <ul>
 In case you <ins>provide your own bed file</ins>, we strongly recommend merging proximal regions. This will prevent the potential issue of initially properly paired reads being remapped into separate zones, which would result in them being erroneously flagged as improperly paired by the mapping software during the remapping step.  
 
@@ -134,8 +134,8 @@ Should you prefer to have the workflow <ins>automatically identify regions of in
 We advise setting the BED_MIN_DIST parameter to a value exceeding the difference between the insert size and twice the read sequencing length. For instance, with DNA fragments averaging 500bp and both R1 and R2 reads being 150bp, a BED_MIN_DIST value greater than 200 is recommended.
 </ul>
 
-- Filtering steps :
-
+- Filtering:  
+Bam filtering options are available after both the initial mapping (SAMTOOLS_VIEW_FILTERS1) and remapping (SAMTOOLS_VIEW_FILTERS2) steps. To ensure the integrity of read extraction and remapping, it is best to remove unproperly paired reads, as well as non-primary and supplementary alignments, after the first mapping. This precaution helps prevent the misclassification of improperly paired reads as singletons if only one read of a pair is preserved. Furthermore, in the absence of the primary read (in case it mapped out of the extracted zones), secondary or supplementary alignments could be incorrectly designated as primary during the remapping step. Such misclassifications can lead to the erroneous interpretation of mapping quality, resulting in inaccuracies in downstream analysis and the potential overestimation of certain reads' reliability. To filter out unproperly paired, non primary and supplementary reads, set SAMTOOLS_VIEW_FILTERS1 to "-F 256 -F2048 -f2" (see [here](https://broadinstitute.github.io/picard/explain-flags.html) to understand sam flags and [here](https://www.htslib.org/doc/samtools-view.html) for more information on samtools view's options -F and -f).
 
 ### 4/ Launch the analysis
 
