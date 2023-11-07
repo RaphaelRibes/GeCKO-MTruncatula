@@ -62,4 +62,3 @@ Stats_Subbams:
     output: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.out.txt
     error: Logs_ReadMappingWorkflow/{rule}.{wildcards.base}.%j.err.txt
 
-
