@@ -120,9 +120,16 @@ This file is used to pass all the information and tools parameters that will be 
 
 #### *Filling the config file is you want to extract and remap reads from specific zones*
 - Bed file :  
-In case you provide your own bed file, We strongly recommend merging proximal regions. This will prevent the potential issue of initially properly paired reads being remapped into separate zones, which would result in them being erroneously flagged as improperly paired by the mapping software during the remapping step.  
-Please note that any overlapping regions present in your BED file will be automatically merged into a single contiguous region. The resultant BED file (user_clean.bed), featuring the merged zones, will be available in the WORKFLOWS_OUTPUTS/READ_MAPPING/*/EXTRACTED_BAMS/REFERENCE_zones/ output folder.  
-Should you prefer to have the workflow automatically identify regions of interest based on read depth, we advise setting the BED_MIN_DIST parameter to a value exceeding the difference between the insert size and twice the read sequencing length. For instance, with DNA fragments averaging 500bp and both R1 and R2 reads being 150bp, a BED_MIN_DIST value greater than 200 is recommended. The workflow will compute the read depth across the genome for all samples, and only retain zones that exceed the BED_MIN_MEAN_COV mean depth threshold. Subsequently, regions within a distance less than BED_MIN_DIST will be merged together, and any resulting regions shorter than BED_MIN_LENGTH will be excluded.
+<ul>
+In case you <ins>provide your own bed file</ins>, we strongly recommend merging proximal regions. This will prevent the potential issue of initially properly paired reads being remapped into separate zones, which would result in them being erroneously flagged as improperly paired by the mapping software during the remapping step.  
+
+Please note that any overlapping regions present in your BED file will be automatically merged into a single contiguous region. The resultant BED file (user_clean.bed), featuring the merged zones, will be available in the WORKFLOWS_OUTPUTS/READ_MAPPING/*/EXTRACTED_BAMS/REFERENCE_zones/ output folder.
+</ul>
+<ul>
+Should you prefer to have the workflow <ins>automatically identify regions of interest</ins>, it will compute the read depth across the genome for all samples, and only retain zones that exceed the BED_MIN_MEAN_COV mean depth threshold. Subsequently, regions within a distance less than BED_MIN_DIST will be merged together, and any resulting regions shorter than BED_MIN_LENGTH will be excluded.  
+
+We advise setting the BED_MIN_DIST parameter to a value exceeding the difference between the insert size and twice the read sequencing length. For instance, with DNA fragments averaging 500bp and both R1 and R2 reads being 150bp, a BED_MIN_DIST value greater than 200 is recommended.
+</ul>
 
 - Filtering steps :
 
