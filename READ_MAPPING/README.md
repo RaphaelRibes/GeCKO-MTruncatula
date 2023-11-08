@@ -207,7 +207,6 @@ This workflow uses the following tools:
 - [samtools v1.14](http://www.htslib.org/)
 - [picard v2.26.10](https://broadinstitute.github.io/picard/)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
-- [crossmap v0.6.3](http://crossmap.sourceforge.net/)
 - [bedtools v2.30.0](https://github.com/arq5x/bedtools2)
 
 These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
@@ -225,7 +224,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Index_Bams                  | Creating bams index                                                                                                                 | samtools index                                                                                                                         |
 | Stats_Bams                  | Computing mapping stats                                                                                                             | samtools stats                                                                                                                         |
 | Summarize_BamsReadsCount    | Summarizing reads count in bams from samtools stats output                                                                          |                                                                                                                                        |
-| MultiQC_Bams                | Runing MultiQC on samtools stats output                                                                                             | MultiQC                                                                                                                                |
+| MultiQC_Bams                | Running MultiQC on samtools stats output                                                                                             | MultiQC                                                                                                                                |
 | Create_BamsList             | Writing list of bams files                                                                                                          |                                                                                                                                        |
 | Create_BedFile              | Creating bed file containing the positions of zones                                                                                 | samtools merge; bedtools genomecov                                                                                                     |
 | CountReadsZones_Bams        | Counting reads in each zone provided in the bed file for each sample                                                                | samtools bedcov                                                                                                                        |
@@ -236,7 +235,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Index_Subbams               | Creating subbams index                                                                                                              | samtools index                                                                                                                         |
 | Stats_Subbams               | Computing mapping stats for subbams                                                                                                 | samtools stats                                                                                                                         |
 | Summarize_SubbamsReadsCount | Summarizing reads count in subbams from samtools stats output                                                                       |                                                                                                                                        |
-| MultiQC_Subbams             | Runing MultiQC on samtools stats output                                                                                             | MultiQC                                                                                                                                |
+| MultiQC_Subbams             | Running MultiQC on samtools stats output                                                                                             | MultiQC                                                                                                                                |
 | Create_SubbamsList          | Writing list of subbams files                                                                                                       |                                                                                                                                        |
 | Create_RefChrSizeFile       | Creating file with the name and size of each chromosome in the genomic reference                                                    | samtools faidx                                                                                                                         |
 
