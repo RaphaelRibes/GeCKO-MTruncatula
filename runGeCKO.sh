@@ -3,9 +3,9 @@
 
 ### v WRITE YOUR MODULE LOADS HERE v ###
 
-module purge
-module load snakemake/7.15.1-conda
-module load anaconda/python3.8
+# module purge
+# module load snakemake/7.15.1-conda
+# module load anaconda/python3.8
 
 
 ### ^ WRITE YOUR MODULE LOADS HERE ^ ###
