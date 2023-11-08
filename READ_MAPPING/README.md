@@ -126,7 +126,7 @@ See the samtools view documentation [here](https://www.htslib.org/doc/samtools-v
 #### *Filling in the config file if you want to extract and remap reads from specific zones (CREATE_SUB_BAMS set to TRUE)*
 - Bed file:  
 <ul>
-In case you <ins>provide your own bed file</ins>, we strongly recommend merging proximal regions. This will prevent the potential issue of initially properly paired reads being remapped into separate zones, which would result in them being erroneously flagged as improperly paired by the mapping software during the remapping step.  
+In case you <ins>provide your own bed file</ins>, we strongly recommend merging proximal regions. This will prevent the potential issue of initially properly paired reads being remapped into distinct zones, which would result in them being erroneously flagged as improperly paired by the mapping software during the remapping step.  
 
 Please note that any overlapping regions present in your BED file will be automatically merged into a single contiguous region. The resultant BED file (user_clean.bed), featuring the merged zones, will be available in the WORKFLOWS_OUTPUTS/READ_MAPPING/*/EXTRACTED_BAMS/REFERENCE_zones/ output folder.
 </ul>
