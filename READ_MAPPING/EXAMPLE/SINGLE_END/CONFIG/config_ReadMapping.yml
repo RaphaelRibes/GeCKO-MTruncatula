@@ -21,7 +21,6 @@ BED_MIN_LENGTH: ""
 
 ### MAPPING PARAMETERS ###
 MAPPER: "bwa_mem"
-REMOVE_DUP: TRUE
 SEQUENCING_TECHNOLOGY: "ILLUMINA"
 EXTRA_MAPPER_OPTIONS: "-t 4"
 MAPPING_CPUS_PER_TASK: 8
@@ -33,8 +32,10 @@ SAMTOOLS_INDEX_OPTIONS: "" #use "-c" if mapping to a really big reference genome
 
 
 ### BAM FILTERING ###
-# After the first mapping (options passed to 'samtools view')
+## After the first mapping
+REMOVE_DUP: TRUE
+# options passed to 'samtools view'
 SAMTOOLS_VIEW_FILTERS1: "-F 256 -F 2048"
 
-# After the remapping (options passed to 'samtools view'). If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway)
+## After the remapping (options passed to 'samtools view'). If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway)
 SAMTOOLS_VIEW_FILTERS2: "-q 30"
