@@ -282,17 +282,14 @@ rule Summarize_BamsReadsCount:
 
 rule MultiQC_Bams:
     input:
-        stats_files = expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir),
-        nb_reads = bams_reports_dir+"/nb_reads_per_sample.tsv"
+        stats_files = expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir)
     output:
-        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
-        temp(bams_reports_dir+"/config_multiQC.yaml")
+        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$3}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//') ;"
-        "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_clean_names.yaml --nb_reads ${{mean_nb_reads}} --output_dir {bams_reports_dir};"
-        "multiqc {input.stats_files} -c {bams_reports_dir}/config_multiQC.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report"
+        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report"
+
 
 
 rule Index_Bams:
@@ -509,17 +506,13 @@ rule Summarize_SubbamsReadsCount:
 
 rule MultiQC_Subbams:
     input:
-        stats_files = expand("{subbams_stats_reports_dir}/stats_{sample}", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir),
-        nb_reads = subbams_reports_dir+"/nb_reads_per_sample.tsv"
+        stats_files = expand("{subbams_stats_reports_dir}/stats_{sample}", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir)
     output:
-        subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
-        temp(subbams_reports_dir+"/config_multiQC.yaml")
+        subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$3}}END{{print T/NR}}' {input.nb_reads}| sed 's/\..*//') ;"
-        "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_clean_names.yaml --nb_reads ${{mean_nb_reads}} --output_dir {subbams_reports_dir};"
-        "multiqc {input.stats_files} -c {subbams_reports_dir}/config_multiQC.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report"
+        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report"
 
 
 rule Index_Subbams:
