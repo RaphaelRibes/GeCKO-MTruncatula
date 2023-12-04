@@ -28,3 +28,7 @@ fn_clean_trim:
   - ".hist"
   - ".phased"
   - "stats_"
+
+read_count_multiplier: 1
+read_count_prefix: ""
+read_count_desc: ""
