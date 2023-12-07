@@ -108,6 +108,12 @@ fi
 
 #### SCRIPT:
 
+# clean intermediate files when the script exits
+clean_intermediate_files() {
+  rm -r ${DEMULT_DIR}/Cutadapt_tmp
+}
+trap 'clean_intermediate_files' EXIT
+
 ## 1/ CREATE BARCODE/TAGS FASTA FILES
 mkdir ${DEMULT_DIR}/Cutadapt_tmp
 awk '{print ">"$1"\n^"$2}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R1_barcode_cutadapt.fasta
@@ -115,6 +121,3 @@ awk '{print ">"$1"\n^"$3}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R2_barco
 
 ## 2/ RUN CUTADAPT - DEMULTIPLEXING
 cutadapt -e ${SUBSTITUTIONS} --no-indels --pair-adapters --cores ${CORES} -g file:${DEMULT_DIR}/Cutadapt_tmp/R1_barcode_cutadapt.fasta -G file:${DEMULT_DIR}/Cutadapt_tmp/R2_barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.R1.fastq.gz -p ${DEMULT_DIR}/{name}.R2.fastq.gz ${R1} ${R2} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
-
-## 3/ REMOVE TMP FILES
-rm -r ${DEMULT_DIR}/Cutadapt_tmp

@@ -53,6 +53,11 @@ fi
 
 # ------------------------------------------------------------------------------------------------------ #
 
+# clean intermediate files when the script exits
+clean_intermediate_files() {
+  rm ${OUTPUT_DIR}/all_merged.bam ${OUTPUT_DIR}/all_covered_zones_mincov.bed ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed
+}
+trap 'clean_intermediate_files' EXIT
 
 # Merge all bams into one
 samtools merge ${OUTPUT_DIR}/all_merged.bam ${INPUT_BAMS_DIR}/*bam
@@ -76,6 +81,3 @@ awk -v M=$MIN_DIST 'BEGIN{OFS="\t"; chr=0; start=0; end=0}{
 
 # Remove zones that are too short
 awk -v m=$MIN_LENGTH '{if ($3-$2+1 >= m){print $0}}' ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed > ${OUTPUT_DIR}/auto_zones.bed
-
-
-rm ${OUTPUT_DIR}/all_merged.bam ${OUTPUT_DIR}/all_covered_zones_mincov.bed ${OUTPUT_DIR}/all_covered_zones_mincov_collapsed.bed

@@ -10,6 +10,16 @@ variants_pos_tsv_output=$5
 contigs_lengths_tsv_output=$6
 outdir=$7
 
+
+
+# clean intermediate files when the script exits
+clean_intermediate_files() {
+  rm ${outdir}/tmp_variables
+  rm -f $1"_sample.gz"
+}
+trap 'clean_intermediate_files' EXIT
+
+
 # Write the list of variants positions
 echo -e "contig\tpos" > $variants_pos_tsv_output
 grep -v '#' $vcf_input | cut -f1,2 >> $variants_pos_tsv_output
@@ -50,6 +60,3 @@ awk -v nvar=$nvar -F"\t|;" '{
 # Extract DP and GT values
 bcftools query -f '%CHROM\t%POS[\t%DP]\n' ${vcf_input} > $DP_tsv_output
 bcftools query -f '%CHROM\t%POS[\t%GT]\n' ${vcf_input} > $GT_tsv_output
-
-rm ${outdir}/tmp_variables
-rm -f $1"_sample"

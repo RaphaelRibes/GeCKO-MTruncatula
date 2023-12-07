@@ -52,6 +52,11 @@ if [[ ! -z "$BAM" && ! "$BAM" = /* ]] ; then
   BAM=$(readlink -f $BAM) ;
 fi
 
+# clean intermediate files when the script exits
+clean_intermediate_files() {
+  rm ${OUTPUT_DIR}/${SAMPLE}*_PP* ${OUTPUT_DIR}/${SAMPLE}*_UP*
+}
+trap 'clean_intermediate_files' EXIT
 
 #get reads that are mapped -F4 and unproperly paired (UP) -F2
 samtools view -F4 -F2 -b ${BAM} > ${OUTPUT_DIR}/${SAMPLE}_UP.bam
@@ -139,7 +144,3 @@ for type in R1 R2 U; do
   cat ${OUTPUT_DIR}/${SAMPLE}_PP_extract_${type}.fastq ${OUTPUT_DIR}/${SAMPLE}_UP_extract.${type}.fastq >  ${OUTPUT_DIR}/${SAMPLE}_extract.${type}.fastq
   gzip ${OUTPUT_DIR}/${SAMPLE}_extract.${type}.fastq
 done
-
-
-#clean everything
-rm ${OUTPUT_DIR}/${SAMPLE}*_PP* ${OUTPUT_DIR}/${SAMPLE}*_UP*
