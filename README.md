@@ -11,21 +11,6 @@ Each corresponding folder has a specific README to explain the use of the workfl
 
 We provide a bash launcher called runGeCKO.sh that can be used to easily run these different workflows on your own data and HPC environments with minimal effort. Each workflow will produce an html report (generating thanks to [multiQC](https://multiqc.info/)) summarizing key information for this step.
 
-To execute one of the workflows, follow the steps:  
-
-
-1) If it is the first time you clone a GitHub repository, you will first need to [generate your SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key) and [add it to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
-
-2) Clone this repository in your environment:   
-```git clone git@github.com:GE2POP/GeCKO.git```  
-This will create a GeCKO directory, for example /home/user/GeCKO.
-Then follow the steps described [below](#installation) to make GeCKO ready to be used on your data.
-
-4) Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
-For more information on this step, see the more detailed README placed in each workflow folder.  
-
-5) Use the launcher script runGeCKO.sh to run the workflow.  
-
 &nbsp;
 ### Environment  
 These workflows rely on snakemake, which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and conda available on your environment. 
@@ -66,27 +51,40 @@ SGE and Slurm job schedulers are currently supported.
 &nbsp;
 ### Installation  
 
-- If the script was open on a Windows system and you will execute it on a Linux system, you may need to remove windows carriage returns ('\r') with:  
+1) If it is the first time you clone a GitHub repository, you will first need to [generate your SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key) and [add it to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+
+2) Clone this repository in your environment:   
+```git clone git@github.com:GE2POP/GeCKO.git```  
+This will create a GeCKO directory, for example /home/user/GeCKO.
+Then follow the steps described [below](#installation) to make GeCKO ready to be used on your data.
+
+3) If the script was open on a Windows system and you will execute it on a Linux system, you may need to remove windows carriage returns ('\r') with:  
 ```dos2unix runGeCKO.sh```  
 or  
 ```sed -i 's/\r$//g' runGeCKO.sh ; sed -i 's/\r/\n/g' runGeCKO.sh```
 
-- Make the script executable with:  
+4) Make the script executable with:  
 ```chmod u+x runGeCKO.sh```
 
-- Make sure Snakemake and Conda are available to your working environment.  
+5) Make sure Snakemake and Conda are available to your working environment.  
 Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.  
     - For clusters using module environment, you can add the 'module load' lines in runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOADS HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the needed modules, use the 'module avail' command. The modules will be loaded every time you execute the script.  
-    - For clusters using Conda environment, Conda will likely be readily available, and you will only need to conda activate Snakemake. To find out the precise name of the snakemake environment, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.  
+    - For clusters using Conda environment, Conda will likely be readily available, and you will only need to conda activate Snakemake. To find out the precise name of the snakemake environment, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.   
+
 
 &nbsp;
-### Using the workflow
+### Running a workflow
 
-The following section describes the different workflow actions and parameters. The /home/user/GeCKO path refers to the directory you cloned from GitHub.
+The /home/user/GeCKO path refers to the directory you cloned from GitHub.
 
 &nbsp;
-#### QUICK START:  
-There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
+#### Prepare your data and config files 
+Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
+For more information on this step, see the more detailed README placed in each workflow folder.  
+
+&nbsp;
+#### THE RUNGECKO LAUNCHER:  
+You can use the launcher script runGeCKO.sh to run the workflow of your choice. There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
 ```./runGeCKO.sh --workflow-path /home/user/GeCKO --workflow DataCleaning```
 
