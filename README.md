@@ -38,10 +38,8 @@ Either install them on your computer, or if you are working on a cluster, you ma
 
 &nbsp;
 ### Running a workflow
+*The /home/user/GeCKO path refers to the directory you cloned from GitHub.*
 
-The /home/user/GeCKO path refers to the directory you cloned from GitHub.
-
-&nbsp;
 #### Prepare your data and config files 
 Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
