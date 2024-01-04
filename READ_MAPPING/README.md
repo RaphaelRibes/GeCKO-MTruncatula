@@ -53,7 +53,7 @@ To launch it on your own data, if you cloned the repository in /home/user and pl
 
 ### 1/ Clone the GitHub repository
 
-Follow the procedure described [here](https://github.com/GE2POP/GeCKO/tree/main#readme) to have GeCKO ready to process your data.
+Follow the procedure described [here](https://github.com/GE2POP/GeCKO/tree/main#installation) to have GeCKO ready to process your data.
 
 ### 2/ Prepare your input data
 
