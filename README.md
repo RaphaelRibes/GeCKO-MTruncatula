@@ -55,7 +55,7 @@ The information regarding the fastq files, read index etc. are, by default, retr
 To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
 
 ```./runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
-
+&nbsp;
 > ##### POSSIBLE ACTIONS:  
 > The launcher's default behavior is to run the workflow, but other actions can be called instead:
 >
