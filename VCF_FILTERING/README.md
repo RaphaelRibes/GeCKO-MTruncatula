@@ -162,7 +162,7 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 - *samples_to_remove.list*:&nbsp;&nbsp;&nbsp;list of samples that were deleted in step 03 (filtering by sample)
 - *03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf*:&nbsp;&nbsp;&nbsp;the intermediate vcf file corresponding to variants filtered after step 03 (genotype + locus1 + sample), with additional site level statistics (Fis, He, MAF,...) by variants.  
 - *04__Genotype_Locus1_Sample_Locus2_Filtered.vcf*:&nbsp;&nbsp;&nbsp;the vcf file after filtering variants by **locus** 
-- *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
+- *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File containing the date and time of the workflow launch, the link to the Github repository, the corresponding commit ID, and a copy of the config files provided by the user
 
 **REPORTS directory** 
 - *00_variants_raw_vcf.stats*:&nbsp;&nbsp;&nbsp;bcftools statistics of the unfiltered vcf file 
