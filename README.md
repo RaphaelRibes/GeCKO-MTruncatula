@@ -1,4 +1,4 @@
-### Project overview  
+## Project overview  
 This repository provides several workflows to clean sequenced reads, map them to the reference of your choice, call variants and filter the resulting VCF file. They are especially appropriate for data sequenced after target enrichment capture, but can be used for other types of sequenced reads.
 
 You will find the different workflows in the corresponding folders:
@@ -14,7 +14,7 @@ We provide a bash launcher called runGeCKO.sh that can be used to easily run the
 
 
 &nbsp;
-### Installation  
+## Installation  
 
 1) If it is the first time you clone a GitHub repository, you will first need to [generate your SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key) and [add it to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
 
@@ -37,7 +37,7 @@ Either install them on your computer, or if you are working on a cluster, you ma
 
 
 &nbsp;
-### Running a workflow
+## Running a workflow
 *The /home/user/GeCKO path refers to the directory you cloned from GitHub.*
 
 #### Prepare your data and config files 
@@ -45,7 +45,7 @@ Copy the appropriate config and cluster_config files and adapt them to your data
 For more information on this step, see the more detailed README placed in each workflow folder.  
 
 &nbsp;
-#### THE RUNGECKO LAUNCHER:  
+#### The runGeCKO launcher  
 You can use the launcher script runGeCKO.sh to run the workflow of your choice. There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
 
 ```./runGeCKO.sh --workflow-path /home/user/GeCKO --workflow DataCleaning```
