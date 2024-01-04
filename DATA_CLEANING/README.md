@@ -247,7 +247,7 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 <ins>Description of the main files:</ins>  
 
 - *multiQC_DataCleaning_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on raw data, (demultiplexing) and trimming fastQC reports to visualize the impact of DATA_CLEANING.  
-- *workflow_info.txt*:&nbsp;&nbsp;&nbsp; file containing the date and time of the workflow launch, the link to the Github repository and the corresponding commit ID.
+- *workflow_info.txt*:&nbsp;&nbsp;&nbsp; file containing the date and time of the workflow launch, the link to the Github repository, the corresponding commit ID, and a copy of the config files provided by the user.
 
 **RAWDATA/REPORTS directory**  
 - *FASTQC directory*:&nbsp;&nbsp;&nbsp;Graphics representations (R1 /R2) of the quality of the raw reads before cleaning (fastQC)  
