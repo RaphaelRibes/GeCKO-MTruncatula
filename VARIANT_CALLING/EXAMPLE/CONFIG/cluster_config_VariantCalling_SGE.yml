@@ -2,7 +2,7 @@ __default__:
     pe: smp 1
     h_vmem: 2G
     q: short.q
-    N: DC.{rule}
+    N: VC.{rule}
     o: Logs_VariantCallingWorkflow/{rule}.$JOB_ID.out.txt
     e: Logs_VariantCallingWorkflow/{rule}.$JOB_ID.err.txt
    
