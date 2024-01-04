@@ -125,7 +125,7 @@ This workflow will create a "VARIANT_CALLING" directory in the "WORKFLOWS_OUTPUT
 
 <ins>Description of the main files:</ins> 
 
-- *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File that contains the date and time of the workflow launch, the link to the Github repository and the commit ID
+- *workflow_info.txt*:&nbsp;&nbsp;&nbsp;File containing the date and time of the workflow launch, the link to the Github repository, the corresponding commit ID, and a copy of the config files provided by the user
 
 **HAPLOTYPE_CALLER directory**  
 - Two files by sample, the vcf.gz file (sample.g.vcf.gz) and the associated index file (sample.g.vcf.gz.tbi). A list of the vcf files contained in this folder will also be here (vcf.list.txt).  
