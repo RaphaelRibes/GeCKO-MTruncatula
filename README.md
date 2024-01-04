@@ -59,7 +59,7 @@ To use the full resource of my HPC environment (Slurm), and allow up to 100 subm
 
 &nbsp;
 
-#### POSSIBLE ACTIONS:  
+##### POSSIBLE ACTIONS:  
 The launcher's default behavior is to run the workflow, but other actions can be called instead:
 
 **--help**&nbsp;&nbsp;&nbsp;*print the help*  
@@ -76,7 +76,7 @@ The launcher's default behavior is to run the workflow, but other actions can be
 
 &nbsp;
 
-#### MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):  
+##### MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):  
 **--workflow-path [...]**&nbsp;&nbsp;&nbsp;*the path to the directory you cloned from GitHub*  
 If the directory was cloned from GitHub, it should end with /GeCKO  
 
@@ -85,7 +85,7 @@ Current existing options are 'DataCleaning', 'ReadMapping', 'VariantCalling' and
 
 &nbsp;
 
-#### CONFIGURATION PARAMETERS:  
+##### CONFIGURATION PARAMETERS:  
 **--job-scheduler [...]**&nbsp;&nbsp;&nbsp;*name of the job scheduler that is installed on your cluster*  
 Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will run without submitting any job and any parallelization.  
 
@@ -97,7 +97,7 @@ If omitted, this script will look for a config_WorkflowName.yml file (eg: config
 
 &nbsp;
 
-#### USEFUL EXTRA OPTIONS:  
+##### USEFUL EXTRA OPTIONS:  
 **--jobs [int]**&nbsp;&nbsp;&nbsp;*maximum number of jobs that can be run in parallel (default: 1)*  
 
 **--latency-wait [int]**&nbsp;&nbsp;&nbsp;*number of seconds Snakemake will wait after the end of a task to look for the expected output files (default: 20)*  
@@ -116,13 +116,13 @@ If specified, the environment will only be built once in this folder (the first 
 
 &nbsp;
 
-#### ANY OTHER OPTIONS:  
+##### ANY OTHER OPTIONS:  
 **--extra-snakemake-options ["..."]**&nbsp;&nbsp;&nbsp;*any list of other Snakemake options that you may want to pass to the Snakemake command*  
 Be careful to provide them between quotes. For an exhaustive list of Snakemake options see https://snakemake.readthedocs.io/en/stable/index.html.  
 
 
 &nbsp;
-### Environment  
+## Environment  
 These workflows rely on snakemake, which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and conda available on your environment. 
 
 #### Snakemake
