@@ -65,7 +65,7 @@ or
 4) Make the script executable with:  
 ```chmod u+x runGeCKO.sh```
 
-5) Make sure [Snakemake](####Snakemake) and [Conda](####Conda) are available to your working environment.  
+5) Make sure [Snakemake](#snakemake) and [Conda](#conda) are available to your working environment.  
 Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.  
     - For clusters using module environment, you can add the 'module load' lines in runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOADS HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the needed modules, use the 'module avail' command. The modules will be loaded every time you execute the script.  
     - For clusters using Conda environment, Conda will likely be readily available, and you will only need to conda activate Snakemake. To find out the precise name of the snakemake environment, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.   
