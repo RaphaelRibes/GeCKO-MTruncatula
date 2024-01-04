@@ -111,7 +111,7 @@ To use the full resource of my HPC environment (Slurm), and allow up to 100 subm
 > Be careful to provide them between quotes. For an exhaustive list of Snakemake options see https://snakemake.readthedocs.io/en/stable/index.html.  
 
 #### Outputs
-Each of our four workflows generates its own set of files, organized in a WORKFLOW_OUTPUTS folder. One of their common features, however, is the creation of a ‘workflow_info.txt’ file. This file records the date and time of each run, the configuration files used, and the GitHub commit ID of the workflow version you’re working with. It also tracks when each output file was created. If you run the workflow again, i.e. to produce some missing files, this file will be updated with the new run's details, while keeping the previous run’s information intact.
+Each of the four workflows generates its own set of files, organized in a WORKFLOW_OUTPUTS folder. One of their common features, however, is the creation of a ‘workflow_info.txt’ file. This file records the date and time of each run, the configuration files used, and the GitHub commit ID of the workflow version you’re working with. It also tracks when each output file was created. If you run the workflow again, i.e. to produce some missing files, this file will be updated with the new run's details, while keeping the previous run’s information intact.
 
 &nbsp;
 ## Environment  
