@@ -185,7 +185,7 @@ This workflow will create a "READ_MAPPING" directory in the "WORKFLOWS_OUTPUTS" 
 - *nb_reads_per_sample.tsv*:&nbsp;&nbsp;&nbsp;Number of reads per sample after mapping and extraction  
 - *DUPLICATES directory*:&nbsp;&nbsp;&nbsp;MarkDuplicates reports (one per sample)  
 - *STATS directory*:&nbsp;&nbsp;&nbsp;Samtools stats reports (one per sample)  
-- *multiQC_ReadMapping_SubBams_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on stats reports to visualize the number and percentages of mapped reads in sub-bams\*  
+- *multiQC_ReadMapping_SubBams_Report.html (and the associated directory)*:&nbsp;&nbsp;&nbsp;Graphic report based on stats reports to visualize the number and percentages of mapped reads in sub-bams  
 
 **EXTRACTED_BAMS/REFERENCE_ZONES directory** (if a bed file was provided and CREATE_SUB_BAMS was set to TRUE)  
 - *zones.bed*:&nbsp;&nbsp;&nbsp;Bed file containing the positions (start - end) of the genomic regions with enough coverage.
@@ -194,7 +194,6 @@ This workflow will create a "READ_MAPPING" directory in the "WORKFLOWS_OUTPUTS" 
 **ZONES_STATS directory** (if a bed file was provided) 
 - *mean_depth_per_zone_per_sample.tsv*:&nbsp;&nbsp;&nbsp;For each zone and each sample, the mean depth per zone (number of reads per base) 
 
-\*⚠ During the extraction step by CrossMap, paired reads are considered as a "proper pair" if both ends are mapped to different strands of the same contig and the distance between them is less than 500 pb. This information is stored in the bams' flags for each read (0x2).
 
 
 
