@@ -128,7 +128,7 @@ See the samtools view documentation [here](https://www.htslib.org/doc/samtools-v
 <ul>
 In case you <ins>provide your own bed file</ins>, we strongly recommend merging proximal regions. This will prevent the potential issue of initially properly paired reads being remapped into distinct zones, which would result in them being erroneously flagged as improperly paired by the mapping software during the remapping step.  
 
-Please note that any overlapping regions present in your BED file will be automatically merged into a single contiguous region. The resultant BED file (user_clean.bed), featuring the merged zones, will be available in the WORKFLOWS_OUTPUTS/READ_MAPPING/*/EXTRACTED_BAMS/REFERENCE_zones/ output folder.
+Please note that any overlapping regions present in your BED file will be automatically merged into a single contiguous region. The resulting BED file (user_clean.bed), featuring the merged zones, will be available in the WORKFLOWS_OUTPUTS/READ_MAPPING/*/EXTRACTED_BAMS/REFERENCE_zones/ output folder.
 </ul>
 <ul>
 Should you prefer to have the workflow <ins>automatically identify regions of interest</ins>, it will compute the read depth across the genome for all samples, and only retain zones that exceed the BED_MIN_MEAN_COV mean depth threshold. Subsequently, regions within a distance less than BED_MIN_DIST will be merged together, and any resulting regions shorter than BED_MIN_LENGTH will be excluded.  
