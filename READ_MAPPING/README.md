@@ -124,11 +124,11 @@ See the samtools view documentation [here](https://www.htslib.org/doc/samtools-v
 &nbsp;
 
 #### *Filling in the config file if you want to extract and remap reads from specific zones (CREATE_SUB_BAMS set to TRUE)*
-- Preambule: targeted remapping impact on alignment flags:  
+- Preambule: targeted remapping impact on alignment flags  
 Performing targeted remapping can affect the flags of the mapped reads alignments, which in some cases may change compared to the results obtained after the first mapping. We have taken measures to avoid the most problematic issues: particularly, two reads of a pair flagged as properly paired at the end of mapping on the complete reference will not become improperly paired after targeted remapping. Indeed, for properly paired reads, the extraction and transformation of reads from the BAM format to the FASTQ format are conducted zone by zone. This implies that if one of the two reads of a properly paired pair ends up alone in a zone, it will enter the remapping step as a single read, regardless of whether its mate is in another zone, and therefore won't be considered improperly paired in subsequent steps.  
 However, it remains possible that paired reads (either properly or improperly paired) may become single. The following paragraphs provide advice on minimizing these occurrences.
 
-- Bed file:  
+- Bed file  
 <ul>
 In case you <ins>provide your own bed file</ins>, we strongly recommend merging proximal regions. This will prevent the potential issue of initially (properly or improperly) paired reads being remapped into distinct zones, which would result in them both being considered single during the remapping step.  
 
@@ -140,7 +140,7 @@ Should you prefer to have the workflow <ins>automatically identify regions of in
 We advise setting the BED_MIN_DIST parameter to a value exceeding the difference between the insert size and twice the read sequencing length. For instance, with DNA fragments averaging 500bp and both R1 and R2 reads being 150bp, a BED_MIN_DIST value greater than 200 is recommended.
 </ul>
 
-- Filtering:  
+- Filtering  
 Bam filtering options are available after both the initial mapping (SAMTOOLS_VIEW_FILTERS1) and remapping (SAMTOOLS_VIEW_FILTERS2) steps. To ensure the integrity of read extraction and remapping, it is best to remove improperly paired reads, as well as non-primary and supplementary alignments, after the first mapping. This precaution helps prevent the misclassification of improperly paired reads as single reads if only one read of a pair is preserved. Furthermore, in the absence of the primary read (in case it mapped out of the extracted zones), secondary or supplementary alignments could be incorrectly designated as primary during the remapping step. Such misclassifications can lead to the erroneous interpretation of mapping quality, resulting in inaccuracies in downstream analysis and the potential overestimation of certain reads' reliability. To filter out improperly paired, non primary and supplementary reads, set SAMTOOLS_VIEW_FILTERS1 to "-F 256 -F2048 -f2" (see [here](https://broadinstitute.github.io/picard/explain-flags.html) to understand sam flags and [here](https://www.htslib.org/doc/samtools-view.html) for more information on samtools view's -F and -f options).
 
 ### 4/ Launch the analysis
