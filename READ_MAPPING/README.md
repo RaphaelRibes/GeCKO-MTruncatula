@@ -86,11 +86,11 @@ This file is used to pass all the information and tools parameters that will be 
 
 **GENERAL VARIABLES**  
 - *PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end. [TRUE or FALSE]  
-- *CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. Cannot be set to TRUE if the BED variable is left blank. Is set to TRUE, please read [this](#filling-in-the-config-file-if-you-want-to-extract-and-remap-reads-from-specific-zones-create_sub_bams-set-to-true) to understand how to properly set up your config file. [TRUE or FALSE]  
+- *CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. Cannot be set to TRUE if the BED variable is left blank. Is set to TRUE, please read [this section](#filling-in-the-config-file-if-you-want-to-extract-and-remap-reads-from-specific-zones-create_sub_bams-set-to-true) to understand how to properly set up your config file. [TRUE or FALSE]  
 - *MAPPING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different mapping parameters (different reference, mapping options...), provide a name for an extra folder to create in the READ_MAPPING output folder. Otherwise leave blank ("").  
 
 **INPUT FILES**  
-- *TRIM_DIRS:*&nbsp;&nbsp;&nbsp;The path(s) to the directory or directories containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files. To provide several directories, separate them with spaces, e.g.: "/home/user/trim_dir1 /home/user/trim_dir2". Be careful to provide them between quotes.   
+- *TRIM_DIRS:*&nbsp;&nbsp;&nbsp;The path(s) to the directory or directories containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to the DATA_CLEANING workflow output files. To provide several directories, separate them with spaces, e.g.: "/home/user/trim_dir1 /home/user/trim_dir2". Be careful to provide them between quotes.   
 - *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
 
 *If you set CREATE_SUB_BAMS to TRUE, you either have to provide a bed file:*
