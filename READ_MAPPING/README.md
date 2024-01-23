@@ -137,7 +137,7 @@ Please note that any overlapping regions present in your BED file will be automa
 <ul>
 Should you prefer to have the workflow <ins>automatically identify regions of interest</ins>, it will compute the read depth across the genome for all samples, and only retain zones that exceed the BED_MIN_MEAN_COV mean depth threshold. Subsequently, regions within a distance less than BED_MIN_DIST will be merged together, and any resulting regions shorter than BED_MIN_LENGTH will be excluded.  
 
-We advise setting the BED_MIN_DIST parameter to a value exceeding the difference between the insert size and twice the read sequencing length. For instance, with DNA fragments averaging 500bp and both R1 and R2 reads being 150bp, a BED_MIN_DIST value greater than 200 is recommended.
+We advise setting the BED_MIN_DIST parameter to a value exceeding the difference between the fragment size and twice the read sequencing length. For instance, with DNA fragments averaging 500bp and both R1 and R2 reads being 150bp, a BED_MIN_DIST value greater than 200 is recommended.
 </ul>
 
 - Filtering  
