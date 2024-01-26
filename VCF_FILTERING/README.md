@@ -23,7 +23,7 @@ Needed files:
 &nbsp;
 
 To easily launch the workflow, use the runGeCKO.sh launcher. For example, to launch the workflow on the VCF example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```../../../runGeCKO.sh --workflow VcfFiltering --workflow-path ../../../../GeCKO --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```../../runGeCKO.sh --workflow VcfFiltering --workflow-path ../../../GeCKO --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
 
 To launch it on your own data, if you cloned the repository in /home/user and placed your config_DataCleaning.yml and cluster_config_DataCleaning.yml files in a CONFIG folder:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
