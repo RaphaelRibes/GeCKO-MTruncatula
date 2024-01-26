@@ -15,7 +15,7 @@ REFERENCE: "../REFERENCE/Reference.fasta"
 # Path to the bed file listing targeted zones. Optionnal: can be left blank ("").
 BED: "../REFERENCE/Reference_targeted_zones.bed"
 BED_MIN_MEAN_COV: ""
-BED_MAX_DIST: ""
+BED_MIN_DIST: ""
 BED_MIN_LENGTH: ""
 
 
