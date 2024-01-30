@@ -4,10 +4,10 @@
 HERE=$PWD
 
 ### 0/ Variables help
-workflow_help=$(grep -e "^--workflow " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
-config_file_help=$(grep -e "^--config-file " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
-cluster_config_help=$(grep -e "^--cluster-config " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
-conda_env_path_help=$(grep -e "^--conda-env-path: " ${WORKFLOW_PATH}/scripts/launcher_help.txt)
+workflow_help=$(grep -e "^--workflow " ${WORKFLOW_PATH}/launcher_files/launcher_help.txt)
+config_file_help=$(grep -e "^--config-file " ${WORKFLOW_PATH}/launcher_files/launcher_help.txt)
+cluster_config_help=$(grep -e "^--cluster-config " ${WORKFLOW_PATH}/launcher_files/launcher_help.txt)
+conda_env_path_help=$(grep -e "^--conda-env-path: " ${WORKFLOW_PATH}/launcher_files/launcher_help.txt)
 
 ### 1/ WORKFLOW FOLDER AND ITS CONTENTS ###
 
@@ -19,7 +19,7 @@ if [[ -z "$WORKFLOW" || "$WORKFLOW" = --* || "$WORKFLOW_PATH" = -* ]] ; then
 	exit 1
 fi
 
-workflow_folder_name=$(grep -w $WORKFLOW ${WORKFLOW_PATH}/scripts/workflows_list.tsv | cut -f2)
+workflow_folder_name=$(grep -w $WORKFLOW ${WORKFLOW_PATH}/launcher_files/workflows_list.tsv | cut -f2)
 if [[ -z $workflow_folder_name ]] ; then
 	echo -e "\nERROR: The workflow name provided with --workflow is unknown."
 	echo "As a reminder:"
@@ -195,7 +195,7 @@ fi
 if ! [[ -x "$(command -v snakemake)" ]] ; then
   echo -e "\nERROR: Snakemake is not available. You must install it, or make it available to your working environment (eg: module load it or activate it with conda)."
   echo "As a reminder:"
-  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/scripts/launcher_help.txt
+  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
   echo -e "\nExiting.\n"
   exit 1
 fi
@@ -259,7 +259,7 @@ fi
 if ! [[ -x "$(command -v conda)" ]] ; then
   echo -e "\nERROR: Conda is not available. You must install it, or make it available to your working environment (eg: module load it)."
   echo "As a reminder:"
-  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/scripts/launcher_help.txt
+  awk '/^- Make sure Snakemake and Conda/,/^$/' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
   echo -e "\nExiting.\n"
   exit 1
 fi
