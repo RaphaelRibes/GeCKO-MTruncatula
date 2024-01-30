@@ -153,50 +153,50 @@ WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
 
 
 ### Check if folder exists
-if [[ ! -d "${WORKFLOW_PATH}/scripts/" ]] ; then
-  echo -e "\nERROR: No scripts/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
+if [[ ! -d "${WORKFLOW_PATH}/launcher_files/" ]] ; then
+  echo -e "\nERROR: No launcher_files/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
   echo -e "\nExiting.\n"
   exit 1
 fi
 
 
 ### Remove Windows \r from help file
-nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/scripts/launcher_help.txt)
+nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt)
 if [[ "$nb_carriage_returns" -gt 0 ]] ; then
-  sed -i 's/\r$//g' ${WORKFLOW_PATH}/scripts/launcher_help.txt
-  sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/scripts/launcher_help.txt
+  sed -i 's/\r$//g' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
+  sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
 
 fi
 
 
 ### Print the help
 if [ "${HELP}" = "TRUE" ] ; then
-  cat ${WORKFLOW_PATH}/scripts/launcher_help.txt
+  cat ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
   exit 0
 fi
 
 
 ### Make scripts executable
-for script in $(ls "${WORKFLOW_PATH}/scripts/") ; do
-  if [[ -f "${WORKFLOW_PATH}/scripts/${script}" ]] ; then
-    nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/scripts/${script})
+for script in $(ls "${WORKFLOW_PATH}/launcher_files/") ; do
+  if [[ -f "${WORKFLOW_PATH}/launcher_files/${script}" ]] ; then
+    nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/launcher_files/${script})
     if [[ "$nb_carriage_returns" -gt 0 ]] ; then
       echo "Removing windows carriage returns in ${script}..."
-      sed -i 's/\r$//g' ${WORKFLOW_PATH}/scripts/$script
-      sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/scripts/$script
+      sed -i 's/\r$//g' ${WORKFLOW_PATH}/launcher_files/$script
+      sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/launcher_files/$script
     fi
-    if [[ ! -x "${WORKFLOW_PATH}/scripts/${script}" ]] ; then
+    if [[ ! -x "${WORKFLOW_PATH}/launcher_files/${script}" ]] ; then
       echo "Making $script executable..."
-      chmod 755 "${WORKFLOW_PATH}/scripts/${script}"
+      chmod 755 "${WORKFLOW_PATH}/launcher_files/${script}"
     fi
   fi
 done
 
 
 ### Check variables and paths
-source "${WORKFLOW_PATH}/scripts/launcher_allWorkflowsCheck.sh"
-if [[ -f "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh" ]] ; then
-  source "${WORKFLOW_PATH}/scripts/launcher_${WORKFLOW}Check.sh"
+source "${WORKFLOW_PATH}/launcher_files/launcher_allWorkflowsCheck.sh"
+if [[ -f "${WORKFLOW_PATH}/launcher_files/launcher_${WORKFLOW}Check.sh" ]] ; then
+  source "${WORKFLOW_PATH}/launcher_files/launcher_${WORKFLOW}Check.sh"
 fi
 
 
