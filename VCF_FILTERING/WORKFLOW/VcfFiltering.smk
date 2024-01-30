@@ -108,8 +108,7 @@ rule Calculate_LocusExtraStats:
     conda:
         "ENVS/conda_tools.yml"
     shell:
-        "sed -i 's/=nan/=./g' {input};"
-        "module purge ; python {scripts_dir}/egglib_LocusExtraStats.py --input {input} --output {output}"
+        "sed -i 's/=nan/=./g' {input}; python {scripts_dir}/egglib_LocusExtraStats.py --input {input} --output {output}"
 
 
 rule Filter_Loci_2:
