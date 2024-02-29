@@ -1,11 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e -o pipefail
 
 
 ### v WRITE YOUR MODULE LOADS HERE v ###
 
-# module purge
-# module load snakemake/7.15.1-conda
-# module load anaconda/python3.8
+module purge
+source /home/girodollej/.bashrc_new
+conda activate snakemake7.32.4_mamba_python
+#module load snakemake/7.15.1-conda
+#module load snakemake/8.4.2-conda
+#conda activate snakemake7.15.2_mamba_python
+#conda activate snakemake8.4.2_mamba
+#conda activate snakemake8.4.8_mamba
+#conda activate snakemake8.5.3_mamba
+#module load anaconda/python3.8
 
 
 ### ^ WRITE YOUR MODULE LOADS HERE ^ ###
@@ -41,13 +50,13 @@ do
     shift
     shift
     ;;
-    --workflow-path)
-    WORKFLOW_PATH="$2"
-    shift
-    shift
-    ;;
-    --cluster-config)
-    CLUSTER_CONFIG="$2"
+    #--workflow-path)
+    #WORKFLOW_PATH="$2"
+    #shift
+    #shift
+    #;;
+    --cluster-profile)
+    CLUSTER_PROFILE="$2"
     shift
     shift
     ;;
@@ -86,11 +95,6 @@ do
     shift
     shift
     ;;
-    --job-scheduler)
-    JOB_SCHEDULER="$2"
-    shift
-    shift
-    ;;
     --conda-env-path)
     CONDA_ENV_PATH="$2"
     shift
@@ -121,7 +125,7 @@ set -- "${POSITIONAL[@]}"
 
 absolutePath () {
   if [[ ! -z "$1" && ! "$1" = /* ]] ; then
-    fileOrFolder_absolutePath=$(readlink -f $1) ;
+    fileOrFolder_absolutePath=$(readlink -f "$1") ;
     echo ${fileOrFolder_absolutePath%/}
   else
     echo ${1%/}
@@ -130,84 +134,86 @@ absolutePath () {
 
 # --------------------------------------------------------------------------------------------------------------#
 
-### WORKFLOW_PATH (needed for next steps)
+### GeCKO_path (needed for next steps)
+GeCKO_path=$(dirname $(absolutePath "$0"))
 
-if [[ -z "$WORKFLOW_PATH" || "$WORKFLOW_PATH" = --* || "$WORKFLOW_PATH" = -* ]] ; then
-	echo -e "\nERROR: the --workflow-path parameter is missing, please include it in your command."
-	echo "As a reminder:"
-	echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
-	echo -e "\nExiting.\n"
-	exit 1
-fi
-if [ ! -d "$WORKFLOW_PATH" ] ; then
-	echo -e "\nERROR: the path given in the --workflow-path parameter is not valid. Please make sure the directory exists and the path is correctly written."
-	echo "As a reminder:"
-  echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
-	echo -e "\nExiting.\n"
-	exit 1
-fi
+#if [[ -z "$WORKFLOW_PATH" || "$WORKFLOW_PATH" = --* || "$WORKFLOW_PATH" = -* ]] ; then
+#	echo -e "\nERROR: the --workflow-path parameter is missing, please include it in your command."
+#	echo "As a reminder:"
+#	echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
+#	echo -e "\nExiting.\n"
+#	exit 1
+#fi
+#if [ ! -d "$WORKFLOW_PATH" ] ; then
+#	echo -e "\nERROR: the path given in the --workflow-path parameter is not valid. Please make sure the directory exists and the path is correctly written."
+#	echo "As a reminder:"
+#  echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
+#	echo -e "\nExiting.\n"
+#	exit 1
+#fi
 
-WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
+#WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
+
+
 
 # --------------------------------------------------------------------------------------------------------------#
 
 
 ### Check if folder exists
-if [[ ! -d "${WORKFLOW_PATH}/launcher_files/" ]] ; then
-  echo -e "\nERROR: No launcher_files/ folder was found in the provided workflow path (${WORKFLOW_PATH}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
+if [[ ! -d "${GeCKO_path}/launcher_files/" ]] ; then
+  echo -e "\nERROR: No launcher_files/ folder was found in the provided workflow path (${GeCKO_path}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
   echo -e "\nExiting.\n"
   exit 1
 fi
 
 
 ### Remove Windows \r from help file
-nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt)
-if [[ "$nb_carriage_returns" -gt 0 ]] ; then
-  sed -i 's/\r$//g' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
-  sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
 
+if grep -q $'\r' ${GeCKO_path}/launcher_files/launcher_help.txt; then
+  sed -i 's/\r$//g' ${GeCKO_path}/launcher_files/launcher_help.txt
+  sed -i 's/\r/\n/g' ${GeCKO_path}/launcher_files/launcher_help.txt
 fi
+
 
 
 ### Print the help
 if [ "${HELP}" = "TRUE" ] ; then
-  cat ${WORKFLOW_PATH}/launcher_files/launcher_help.txt
+  cat ${GeCKO_path}/launcher_files/launcher_help.txt
   exit 0
 fi
 
 
 ### Make scripts executable
-for script in $(ls "${WORKFLOW_PATH}/launcher_files/") ; do
-  if [[ -f "${WORKFLOW_PATH}/launcher_files/${script}" ]] ; then
-    nb_carriage_returns=$(grep -c $'\r' ${WORKFLOW_PATH}/launcher_files/${script})
-    if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+for script in $(ls "${GeCKO_path}/launcher_files/") ; do
+  if [[ -f "${GeCKO_path}/launcher_files/${script}" ]] ; then
+    if grep -q $'\r' ${GeCKO_path}/launcher_files/${script}; then
       echo "Removing windows carriage returns in ${script}..."
-      sed -i 's/\r$//g' ${WORKFLOW_PATH}/launcher_files/$script
-      sed -i 's/\r/\n/g' ${WORKFLOW_PATH}/launcher_files/$script
+      sed -i 's/\r$//g' ${GeCKO_path}/launcher_files/$script
+      sed -i 's/\r/\n/g' ${GeCKO_path}/launcher_files/$script
     fi
-    if [[ ! -x "${WORKFLOW_PATH}/launcher_files/${script}" ]] ; then
+    if [[ ! -x "${GeCKO_path}/launcher_files/${script}" ]] ; then
       echo "Making $script executable..."
-      chmod 755 "${WORKFLOW_PATH}/launcher_files/${script}"
+      chmod 755 "${GeCKO_path}/launcher_files/${script}"
     fi
   fi
 done
 
 
 ### Check variables and paths
-source "${WORKFLOW_PATH}/launcher_files/launcher_allWorkflowsCheck.sh"
-if [[ -f "${WORKFLOW_PATH}/launcher_files/launcher_${WORKFLOW}Check.sh" ]] ; then
-  source "${WORKFLOW_PATH}/launcher_files/launcher_${WORKFLOW}Check.sh"
+source "${GeCKO_path}/launcher_files/launcher_allWorkflowsCheck.sh"
+if [[ -f "${GeCKO_path}/launcher_files/launcher_${WORKFLOW}Check.sh" ]] ; then
+  source "${GeCKO_path}/launcher_files/launcher_${WORKFLOW}Check.sh"
 fi
 
 
 ### RUN APPROPRIATE SNAKEMAKE COMMANDS ###
 # Always unlock in case the folder is locked
-snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
+snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
 
 
 ## DRYRUN ##
 if [ "${DRYRUN}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -217,7 +223,7 @@ fi
 
 ## DIAGRAM ##
 if [ "${DIAGRAM}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
+  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -227,7 +233,7 @@ fi
 
 ## REPORT ##
 if [ "${REPORT}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command
@@ -237,9 +243,7 @@ fi
 
 ## RUN WITH CONDA ##
 if [ "${USE_CONDA}" = "TRUE" ] ; then
-  mkdir -p Logs_${WORKFLOW}Workflow
-
-  snakemake_command="snakemake --snakefile ${workflow_folder}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda ${CLUSTER_CONFIG_CMD} --configfile ${CONFIG} --config configfile_name=${CONFIG} clusterconfig_name=${CLUSTER_CONFIG} ${PROFILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
+  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
   $snakemake_command

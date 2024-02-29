@@ -28,13 +28,11 @@ BARCODE_FILE: ""
 ### DEMULTIPLEXING PARAMETERS ###
 
 # Complete these three fields if the raw fastq files is multiplexed, if not leave blank: ""
-DEMULT_CPUS_PER_TASK: 0
-DEMULT_CORES: ""             # Cutadapt parameter "--cores"
-DEMULT_SUBSTITUTIONS: ""     # Cutadapt parameter "--substitutions"
+DEMULT_CORES: "" # Cutadapt parameter "--cores"
+DEMULT_SUBSTITUTIONS: "" # Cutadapt parameter "--substitutions"
 
 
 ### TRIMMING PARAMETERS ###
-TRIMMING_CPUS_PER_TASK: 1
-TRIMMING_CORES: 1           # Cutadapt parameter "--cores"
-TRIMMING_QUAL: 30           # Cutadapt parameter "--quality_cutoff"
-TRIMMING_MIN_LENGTH: 36     # Cutadapt parameter "--minimum_length"
+TRIMMING_CORES: 1 # Cutadapt parameter "--cores"
+TRIMMING_QUAL: 30 # Cutadapt parameter "--quality_cutoff"
+TRIMMING_MIN_LENGTH: 36 # Cutadapt parameter "--minimum_length"

@@ -4,6 +4,7 @@ import os,sys,glob
 from itertools import compress
 from datetime import datetime
 
+default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
 
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
@@ -60,6 +61,7 @@ rule Filter_Genotypes:
         "ENVS/conda_tools.yml"
     params:
         config["BCFTOOLS_GENOTYPE_FILTERING_OPTIONS"]
+    threads: default_threads
     shell:
         "bcftools filter -Ou -i '{params}' -S . {input} | bcftools view -Ou --exclude-uncalled --trim-alt-alleles | bcftools view -m2 -o {output}"
 
@@ -75,6 +77,7 @@ rule Filter_Loci_1:
         "ENVS/conda_tools.yml"
     params:
         locus_filters = config["BCFTOOLS_LOCUS_FILTERING1_OPTIONS"]
+    threads: default_threads
     shell:
         "bcftools filter -Ou -sFilter1 -i '{params}' {input} | bcftools view -f 'PASS' > {output}"
 
@@ -91,6 +94,7 @@ rule Filter_Samples:
         "ENVS/conda_tools.yml"
     params:
         config["MAX_NA_PER_SAMPLE"]
+    threads: default_threads
     shell:
         "paste <(bcftools query -f '[%SAMPLE\t]\n' {input} | head -1 | tr '\t' '\n')"
         " <(bcftools query -f '[%GT\t]\n' {input} | awk -v OFS=\"\t\" '{{for (i=1;i<=NF;i++) if (($i == \"./.\") || ($i == \".|.\")) sum[i]+=1 }} END {{for (i in sum) print i, sum[i] / NR }}' | sort -k1,1n | cut -f 2)"
@@ -107,6 +111,7 @@ rule Calculate_LocusExtraStats:
         outputs_directory+"/03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "sed -i 's/=nan/=./g' {input}; python {scripts_dir}/egglib_LocusExtraStats.py --input {input} --output {output}"
 
@@ -120,6 +125,7 @@ rule Filter_Loci_2:
         "ENVS/conda_tools.yml"
     params:
         config["BCFTOOLS_LOCUS_FILTERING2_OPTIONS"]
+    threads: default_threads
     shell:
         "bcftools filter -Ou -sFilter2 -i '{params}' {input} | bcftools view -f 'PASS' > {output}"
 
@@ -139,6 +145,7 @@ rule Build_StatsReports:
         stats_GenotypeLocus1SampleLocus2 = VCF_reports_dir+"/04__Genotype_Locus1_Sample_Locus2_Filtered.stats"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "bcftools stats {input.vcf_raw} > {output.stats_raw};"
         "bcftools stats {input.vcf_Genotype_Filtered} > {output.stats_Genotype};"
@@ -158,8 +165,9 @@ rule Build_Report:
         VCF_reports_dir+"/multiQC_VcfFiltering_report.html"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
-        "multiqc {input} -o {VCF_reports_dir} -n multiQC_VcfFiltering_report -i VcfFiltering_report"
+        "multiqc {input} -o {VCF_reports_dir} -n multiQC_VcfFiltering_report -i VcfFiltering_report -f"
 
 
 rule Summarize_FinalVCFVariables:
@@ -173,6 +181,7 @@ rule Summarize_FinalVCFVariables:
         lengths_tsv = temp(VCF_reports_dir+"/contigs_lengths.tsv")
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {output.pos_tsv} {output.lengths_tsv} {VCF_reports_dir}"
 
@@ -184,6 +193,7 @@ rule Plot_FinalVCFVariablesHistograms:
         VCF_reports_dir+"/variants_stats_histograms_VF.pdf"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
 
@@ -196,6 +206,7 @@ rule Plot_FinalVCFDPBoxplot:
         VCF_reports_dir+"/genotypes_DP_boxplot_VF.pdf"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
 
@@ -208,6 +219,7 @@ rule Plot_FinalVCFVariantsAlongGenome:
         VCF_reports_dir+"/variants_along_genome_VF.pdf"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_along_genome.py --snp-pos {input.pos_tsv} --contigs-lengths {input.lengths_tsv} --output {output}"
 
@@ -219,6 +231,7 @@ rule Compute_MissingDataPerSample:
         VCF_reports_dir+"/missing_data_per_sample.txt"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "echo -e \"Sample\tNA_fraction\" > {output};"
         "paste <(bcftools query -f '[%SAMPLE\t]\n' {input} | head -1 | tr '\t' '\n')"
@@ -237,6 +250,7 @@ rule Write_Summary:
     params:
         latest_info_file = lambda wildcards: find_latest_info_file(outputs_directory),
         new_info_file = workflow_info_file
+    threads: default_threads
     shell:
         """
         if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
@@ -251,11 +265,11 @@ rule Write_Summary:
         if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
         cd -
         echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[configfile_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
-        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[clusterconfig_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
+        sed 's/#.*//' {config[configfile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        if [ {config[clusterprofile_name]} != "NULL" ] ; then
+            echo -e \"\\n>>>CLUSTER PROFILE FILE:\" >> {params.new_info_file}
+            sed 's/#.*//' {config[clusterprofile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        fi
         echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
         snakemake --snakefile {snakefile_dir}/VcfFiltering.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
         echo -e \"\\n\" >> {params.new_info_file}

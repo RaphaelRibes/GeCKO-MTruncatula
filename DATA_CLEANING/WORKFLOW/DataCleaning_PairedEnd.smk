@@ -4,6 +4,7 @@ import os,sys,glob
 from itertools import compress
 from datetime import datetime
 
+default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
 
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
@@ -24,12 +25,12 @@ else:
     performDemultiplexing = False
 
 ### Raw fastq files path and base names
-fastq_R1_raw_base = fastq_R2_raw_base = raw_data_dir = fastq_raw_base = ""
+fastq_R1_raw_base = fastq_R2_raw_base = raw_data_dir = ""
+
 if performDemultiplexing:
     fastq_R1_raw_base = fastq_R1_raw.rsplit('/', 1)[::-1][0].replace('.fastq','').replace('.fq','').replace('.gz','')
     fastq_R2_raw_base = fastq_R2_raw.rsplit('/', 1)[::-1][0].replace('.fastq','').replace('.fq','').replace('.gz','')
     raw_data_dir = fastq_R1_raw.rsplit('/', 1)[0]
-    fastq_raw_base = fastq_R1_raw_base.replace('_R1','')
 
 ### Define paths
 path_to_snakefile = workflow.snakefile
@@ -85,6 +86,13 @@ def find_latest_info_file(directory):
 
 ### PIPELINE ###
 
+ruleorder: Fastqc_ConcatTrimmedFastqs > Fastqc_TrimmedFastqs
+ruleorder: Fastqc_ConcatDemultFastqs > Fastqc_DemultFastqs
+
+
+ # ----------------------------------------------------------------------------------------------- #
+ # ----------------------------------------------------------------------------------------------- #
+
 rule FinalTargets:
     input:
         outputs_directory+"/summary.sentinel"
@@ -100,6 +108,7 @@ rule Fastqc_RawFastqs:
         rawdata_fastqc_reports_dir+"/{base}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "fastqc -o {rawdata_fastqc_reports_dir} {input}"
 
@@ -110,6 +119,7 @@ rule CountReads_RawFastqs:
         fastq_R2_raw
     output:
         rawdata_reports_dir+"/Reads_Count_RawData.txt"
+    threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {raw_data_dir} --output {output}"
 
@@ -128,7 +138,7 @@ rule Demultiplex_RawFastqs:
         cores = config["DEMULT_CORES"]
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["DEMULT_CPUS_PER_TASK"]
+    threads: default_threads
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_PE.sh --demultdir {demult_dir} --R1 {input.fastq_R1_raw} "
         "--R2 {input.fastq_R2_raw} --barcode_file {input.barcode_file} --cores {params.cores} "
@@ -142,6 +152,7 @@ rule CountReads_DemultFastqs:
         expand("{demult_dir}/{sample}.R2.fastq.gz", sample=samples, demult_dir=demult_dir)
     output:
         demult_reports_dir+"/Reads_Count_Demult.txt"
+    threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_dir} --output {output}"
 
@@ -153,6 +164,7 @@ rule Fastqc_DemultFastqs:
         demult_fastqc_reports_dir+"/{base}.{R}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "fastqc -o {demult_fastqc_reports_dir} {input}"
 
@@ -167,10 +179,11 @@ rule MultiQC_DemultFastqs:
         temp(demult_reports_dir+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_reports_dir};"
-        "multiqc {input.fastqc_R1} {input.fastqc_R2} -o {demult_reports_dir} -n multiQC_Demult_Report -c {demult_reports_dir}/config_multiQC.yaml -i Demultiplexing_Report"
+        "multiqc {input.fastqc_R1} {input.fastqc_R2} -o {demult_reports_dir} -n multiQC_Demult_Report -c {demult_reports_dir}/config_multiQC.yaml -i Demultiplexing_Report -f"
 
 
 rule Concatenate_DemultFastqs:
@@ -178,22 +191,23 @@ rule Concatenate_DemultFastqs:
         fastqs_demult = expand("{demult_dir}/{sample}.{{R}}.fastq.gz", sample=samples, demult_dir=demult_dir),
         demult_reads_count = demult_reports_dir+"/Reads_Count_Demult.txt" # necessary to exclude concatenated fastq from read count
     output:
-        temp(demult_dir_output+"/"+fastq_raw_base+"_demultiplexed.{R}.fastq.gz")
+        temp(demult_dir_output+"/All_Samples_Concat_demultiplexed.{R}.fastq.gz")
+    threads: default_threads
     shell:
         "cat {input.fastqs_demult} > {output}"
 
 
 rule Fastqc_ConcatDemultFastqs:
     input:
-        demult_dir_output+"/"+fastq_raw_base+"_demultiplexed.{R}.fastq.gz"
+        demult_dir_output+"/All_Samples_Concat_demultiplexed.{R}.fastq.gz"
     output:
         demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed.{R}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "fastqc -o {demult_fastqc_reports_dir} {input} ;"
-        "mv {demult_fastqc_reports_dir}/{fastq_raw_base}_demultiplexed.{wildcards.R}_fastqc.html {demult_fastqc_reports_dir}/All_Samples_Concat_demultiplexed.{wildcards.R}_fastqc.html ;"
-        "mv {demult_fastqc_reports_dir}/{fastq_raw_base}_demultiplexed.{wildcards.R}_fastqc.zip {demult_fastqc_reports_dir}/All_Samples_Concat_demultiplexed.{wildcards.R}_fastqc.zip"
+
 
 rule Trimming_DemultFastqs:
     input:
@@ -212,7 +226,7 @@ rule Trimming_DemultFastqs:
         cores = config["TRIMMING_CORES"]
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["TRIMMING_CPUS_PER_TASK"]
+    threads: default_threads
     shell:
         "{scripts_dir}/trimming_with_cutadapt_PE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapt_file {input.adapt_file} "
@@ -227,6 +241,7 @@ rule CountReads_TrimmedFastqs:
         expand("{demult_trim_dir}/{sample}.R2.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir)
     output:
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt"
+    threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_trim_dir} --output {output}"
 
@@ -238,6 +253,7 @@ rule Fastqc_TrimmedFastqs:
         demult_trim_fastqc_reports_dir+"/{base}.{R}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "fastqc -o {demult_trim_fastqc_reports_dir} {input}"
 
@@ -254,10 +270,11 @@ rule MultiQC_TrimmedFastqs:
         temp(demult_trim_reports_dir+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{mean_nb_reads}} --output_dir {demult_trim_reports_dir};"
-        "multiqc {input.cutadapt_R1} {input.cutadapt_R2} {input.fastqc_R1} {input.fastqc_R2} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report -c {demult_trim_reports_dir}/config_multiQC.yaml -i Trimming_Report"
+        "multiqc {input.cutadapt_R1} {input.cutadapt_R2} {input.fastqc_R1} {input.fastqc_R2} -o {demult_trim_reports_dir} -n multiQC_Trimming_Report -c {demult_trim_reports_dir}/config_multiQC.yaml -i Trimming_Report -f"
 
 
 rule Concatenate_TrimmedFastqs:
@@ -265,22 +282,22 @@ rule Concatenate_TrimmedFastqs:
         fastqs_trim = expand("{demult_trim_dir}/{sample}.{{R}}.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir),
         demult_trim_reads_count = demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt" # necessary to exclude concatenated fastq from read count
     output:
-        temp(demult_trim_dir+"/"+fastq_raw_base+"_trimmed.{R}.fastq.gz")
+        temp(demult_trim_dir+"/All_Samples_Concat_trimmed.{R}.fastq.gz")
+    threads: default_threads
     shell:
         "cat {input.fastqs_trim} > {output}"
 
 
 rule Fastqc_ConcatTrimmedFastqs:
     input:
-        demult_trim_dir+"/"+fastq_raw_base+"_trimmed.{R}.fastq.gz"
+        demult_trim_dir+"/All_Samples_Concat_trimmed.{R}.fastq.gz"
     output:
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.{R}_fastqc.zip"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "fastqc -o {demult_trim_fastqc_reports_dir} {input} ;"
-        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed.{wildcards.R}_fastqc.html {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.{wildcards.R}_fastqc.html ;"
-        "mv {demult_trim_fastqc_reports_dir}/{fastq_raw_base}_trimmed.{wildcards.R}_fastqc.zip {demult_trim_fastqc_reports_dir}/All_Samples_Concat_trimmed.{wildcards.R}_fastqc.zip"
 
 
 rule MultiQC_Global:
@@ -301,10 +318,11 @@ rule MultiQC_Global:
         temp(outputs_directory+"/config_multiQC.yaml")
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "sum_nb_reads_R1=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/2}}' {demult_trim_reports_dir}/Reads_Count_DemultTrim.txt | sed 's/\..*//');"
         "{scripts_dir}/make_multiQC_config_file.sh --config_file_base {scripts_dir}/config_multiQC_classic.yaml --nb_reads ${{sum_nb_reads_R1}} --output_dir {outputs_directory};"
-        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report -c {outputs_directory}/config_multiQC.yaml -i DataCleaning_Report -b 'WARNING: In this report the %Dups is overestimated and not really meaningful because the data results from merging several individual samples.'"
+        "multiqc {input} -o {outputs_directory} -n multiQC_DataCleaning_Report -c {outputs_directory}/config_multiQC.yaml -i DataCleaning_Report -f -b 'WARNING: In this report the %Dups is overestimated and not really meaningful because the data results from merging several individual samples.'"
 
 
 rule Write_Summary:
@@ -324,6 +342,7 @@ rule Write_Summary:
     params:
         latest_info_file = lambda wildcards: find_latest_info_file(outputs_directory),
         new_info_file = workflow_info_file
+    threads: default_threads
     shell:
         """
         if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
@@ -338,11 +357,11 @@ rule Write_Summary:
         if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
         cd -
         echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[configfile_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
-        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[clusterconfig_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
+        sed 's/#.*//' {config[configfile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        if [ {config[clusterprofile_name]} != "NULL" ] ; then
+            echo -e \"\\n>>>CLUSTER PROFILE FILE:\" >> {params.new_info_file}
+            sed 's/#.*//' {config[clusterprofile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        fi
         echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
         snakemake --snakefile {snakefile_dir}/DataCleaning_PairedEnd.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
         echo -e \"\\n\" >> {params.new_info_file}

@@ -18,11 +18,9 @@ GENOMIC_REFERENCE_CHR_SIZE: "REFERENCE/reference_chr_size.txt"
 
 # For each of the three GATK steps, two options fields are available: options related to the use of JAVA and step-specific options , if not leave blank: ""
 GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS: "-Xmx30g"
-GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK: 20
 GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS: "--native-pair-hmm-threads 10"
 
 GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS: "-Xmx30g"
-GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK: 20
 GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS: "--reader-threads 20 --batch-size 50 " #"--merge-contigs-into-num-partitions 20"
 
 GATK_GENOTYPE_GVCFS_JAVA_OPTIONS: "-Xmx30g"

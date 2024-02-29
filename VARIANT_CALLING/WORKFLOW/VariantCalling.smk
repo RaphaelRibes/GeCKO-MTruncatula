@@ -4,6 +4,7 @@ import os,sys,glob
 from itertools import compress
 from datetime import datetime
 
+default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
 
 ### Variables from config file
 reference = config["REFERENCE"]
@@ -84,6 +85,7 @@ rule Index_Reference:
         reference+".fai"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "samtools faidx {input};"
 
@@ -95,6 +97,7 @@ rule Dictionary_Reference:
         reference_base+".dict"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "gatk CreateSequenceDictionary REFERENCE={input} OUTPUT={output}"
 
@@ -104,6 +107,7 @@ rule ListIntervalsReference_Dictionary:
         reference_base+".dict"
     output:
         reference_base+"_intervals_for_GATK.list"
+    threads: default_threads
     shell:
         "grep '@SQ' {input} | cut -f2,3 | sed 's/SN://' | sed 's/LN://' | awk '{{print $1\":1-\"$2}}' > {output}"
 
@@ -122,7 +126,7 @@ rule HaplotypeCaller:
         extra_options = config["GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS"]
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK"]
+    threads: default_threads
     shell:
         "gatk --java-options \"{params.java_options}\" HaplotypeCaller --reference {input.reference} --input {input.bams} --output {output.vcf} {params.extra_options} -ERC GVCF"
 
@@ -132,6 +136,7 @@ rule List_Haplotype:
         expand("{HaplotypeCaller_dir}/{sample}.g.vcf.gz", sample=samples, HaplotypeCaller_dir=HaplotypeCaller_dir)
     output:
         HaplotypeCaller_dir+"/vcf.list.txt"
+    threads: default_threads
     shell:
         "for vcf in {input} ; do sample=$(basename ${{vcf}} .g.vcf.gz) ; echo ${{sample}}\"\t\"${{vcf}} ; done > {HaplotypeCaller_dir}/vcf.list.txt"
 
@@ -148,7 +153,7 @@ rule GenomicsDBImport:
         extra_options = config["GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS"]
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK"]
+    threads: default_threads
     shell:
         "mkdir -p {output.tmp_DB};"
         "gatk --java-options \"{params.java_options}\" GenomicsDBImport --sample-name-map {input.vcf_list} --intervals {input.intervals} {params.extra_options} --genomicsdb-workspace-path {output.DB} --tmp-dir {output.tmp_DB}"
@@ -167,6 +172,7 @@ rule GenotypeGVCFs:
         extra_options = config["GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS"]
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "mkdir -p {output.tmp_GVCF};"
         "gatk --java-options \"{params.java_options}\" GenotypeGVCFs --reference {input.reference} --variant gendb://{input.DB} {params.extra_options} --output {output.vcf_gz} --tmp-dir {output.tmp_GVCF}"
@@ -183,6 +189,7 @@ rule ConvertPositions:
         vcf_converted_gz_csi = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz.csi"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "gunzip {input.vcf_gz};"
         "python3 {scripts_dir}/convert_vcf_positions.py --vcf {output.vcf} --chr_size {input.reference_chr_size} --vcf_converted {GenotypeGVCFs_dir}/variant_calling_converted.vcf;"
@@ -207,6 +214,7 @@ rule Summarize_GVCFVariables:
         lengths_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/contigs_lengths.tsv")
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {output.pos_tsv} {output.lengths_tsv} {GenotypeGVCFs_REPORTS_dir}"
 
@@ -218,6 +226,7 @@ rule Plot_GVCFVariablesHistograms:
         GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
 
@@ -230,6 +239,7 @@ rule Plot_GVCFDPBoxplot:
         GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
 
@@ -242,6 +252,7 @@ rule Plot_GVCFVariantsAlongGenome:
         GenotypeGVCFs_REPORTS_dir+"/variants_along_genome_VC.pdf"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_along_genome.py --snp-pos {input.pos_tsv} --contigs-lengths {input.lengths_tsv} --output {output}"
 
@@ -256,6 +267,7 @@ rule Write_Summary:
     params:
         latest_info_file = lambda wildcards: find_latest_info_file(vc_dir),
         new_info_file = workflow_info_file
+    threads: default_threads
     shell:
         """
         if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
@@ -270,11 +282,11 @@ rule Write_Summary:
         if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
         cd -
         echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[configfile_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
-        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[clusterconfig_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
+        sed 's/#.*//' {config[configfile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        if [ {config[clusterprofile_name]} != "NULL" ] ; then
+            echo -e \"\\n>>>CLUSTER PROFILE FILE:\" >> {params.new_info_file}
+            sed 's/#.*//' {config[clusterprofile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        fi
         echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
         snakemake --snakefile {snakefile_dir}/VariantCalling.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
         echo -e \"\\n\" >> {params.new_info_file}

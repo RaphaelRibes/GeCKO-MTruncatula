@@ -6,7 +6,7 @@ MAPPING_SUBFOLDER: ""
 
 ### INPUT FILES ###
 # Path(s) to the directory or directories containing the trimmed fastq files to be mapped. To provide several directories, separate them with spaces.
-    # If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files. 
+ # If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files. 
 TRIM_DIRS: "DEMULT_TRIM"
 
 # Path to the reference file in fasta format (must end with .fa, .fas or .fasta).
@@ -23,7 +23,6 @@ BED_MIN_LENGTH: ""
 MAPPER: "bwa_mem"
 SEQUENCING_TECHNOLOGY: "ILLUMINA"
 EXTRA_MAPPER_OPTIONS: "-t 4"
-MAPPING_CPUS_PER_TASK: 8
 
 PICARD_MARKDUPLICATES_OPTIONS: "-MAX_FILE_HANDLES_FOR_READ_ENDS_MAP 1000"
 PICARD_MARKDUPLICATES_JAVA_OPTIONS: ""

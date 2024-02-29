@@ -1,5 +1,5 @@
 ### GENERAL VARIABLES ###
-##  If you want to separate results from different filtering parameters, provide a name for an extra folder to create in the VCF_FILTERING output folder. Otherwise leave blank ("").
+## If you want to separate results from different filtering parameters, provide a name for an extra folder to create in the VCF_FILTERING output folder. Otherwise leave blank ("").
 FILTERING_SUBFOLDER: ""
 
 

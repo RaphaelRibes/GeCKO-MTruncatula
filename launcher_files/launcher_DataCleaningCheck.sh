@@ -3,11 +3,11 @@
 # Model config file
 if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" ]] ; then
   echo -e "\nINFO: Paired end data is expected (PAIRED_END set to TRUE)\n"
-  model_config="${workflow_folder}/SCRIPTS/model_files/config_DataCleaning_PE.yml"
+  model_config="${workflow_path}/SCRIPTS/model_files/config_DataCleaning_PE.yml"
   PAIRED="TRUE"
 else
   echo -e "\nINFO: Single end data is expected (PAIRED_END set to FALSE)\n"
-  model_config="${workflow_folder}/SCRIPTS/model_files/config_DataCleaning_SE.yml"
+  model_config="${workflow_path}/SCRIPTS/model_files/config_DataCleaning_SE.yml"
   PAIRED="FALSE"
 fi
 
@@ -136,15 +136,8 @@ else # if single end data is expected
 fi
 
 # DEMULT_CPUS_PER_TASK, DEMULT_SUBSTITUTIONS and DEMULT_CORES
-DEMULT_CPUS_PER_TASK=$(grep "^DEMULT_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 DEMULT_SUBSTITUTIONS=$(grep "^DEMULT_SUBSTITUTIONS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 DEMULT_CORES=$(grep "^DEMULT_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-
-if [[ -z "$DEMULT_DIR" && -z "$DEMULT_CPUS_PER_TASK" ]] ; then
-  echo -e "\nERROR: A DEMULT_CPUS_PER_TASK value must be provided in the config file."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
 
 
 if [[ -z "$DEMULT_DIR" && -z "$DEMULT_SUBSTITUTIONS" ]] ; then
@@ -178,8 +171,9 @@ if [[ ! -z "$BARCODE_FILE" && ! -f "$BARCODE_FILE" ]] ; then
 fi
 
 if [[ ! -z "$BARCODE_FILE" ]] ; then
-  nb_carriage_returns=$(grep -c $'\r' $BARCODE_FILE)
-  if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+  #nb_carriage_returns=$(grep -c $'\r' $BARCODE_FILE)
+  #if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+  if grep -q $'\r' $BARCODE_FILE; then
     echo "Removing windows carriage returns in ${BARCODE_FILE}..."
     sed -i 's/\r$//g' $BARCODE_FILE
     sed -i 's/\r/\n/g' $BARCODE_FILE
@@ -206,8 +200,9 @@ if [[ ! -z "$ADAPT_FILE" && ! -f "$ADAPT_FILE" ]] ; then
   echo -e "\nExiting.\n"
   exit 1
 fi
-nb_carriage_returns=$(grep -c $'\r' $ADAPT_FILE)
-if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+#nb_carriage_returns=$(grep -c $'\r' $ADAPT_FILE)
+#if [[ "$nb_carriage_returns" -gt 0 ]] ; then
+if grep -q $'\r' $ADAPT_FILE; then
   echo "Removing windows carriage returns in ${ADAPT_FILE}..."
   sed -i 's/\r$//g' $ADAPT_FILE
   sed -i 's/\r/\n/g' $ADAPT_FILE
@@ -269,8 +264,8 @@ fi
 
 # check that BARCODE_FILE and ADAPT_FILE contain the same samples
 if [[ ! -z $BARCODE_FILE ]] ; then
-  nb_uniq_adapt=$(grep -F -x -v -f <(cut -f1 $BARCODE_FILE | sort) <(cut -f1 $ADAPT_FILE | sort) | wc -l)
-  nb_uniq_barcode=$(grep -F -x -v -f <(cut -f1 $ADAPT_FILE | sort) <(cut -f1 $BARCODE_FILE | sort) | wc -l)
+  nb_uniq_adapt=$(grep -F -x -v -f <(cut -f1 $BARCODE_FILE | sort) <(cut -f1 $ADAPT_FILE | sort) | wc -l || true)
+  nb_uniq_barcode=$(grep -F -x -v -f <(cut -f1 $ADAPT_FILE | sort) <(cut -f1 $BARCODE_FILE | sort) | wc -l || true)
   if [[ $nb_uniq_adapt -gt 0 || $nb_uniq_barcode -gt 0 ]] ; then
     echo -e "\nERROR: The samples names given in the ADAPT_FILE and the BARCODE_FILE do not match. Please make sure that they are the same."
     echo -e "\nExiting.\n"
@@ -280,17 +275,10 @@ fi
 
 
 # TRIMMING_CPUS_PER_TASK, TRIMMING_QUAL, TRIMMING_MIN_LENGTH and TRIMMING_CORES
-TRIMMING_CPUS_PER_TASK=$(grep "^TRIMMING_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 TRIMMING_QUAL=$(grep "^TRIMMING_QUAL:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 TRIMMING_MIN_LENGTH=$(grep "^TRIMMING_MIN_LENGTH:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 TRIMMING_CORES=$(grep "^TRIMMING_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
-
-if [[ -z $TRIMMING_CPUS_PER_TASK ]] ; then
-  echo -e "\nERROR: You must provide the TRIMMING_CPUS_PER_TASK in the config_file."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
 
 if [[ -z $TRIMMING_QUAL ]] ; then
   echo -e "\nERROR: You must provide the TRIMMING_QUAL in the config_file."

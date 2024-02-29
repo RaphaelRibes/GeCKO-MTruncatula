@@ -2,7 +2,7 @@
 
 
 # Model config file
-model_config="${workflow_folder}/SCRIPTS/model_files/config_ReadMapping.yml"
+model_config="${workflow_path}/SCRIPTS/model_files/config_ReadMapping.yml"
 
 
 # Config file variables
@@ -69,7 +69,6 @@ for TRIM_DIR in $TRIM_DIRS ; do
     echo -e "\nExiting.\n"
     exit 1
   fi
-
   if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
     nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
     nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
@@ -95,11 +94,10 @@ for TRIM_DIR in $TRIM_DIRS ; do
       done
     fi
   fi
-
   if [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
-    nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null | wc -l)
-    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*R1*fastq.gz 2>/dev/null | wc -l)
-    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*R2*fastq.gz 2>/dev/null | wc -l)
+    nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null || true | wc -l)
+    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*R1*fastq.gz 2>/dev/null || true | wc -l)
+    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*R2*fastq.gz 2>/dev/null || true | wc -l)
     if [[ "$nb_fastq" = 0 ]] ; then
       echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.fastq.gz'."
       echo -e "\nExiting.\n"

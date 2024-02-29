@@ -1,3 +1,0 @@
-cluster: "qsub -V -b yes -cwd -q {cluster.q} -N {cluster.N} -o {cluster.o} -e {cluster.e} -pe {cluster.pe} h_vmem={cluster.h_vmem}"
-latency-wait: 20
-jobs: 1

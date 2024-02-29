@@ -1,3 +1,0 @@
-cluster: "sbatch --partition {cluster.partition} --job-name {cluster.job-name} --error {cluster.error} --output {cluster.output} --cpus-per-task {cluster.cpus-per-task} --mem-per-cpu {cluster.mem-per-cpu}"
-latency-wait: 20
-jobs: 1

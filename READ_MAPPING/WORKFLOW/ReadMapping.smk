@@ -4,6 +4,8 @@ import os,sys,glob
 from itertools import compress
 from datetime import datetime
 
+default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
+
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Define paths
@@ -163,6 +165,7 @@ rule Index_Reference:
         ref_index
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "{scripts_dir}/index_ref.sh {input} {mapper}"
 
@@ -182,7 +185,7 @@ rule Mapping_PairedEndFastqs:
         [ paired_end, paired_end, paired_end, paired_end, paired_end ])
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["MAPPING_CPUS_PER_TASK"]
+    threads: default_threads
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
@@ -210,7 +213,7 @@ rule Mapping_SingleEndFastqs:
         [ not paired_end, not paired_end, not paired_end, not paired_end ])
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["MAPPING_CPUS_PER_TASK"]
+    threads: default_threads
     params:
         mapper = config["MAPPER"],
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
@@ -231,6 +234,7 @@ rule Stats_Bams:
         bams_stats_reports_dir+"/stats_{base}"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "samtools stats {input.bam} > {output}"
 
@@ -246,6 +250,7 @@ rule MarkDuplicates_Bams:
     params:
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
+    threads: default_threads
     shell:
         "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {input} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES TRUE -M {output.metrics}"
 
@@ -259,6 +264,7 @@ rule Filter_Bams:
         "ENVS/conda_tools.yml"
     params:
         samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS1"]
+    threads: default_threads
     shell:
         "samtools view -b {params.samtools_view_filters} -o {output} {input}"
 
@@ -275,6 +281,7 @@ rule Summarize_BamsReadsCount:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "{scripts_dir}/summarize_stats.sh --stats_folder {bams_stats_reports_dir} --bams_folder {bams_dir} --rmdup {rm_dup} --output {output};"
         "rm -rf {bams_reports_dir}/DUPLICATES_TMP"
@@ -287,8 +294,9 @@ rule MultiQC_Bams:
         bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
-        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report"
+        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report -f"
 
 
 
@@ -301,6 +309,7 @@ rule Index_Bams:
         "ENVS/conda_tools.yml"
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
+    threads: default_threads
     shell:
         "samtools index -c {params.samtools_index_options} {input.bam}"
 
@@ -310,6 +319,7 @@ rule Create_BamsList:
         expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir)
     output:
         mapping_dir+"/bams_list.txt"
+    threads: default_threads
     shell:
         "ls -d {bams_dir}/*.bam > {output}"
 
@@ -321,6 +331,7 @@ rule Clean_BedFile:
         clean_bed
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         """
         sort -k1,1 -k2,2n {input} | awk 'BEGIN{{OFS="\t"; chr=0; start=0; end=0}}{{
@@ -347,6 +358,7 @@ rule Create_BedFile:
         min_cov = float(config["BED_MIN_MEAN_COV"]) * len(expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir)) if len(config["BED_MIN_MEAN_COV"]) > 0 else 0,
         min_dist = config["BED_MIN_DIST"],
         min_length = config["BED_MIN_LENGTH"]
+    threads: default_threads
     shell:
         "{scripts_dir}/make_bed_file.sh --input_bams_dir {bams_dir} --output_dir {subref_dir} --min_cov {params.min_cov} --min_dist {params.min_dist} --min_length {params.min_length}"
 
@@ -360,6 +372,7 @@ rule CountReadsZones_Bams:
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "echo ZONE {samples} | sed 's/ /\t/g' > {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv ;"
         "samtools bedcov {input.bed} {input.bams} | awk '{{l=$3-$2+1; printf $1\"_\"$2\"_\"$3\"\t\"; for (i=4;i<NF;i++) printf $i/l\"\t\"; printf $NF/l\"\\n\"}}' >> {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv"
@@ -374,6 +387,7 @@ rule Create_SubReference:
         tmp_bed = temp(subref_dir+"/tmp_zones.bed")
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "awk '{{print $1\":\"$2\"-\"$3}}' {input.bed} > {output.tmp_bed} ;"
         "samtools faidx {input.ref} --region-file {output.tmp_bed} > {output.subref};"
@@ -391,6 +405,7 @@ rule Extract_PairedEndReads:
         tmp_extracted_fastq_unpaired = temp(subbams_dir+"/{base}_extract.U.fastq.gz")
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "{scripts_dir}/extract_PEreads.sh --bam {input.bams} --sample {wildcards.base} --bed_file {input.bed} --output_dir {subbams_dir}"
 
@@ -412,13 +427,13 @@ rule Remapping_PairedEndExtractedFastqs:
         [ paired_end, paired_end, paired_end, paired_end, paired_end, paired_end ])
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
+    threads: default_threads
     shell:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" --fastq_U \"{input.fastq_unpaired}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
@@ -435,6 +450,7 @@ rule Extract_SingleEndReads:
         tmp_extracted_fastq = temp(subbams_dir+"/{base}_extract.fastq.gz"),
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "samtools view -F 4 -b -L {input.bed} {input.bams} > {output.tmp_extract_bams} ;"
         "picard SamToFastq -I {output.tmp_extract_bams} -F {subbams_dir}/{wildcards.base}_extract.fastq -VALIDATION_STRINGENCY SILENT ;"
@@ -454,13 +470,13 @@ rule Remapping_SingleEndExtractedFastqs:
         [ not paired_end, not paired_end, not paired_end, not paired_end ])
     conda:
         "ENVS/conda_tools.yml"
-    threads: config["MAPPING_CPUS_PER_TASK"]
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
+    threads: default_threads
     shell:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
@@ -475,6 +491,7 @@ rule Stats_Subbams:
         subbams_stats_reports_dir+"/stats_{base}"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "samtools stats {input.bam} > {output}"
 
@@ -488,6 +505,7 @@ rule Filter_Subbams:
         "ENVS/conda_tools.yml"
     params:
         samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS2"]
+    threads: default_threads
     shell:
         "samtools view -b {params.samtools_view_filters} -o {output} {input}"
 
@@ -500,6 +518,7 @@ rule Summarize_SubbamsReadsCount:
         subbams_reports_dir+"/nb_reads_per_sample.tsv"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "{scripts_dir}/summarize_stats.sh --stats_folder {subbams_stats_reports_dir} --bams_folder {subbams_dir} --rmdup FALSE --output {output};"
 
@@ -511,8 +530,9 @@ rule MultiQC_Subbams:
         subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
-        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report"
+        "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report -f"
 
 
 rule Index_Subbams:
@@ -524,6 +544,7 @@ rule Index_Subbams:
         "ENVS/conda_tools.yml"
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
+    threads: default_threads
     shell:
         "samtools index -c {params.samtools_index_options} {input.bam}"
 
@@ -533,6 +554,7 @@ rule Create_SubbamsList:
         expand("{subbams_dir}/{sample}.bam", sample=samples, subbams_dir=subbams_dir)
     output:
         mapping_dir+"/subbams_list.txt"
+    threads: default_threads
     shell:
         "ls -d {subbams_dir}/*.bam > {output}"
 
@@ -545,6 +567,7 @@ rule Create_RefChrSizeFile:
         chr_size = mapping_dir+"/reference_chr_size.txt"
     conda:
         "ENVS/conda_tools.yml"
+    threads: default_threads
     shell:
         "samtools faidx {input};"
         "cut -f 1,2 {output.ref_fai} > {output.chr_size}"
@@ -569,6 +592,7 @@ rule Write_Summary:
     params:
         latest_info_file = lambda wildcards: find_latest_info_file(mapping_dir),
         new_info_file = workflow_info_file
+    threads: default_threads
     shell:
         """
         if [ ! -z "{params.latest_info_file}" ]; then mv {params.latest_info_file} {params.new_info_file} ; fi
@@ -583,11 +607,11 @@ rule Write_Summary:
         if git rev-parse --git-dir > /dev/null 2>&1; then echo -e \">>>COMMIT ID:\" >> {params.new_info_file}; git rev-parse HEAD >> {params.new_info_file} ; fi
         cd -
         echo -e \"\\n>>>CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[configfile_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
-        echo -e \"\\n>>>CLUSTER CONFIG FILE:\" >> {params.new_info_file}
-        cat {config[clusterconfig_name]} >> {params.new_info_file}
-        echo -e \"\\n\" >> {params.new_info_file}
+        sed 's/#.*//' {config[configfile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        if [ {config[clusterprofile_name]} != "NULL" ] ; then
+            echo -e \"\\n>>>CLUSTER PROFILE FILE:\" >> {params.new_info_file}
+            sed 's/#.*//' {config[clusterprofile_name]} | grep -vP "^\s*$" >> {params.new_info_file}
+        fi
         echo -e \"\\n>>>SUMMARY:\" >> {params.new_info_file}
         snakemake --snakefile {snakefile_dir}/ReadMapping.smk --configfile {config[configfile_name]} --summary >> {params.new_info_file}
         echo -e \"\\n\" >> {params.new_info_file}

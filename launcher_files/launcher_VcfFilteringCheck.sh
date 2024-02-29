@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Model config file
-model_config="${workflow_folder}/SCRIPTS/model_files/config_VcfFiltering.yml"
+model_config="${workflow_path}/SCRIPTS/model_files/config_VcfFiltering.yml"
 
 
 # Config file variables

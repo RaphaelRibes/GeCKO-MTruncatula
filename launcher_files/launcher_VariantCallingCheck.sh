@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Model config file
-model_config="${workflow_folder}/SCRIPTS/model_files/config_VariantCalling.yml"
+model_config="${workflow_path}/SCRIPTS/model_files/config_VariantCalling.yml"
 
 
 # Config file variables
@@ -63,22 +63,6 @@ fi
 # **GENOMIC_REFERENCE_CHR_SIZE**
 if [[ ! -z "$GENOMIC_REFERENCE_CHR_SIZE" && ! -f "$GENOMIC_REFERENCE_CHR_SIZE" ]] ; then
   echo -e "\nERROR: The GENOMIC_REFERENCE_CHR_SIZE provided in the config file (${GENOMIC_REFERENCE_CHR_SIZE}) does not exist. Please make sure the file exists and its path is correct."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
-
-# **Variant Calling parameters**
-GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK=$(grep "^GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK=$(grep "^GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-
-if [[ -z "$GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK" ]] ; then
-  echo -e "\nERROR: You must provide the GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK in the config_file."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
-
-if [[ -z "$GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK" ]] ; then
-  echo -e "\nERROR: You must provide the GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK in the config_file."
   echo -e "\nExiting.\n"
   exit 1
 fi
