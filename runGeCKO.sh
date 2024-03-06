@@ -50,11 +50,6 @@ do
     shift
     shift
     ;;
-    #--workflow-path)
-    #WORKFLOW_PATH="$2"
-    #shift
-    #shift
-    #;;
     --cluster-profile)
     CLUSTER_PROFILE="$2"
     shift
@@ -135,25 +130,8 @@ absolutePath () {
 # --------------------------------------------------------------------------------------------------------------#
 
 ### GeCKO_path (needed for next steps)
+
 GeCKO_path=$(dirname $(absolutePath "$0"))
-
-#if [[ -z "$WORKFLOW_PATH" || "$WORKFLOW_PATH" = --* || "$WORKFLOW_PATH" = -* ]] ; then
-#	echo -e "\nERROR: the --workflow-path parameter is missing, please include it in your command."
-#	echo "As a reminder:"
-#	echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
-#	echo -e "\nExiting.\n"
-#	exit 1
-#fi
-#if [ ! -d "$WORKFLOW_PATH" ] ; then
-#	echo -e "\nERROR: the path given in the --workflow-path parameter is not valid. Please make sure the directory exists and the path is correctly written."
-#	echo "As a reminder:"
-#  echo "--workflow-path [...]: the path to the directory you cloned from GitHub, ending with /GeCKO"
-#	echo -e "\nExiting.\n"
-#	exit 1
-#fi
-
-#WORKFLOW_PATH=$(absolutePath $WORKFLOW_PATH)
-
 
 
 # --------------------------------------------------------------------------------------------------------------#
