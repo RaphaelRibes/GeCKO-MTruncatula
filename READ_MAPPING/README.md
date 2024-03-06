@@ -103,7 +103,7 @@ This file is used to pass all the information and tools parameters that will be 
 
 **MAPPING PARAMETERS**  
 - *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
-- *REMOVE_DUP:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after the mapping step. They will be marked either way. [TRUE or FALSE]  
+- *REMOVE_DUP_MARKDUPLICATES:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after the mapping step. They will be marked either way. [TRUE or FALSE]  
 - *SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
 - *EXTRA_MAPPER_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the mapper command. Be careful to provide them between quotes. 
 - *MAPPING_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for each mapping task. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.  
