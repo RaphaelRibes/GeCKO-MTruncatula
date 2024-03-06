@@ -181,7 +181,7 @@ fi
 
 ## Mapping parameters ##
 MAPPER=$(grep "^MAPPER:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-REMOVE_DUP=$(grep "^REMOVE_DUP:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+REMOVE_DUP_MARKDUPLICATES=$(grep "^REMOVE_DUP_MARKDUPLICATES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 # **MAPPER**
 if [[ -z "$MAPPER" ]] ; then
@@ -199,11 +199,11 @@ if [[ "$MAPPER" != "bwa-mem2_mem" && "$MAPPER" != "bwa_mem" && "$MAPPER" != "bow
   exit 1
 fi
 
-# **REMOVE_DUP**
-if [[ "$REMOVE_DUP" != "TRUE" && "$REMOVE_DUP" != "True" && "$REMOVE_DUP" != "true" && "$REMOVE_DUP" != "T" && "$REMOVE_DUP" != "FALSE" && "$REMOVE_DUP" != "False" && "$REMOVE_DUP" != "false" && "$REMOVE_DUP" != "F" ]] ; then
-  echo -e "\nERROR: The REMOVE_DUP variable is incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
+# **REMOVE_DUP_MARKDUPLICATES**
+if [[ "$REMOVE_DUP_MARKDUPLICATES" != "TRUE" && "$REMOVE_DUP_MARKDUPLICATES" != "True" && "$REMOVE_DUP_MARKDUPLICATES" != "true" && "$REMOVE_DUP_MARKDUPLICATES" != "T" && "$REMOVE_DUP_MARKDUPLICATES" != "FALSE" && "$REMOVE_DUP_MARKDUPLICATES" != "False" && "$REMOVE_DUP_MARKDUPLICATES" != "false" && "$REMOVE_DUP_MARKDUPLICATES" != "F" ]] ; then
+  echo -e "\nERROR: The REMOVE_DUP_MARKDUPLICATES variable is incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
   echo "As a reminder:"
-  echo "REMOVE_DUP: set to TRUE to remove duplicates after mapping (picard MarkDuplicates -REMOVE_DUPLICATES TRUE), to FALSE otherwise."
+  echo "REMOVE_DUP_MARKDUPLICATES: set to TRUE to remove duplicates after mapping (picard MarkDuplicates -REMOVE_DUPLICATES TRUE), to FALSE otherwise."
   echo -e "\nExiting.\n"
   exit 1
 fi

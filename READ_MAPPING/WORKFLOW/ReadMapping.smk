@@ -22,7 +22,7 @@ if (len(config["TRIM_DIRS"]) == 0):
     trim_dirs = [working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"]
 
 
-if config["REMOVE_DUP"]:
+if config["REMOVE_DUP_MARKDUPLICATES"]:
     rm_dup = "TRUE"
 else:
     rm_dup = "FALSE"
@@ -182,7 +182,7 @@ rule Mapping_PairedEndFastqs:
         temp(bams_dir+"/{base}_sortcoord.bam"),
         bams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
-        [ paired_end, paired_end, paired_end, paired_end, paired_end ])
+        [ paired_end, paired_end, paired_end, paired_end ])
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
@@ -257,7 +257,7 @@ rule MarkDuplicates_Bams:
 
 rule Filter_Bams:
     input:
-        bams_dir+"/{base}_rmDup.bam" if config["REMOVE_DUP"] else bams_dir+"/{base}_markedDup.bam"
+        bams_dir+"/{base}_rmDup.bam" if config["REMOVE_DUP_MARKDUPLICATES"] else bams_dir+"/{base}_markedDup.bam"
     output:
         bams_dir+"/{base}.bam"
     conda:
@@ -276,7 +276,7 @@ rule Summarize_BamsReadsCount:
         expand("{bams_dir}/{sample}_rmDup.bam", sample=samples, bams_dir=bams_dir),
         expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir) ],
 
-        [ True, config["REMOVE_DUP"], True ])
+        [ True, config["REMOVE_DUP_MARKDUPLICATES"], True ])
     output:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
     conda:
@@ -576,7 +576,8 @@ rule Create_RefChrSizeFile:
 rule Write_Summary:
     input:
         buildExpectedFiles(
-        [ bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
+        [ expand("{bams_dir}/{sample}.bam.csi", sample=samples, bams_dir=bams_dir),
+        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
         bams_reports_dir+"/nb_reads_per_sample.tsv",
         mapping_dir+"/bams_list.txt",
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv",
@@ -586,7 +587,7 @@ rule Write_Summary:
         subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
         mapping_dir+"/subbams_list.txt",
         mapping_dir+"/reference_chr_size.txt" ],
-        [ True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
+        [ True, True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
     output:
         temp(mapping_dir+"/summary.sentinel")
     params:

@@ -32,7 +32,7 @@ SAMTOOLS_INDEX_OPTIONS: "" #use "-c" if mapping to a really big reference genome
 
 ### BAM FILTERING ###
 ## After the first mapping
-REMOVE_DUP: TRUE
+REMOVE_DUP_MARKDUPLICATES: TRUE
 # options passed to 'samtools view'
 SAMTOOLS_VIEW_FILTERS1: "-F 256 -F 2048"
 

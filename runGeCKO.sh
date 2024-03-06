@@ -5,9 +5,9 @@ set -e -o pipefail
 
 ### v WRITE YOUR MODULE LOADS HERE v ###
 
-module purge
-source /home/girodollej/.bashrc_new
-conda activate snakemake7.32.4_mamba_python
+#module purge
+#source /home/girodollej/.bashrc_new
+#conda activate snakemake7.32.4_mamba_python
 #module load snakemake/7.15.1-conda
 #module load snakemake/8.4.2-conda
 #conda activate snakemake7.15.2_mamba_python

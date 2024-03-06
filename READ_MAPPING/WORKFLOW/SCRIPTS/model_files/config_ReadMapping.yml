@@ -31,7 +31,7 @@ SAMTOOLS_INDEX_OPTIONS: "" #besoin de "-c" quand mapping sur Svevo entier
 
 ### BAM FILTERING ###
 ## After the first mapping
-REMOVE_DUP: TRUE
+REMOVE_DUP_MARKDUPLICATES: TRUE
 # options passed to 'samtools view'
 SAMTOOLS_VIEW_FILTERS1: ""
 
