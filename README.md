@@ -39,7 +39,7 @@ Once you have conda available and before launching any GeCKO workflow, it is adv
 <ins>**Recommended method:**</ins>  
 Have runGeCKO create a fully operational conda environment for you with:  
 ```./runGeCKO.sh --create-gecko-env```  
-This only needs to be run once, and will create a conda environment called “GeCKO_env”, providing compatible versions of Snakemake (v7.32.4), Mamba (v1.4.9) and their dependencies.  
+This only needs to be run once, and will create a conda environment called 'GeCKO_env', providing compatible versions of Snakemake (v7.32.4), Mamba (v1.4.9) and their dependencies.  
 You will then have to activate the “GeCKO_env” environment before launching any GeCKO workflow with:  
 ```conda activate GeCKO_env```  
 <ins>**Alternative method:**</ins>   
@@ -54,49 +54,45 @@ Make sure Snakemake (v7) and Mamba are available to your working environment
 *The /home/user/GeCKO path refers to the directory you cloned from GitHub.*
 
 #### Prepare your data and config files 
-Copy the appropriate config and cluster_config files and adapt them to your data and cluster.  
+Copy the appropriate config and profile files and adapt them to your data and cluster.  
 For more information on this step, see the more detailed README placed in each workflow folder.  
 
 #### The runGeCKO launcher  
-You can use the launcher script runGeCKO.sh to run the workflow of your choice. There are only two mandatory options: one specifying the WORKFLOW directory, and another to provide the name of the workflow you want to run. So to demultiplex and trim your reads simply type:
+You can use the launcher script runGeCKO.sh to run the workflow of your choice.  
+For example, the following command will demultiplex and trim your reads with the DataCleaning workflow, using the full resource of your SLURM HPC environment with up to 100 submitted jobs at the same time:  
 
-```./runGeCKO.sh --workflow-path /home/user/GeCKO --workflow DataCleaning```
+```/home/user/GeCKO/runGeCKO.sh --workflow DataCleaning --config-file CONFIG/config_DataCleaning.yml --cluster-profile CONFIG/DC_CLUSTER_PROFILE_SLURM --jobs 100``` 
 
+The information regarding the fastq files, read index etc. will be retrieved from the config_DataCleaning.yml config file, while the config.yaml found in the CONFIG/DC_CLUSTER_PROFILE_SLURM folder will provide information specific to your cluster (e.g. job queue names, SLURM or SGE job-sheduler, etc).
 
-The information regarding the fastq files, read index etc. are, by default, retrieved from the config file CONFIG/config_WorkflowName.yml. The same folder can also contain the cluster_config_WorkflowName.yml file used by default to provide specific cluster information (e.g. job queue names) related to this workflow.
-
-To use the full resource of my HPC environment (Slurm), and allow up to 100 submitted jobs at the same time, it thus suffices to adapt this cluster config file and to type the following command:  
-
-```./runGeCKO.sh --workflow-path /home/jgirodolle/GeCKO --workflow DataCleaning --job-scheduler SLURM --jobs 100```  
 &nbsp;
 > ##### POSSIBLE ACTIONS:  
 > The launcher's default behavior is to run the workflow, but other actions can be called instead:
 >
 > **--help**&nbsp;&nbsp;&nbsp;*print the help*  
-> ```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --help```  
+> ```./runGeCKO.sh --help```
+> 
+> **--create-gecko-env**&nbsp;&nbsp;&nbsp;*create a suitable environment for launching GeCKO workflows*  
+> ```./runGeCKO.sh --create-gecko-env```  
+> This will create a conda environment 'GeCKO_env' providing compatible versions of Snakemake, Mamba and their dependencies. It will then be possible to activate it with ```conda activate GeCKO_env``` before launching any workflow.
 >
 > **--dryrun**&nbsp;&nbsp;&nbsp;*only dryrun the workflow (and detect potential errors) without actually running it*  
-> ```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --dryrun```  
+> ```./runGeCKO.sh --workflow WorkflowName --dryrun```  
 >
 > **--report**&nbsp;&nbsp;&nbsp;*write an html report of the workflow's last run*  
-> ```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --report```  
+> ```./runGeCKO.sh --workflow WorkflowName --report```  
 >
 > **--diagram**&nbsp;&nbsp;&nbsp;*write an svg diagram of the workflow*  
-> ```./runGeCKO.sh --workflow-path /PATH/TO/GeCKO --workflow WorkflowName --diagram```  
+> ```./runGeCKO.sh --workflow WorkflowName --diagram```  
 >
-> ##### MANDATORY PARAMETERS FOR ALL ACTIONS (except --workflow for --help):  
-> **--workflow-path [...]**&nbsp;&nbsp;&nbsp;*the path to the directory you cloned from GitHub*  
-> If the directory was cloned from GitHub, it should end with /GeCKO  
->
+> ##### MANDATORY PARAMETER FOR ALL ACTIONS except --help and --create-gecko-env:  
 > **--workflow [...]**&nbsp;&nbsp;&nbsp;*name of the workflow you want to run*  
 > Current existing options are 'DataCleaning', 'ReadMapping', 'VariantCalling' and 'VcfFiltering'  
 >
 > ##### CONFIGURATION PARAMETERS:  
-> **--job-scheduler [...]**&nbsp;&nbsp;&nbsp;*name of the job scheduler that is installed on your cluster*  
-> Current supported options are 'SLURM' and 'SGE'. If omitted, the workflow will run without submitting any job and any parallelization.  
->
-> **--cluster-config [...]**&nbsp;&nbsp;&nbsp;*path to the cluster config file*  
-> If omitted, this script will look for a cluster_config_WorkflowName.yml file (eg: cluster_config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from. This argument can also be absent if the job-scheduler is not specified (no jobs submitted).  
+> **--cluster-profile [...]**&nbsp;&nbsp;&nbsp;*path to the cluster profile folder*  
+> This folder must contain a yaml configuration file named 'config.yaml'. This file's first part provides information specific to your cluster (queues/partitions names, and needed cpus and memory for each task). The second part determines how jobs should be submitted depending on your cluster's job-scheduler. Please use the GeCKO's templates provided for SGE and SLURM job-shedulers in the example section of each workflow.  
+> If this argument is absent, no jobs will be submitted.  
 > 
 > **--config-file [...]**&nbsp;&nbsp;&nbsp;*path to the workflow's config file*  
 > If omitted, this script will look for a config_WorkflowName.yml file (eg: config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from.  
