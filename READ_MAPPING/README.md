@@ -23,17 +23,17 @@ Needed files:
 - your demultiplexed and trimmed fastq.gz files
 - a reference file in fasta format to map your reads to
 - (optional) a bed file listing genomic regions of interest 
-- the cluster_config_ReadMapping.yml (in case you work on a cluster) and config_ReadMapping.yml files  
+- a RM_CLUSTER_PROFILE folder (in case you work on a cluster) and a config_ReadMapping.yml file  
 
 
 &nbsp;
 
 To easily launch the workflow, use our runGeCKO.sh launcher. For example, to launch the workflow on our example PAIRED_END DEMULT_TRIM dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/PAIRED_END directory:  
-```../../../runGeCKO.sh --workflow ReadMapping --workflow-path ../../../../GeCKO --config-file CONFIG/config_ReadMapping.yml --cluster-config CONFIG/cluster_config_ReadMapping_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```../../../runGeCKO.sh --workflow ReadMapping --config-file CONFIG/config_ReadMapping.yml --cluster-profile CONFIG/RM_CLUSTER_PROFILE_SLURM --jobs 20```  
 
-To launch it on your own data, if you cloned the repository in /home/user and placed your config_ReadMapping.yml and cluster_config_ReadMapping.yml files in a CONFIG folder:  
+To launch it on your own data, if you cloned the repository in /home/user and placed your config_ReadMapping.yml file and your RM_CLUSTER_PROFILE folder in a CONFIG folder:
 ```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow ReadMapping --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM``` 
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow ReadMapping --cluster-profile CONFIG/RM_CLUSTER_PROFILE --jobs 100``` 
 
 
 &nbsp;
@@ -106,7 +106,6 @@ This file is used to pass all the information and tools parameters that will be 
 - *REMOVE_DUP_MARKDUPLICATES:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after the mapping step. They will be marked either way. [TRUE or FALSE]  
 - *SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
 - *EXTRA_MAPPER_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the mapper command. Be careful to provide them between quotes. 
-- *MAPPING_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for each mapping task. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.  
 - *PICARD_MARKDUPLICATES_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'picard MarkDuplicates' command. Be careful to provide them between quotes.  
 - *PICARD_MARKDUPLICATES_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options to pass to the 'picard MarkDuplicates' command. Eg: "-Xmx4G".  
 - *SAMTOOLS_INDEX_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'samtools index' command. Be careful to provide them between quotes. The "-c" option is already included.
