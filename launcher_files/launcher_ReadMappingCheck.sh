@@ -6,11 +6,11 @@ model_config="${workflow_path}/SCRIPTS/model_files/config_ReadMapping.yml"
 
 
 # Config file variables
-given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ' || true)
-expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ' || true)
+given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ')
+expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ')
 
 for var in $expected_variables ; do
-  var_in_config=$(grep "^$var " $CONFIG || true)
+  var_in_config=$(grep "^$var " $CONFIG)
   if [[ -z "$var_in_config" ]] ; then
     echo -e "\nERROR: The expected variable $var was not found in your config file (${CONFIG}). Please make sure to include it."
     echo -e "\nList of expected variables (some can be left empty but must appear in the file nonetheless) :\n${expected_variables}"
@@ -26,7 +26,7 @@ done
                           ### CONFIG FILE VARIABLES VALUES ###
 
 ## General variables (PAIRED_END) ##
-PAIRED_END=$(grep "^PAIRED_END:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+PAIRED_END=$(grep "^PAIRED_END:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 
 # **PAIRED_END**
@@ -51,8 +51,8 @@ fi
 
 
 ## Input data (TRIM_DIR, fastq files, REFERENCE) ##
-TRIM_DIRS=$(grep "^TRIM_DIRS:" $CONFIG | sed 's/#.*$//' | cut -d '"' -f2 || true)
-REFERENCE=$(grep "^REFERENCE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+TRIM_DIRS=$(grep "^TRIM_DIRS:" $CONFIG | sed 's/#.*$//' | cut -d '"' -f2)
+REFERENCE=$(grep "^REFERENCE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 
 # **TRIM_DIR**
@@ -70,14 +70,14 @@ for TRIM_DIR in $TRIM_DIRS ; do
     exit 1
   fi
   if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
-    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l || true)
-    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l || true)
+    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
+    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
     if [[ $nb_fastq_R1_obs -eq 0 || $nb_fastq_R2_obs -eq 0 ]] ; then
       echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}/) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.R1.fastq.gz' and '.R2.fastq.gz'."
       echo -e "\nExiting.\n"
       exit 1
     else
-      fastq_R1_list=$(ls -1 ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null || true)
+      fastq_R1_list=$(ls -1 ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null)
       fastq_R2_list_exp=$(echo $fastq_R1_list | sed 's/.R1./.R2./g')
       nb_fastq_R2_exp=$(echo $fastq_R2_list_exp | wc -w)
       if [[ $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then
@@ -95,9 +95,9 @@ for TRIM_DIR in $TRIM_DIRS ; do
     fi
   fi
   if [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
-    nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null | wc -l || true)
-    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*R1*fastq.gz 2>/dev/null | wc -l || true)
-    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*R2*fastq.gz 2>/dev/null | wc -l || true)
+    nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null | wc -l)
+    nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*R1*fastq.gz 2>/dev/null | wc -l)
+    nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*R2*fastq.gz 2>/dev/null | wc -l)
     if [[ "$nb_fastq" = 0 ]] ; then
       echo -e "\nERROR: The TRIM_DIR folder (${TRIM_DIR}) is either empty or the fastq files it contains are not properly named. Input fastq files must end with '.fastq.gz'."
       echo -e "\nExiting.\n"
@@ -127,11 +127,11 @@ if [[ "$REFERENCE" != *.fasta && "$REFERENCE" != *.fas && "$REFERENCE" != *.fa ]
 fi
 
 ## Zones and extraction (BED, CREATE_SUB_BAMS)
-BED=$(grep "^BED:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-CREATE_SUB_BAMS=$(grep "^CREATE_SUB_BAMS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-BED_MIN_MEAN_COV=$(grep "^BED_MIN_MEAN_COV:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-BED_MIN_DIST=$(grep "^BED_MIN_DIST:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-BED_MIN_LENGTH=$(grep "^BED_MIN_LENGTH:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+BED=$(grep "^BED:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+CREATE_SUB_BAMS=$(grep "^CREATE_SUB_BAMS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+BED_MIN_MEAN_COV=$(grep "^BED_MIN_MEAN_COV:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+BED_MIN_DIST=$(grep "^BED_MIN_DIST:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+BED_MIN_LENGTH=$(grep "^BED_MIN_LENGTH:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 # **BED**
 # Targeted zones bed file (optionnal) -> si donné existe-t-il, est-il au bon format
@@ -180,8 +180,8 @@ fi
 
 
 ## Mapping parameters ##
-MAPPER=$(grep "^MAPPER:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-REMOVE_DUP_MARKDUPLICATES=$(grep "^REMOVE_DUP_MARKDUPLICATES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+MAPPER=$(grep "^MAPPER:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+REMOVE_DUP_MARKDUPLICATES=$(grep "^REMOVE_DUP_MARKDUPLICATES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 # **MAPPER**
 if [[ -z "$MAPPER" ]] ; then

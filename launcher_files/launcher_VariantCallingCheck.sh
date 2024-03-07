@@ -5,11 +5,11 @@ model_config="${workflow_path}/SCRIPTS/model_files/config_VariantCalling.yml"
 
 
 # Config file variables
-given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ' || true)
-expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ' || true)
+given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ')
+expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ')
 
 for var in $expected_variables ; do
-  var_in_config=$(grep "^$var " $CONFIG || true)
+  var_in_config=$(grep "^$var " $CONFIG)
   if [[ -z "$var_in_config" ]] ; then
     echo -e "\nERROR: The expected variable $var was not found in your config file (${CONFIG}). Please make sure to include it."
     echo -e "\nList of expected variables (some can be left empty but must appear in the file nonetheless) :\n${expected_variables}"
@@ -26,9 +26,9 @@ done
 
 
 ## Input data (BAMS_LIST, REFERENCE, GENOMIC_REFERENCE_CHR_SIZE) ##
-BAMS_LIST=$(grep "^BAMS_LIST:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-REFERENCE=$(grep "^REFERENCE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-GENOMIC_REFERENCE_CHR_SIZE=$(grep "^GENOMIC_REFERENCE_CHR_SIZE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+BAMS_LIST=$(grep "^BAMS_LIST:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+REFERENCE=$(grep "^REFERENCE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+GENOMIC_REFERENCE_CHR_SIZE=$(grep "^GENOMIC_REFERENCE_CHR_SIZE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 # **BAMS_LIST**
 if [[ -z "$BAMS_LIST" ]] ; then

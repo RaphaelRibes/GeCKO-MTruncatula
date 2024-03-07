@@ -5,11 +5,11 @@ model_config="${workflow_path}/SCRIPTS/model_files/config_VcfFiltering.yml"
 
 
 # Config file variables
-given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ' || true)
-expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ' || true)
+given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ')
+expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ')
 
 for var in $expected_variables ; do
-  var_in_config=$(grep "^$var " $CONFIG || true)
+  var_in_config=$(grep "^$var " $CONFIG)
   if [[ -z "$var_in_config" ]] ; then
     echo -e "\nERROR: The expected variable $var was not found in your config file (${CONFIG}). Please make sure to include it."
     echo -e "\nList of expected variables (some can be left empty but must appear in the file nonetheless) :\n${expected_variables}"
@@ -27,7 +27,7 @@ done
 
 
 ## INPUT FILES
-VCF_FILE=$(grep "^VCF_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+VCF_FILE=$(grep "^VCF_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 if [[ -z "$VCF_FILE" ]] ; then
   echo -e "\nERROR: The VCF_FILE variable is missing in your config file (${CONFIG}). Please provide the vcf file produced by your variant caller."
@@ -46,7 +46,7 @@ fi
 
 
 ### VCF FILTERING PARAMETERS ###
-MAX_NA_PER_SAMPLE=$(grep "^MAX_NA_PER_SAMPLE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+MAX_NA_PER_SAMPLE=$(grep "^MAX_NA_PER_SAMPLE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 if [[ -z "$MAX_NA_PER_SAMPLE" ]] ; then
   echo -e "\nERROR: You must provide the MAX_NA_PER_SAMPLE in the config_file."

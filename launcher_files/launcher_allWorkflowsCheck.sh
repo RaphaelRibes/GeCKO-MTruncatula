@@ -4,10 +4,10 @@
 HERE=$PWD
 
 ### 0/ Variables help
-workflow_help=$(grep -e "^--workflow " ${GeCKO_path}/launcher_files/launcher_help.txt || true)
-config_file_help=$(grep -e "^--config-file " ${GeCKO_path}/launcher_files/launcher_help.txt || true)
-#cluster_profile_help=$(grep -e "^--cluster-profile " ${GeCKO_path}/launcher_files/launcher_help.txt || true)
-conda_env_path_help=$(grep -e "^--conda-env-path: " ${GeCKO_path}/launcher_files/launcher_help.txt || true)
+workflow_help=$(grep -e "^--workflow " ${GeCKO_path}/launcher_files/launcher_help.txt)
+config_file_help=$(grep -e "^--config-file " ${GeCKO_path}/launcher_files/launcher_help.txt)
+#cluster_profile_help=$(grep -e "^--cluster-profile " ${GeCKO_path}/launcher_files/launcher_help.txt)
+conda_env_path_help=$(grep -e "^--conda-env-path: " ${GeCKO_path}/launcher_files/launcher_help.txt)
 
 ### 1/ WORKFLOW FOLDER AND ITS CONTENTS ###
 
@@ -19,7 +19,7 @@ if [[ -z "$WORKFLOW" || "$WORKFLOW" = --* ]] ; then
 	exit 1
 fi
 
-workflow_folder_name=$(grep -w $WORKFLOW ${GeCKO_path}/launcher_files/workflows_list.tsv | cut -f2 || true)
+workflow_folder_name=$(grep -w $WORKFLOW ${GeCKO_path}/launcher_files/workflows_list.tsv | cut -f2)
 if [[ -z $workflow_folder_name ]] ; then
 	echo -e "\nERROR: The workflow name provided with --workflow is unknown."
 	echo "As a reminder:"
@@ -45,7 +45,7 @@ fi
 workflow_scripts_folder="${workflow_path}/SCRIPTS"
 workflow_model_files_folder="${workflow_path}/SCRIPTS/model_files"
 if [[ -d ${workflow_scripts_folder} ]] ; then
-	for script in $(ls "${workflow_scripts_folder}" || true) ; do
+	for script in $(ls "${workflow_scripts_folder}") ; do
 	  if [[ -f "${workflow_scripts_folder}/${script}" ]] ; then
 	    if grep -q $'\r' ${workflow_scripts_folder}/${script}; then
 	      echo "Removing windows carriage returns in ${script}..."
@@ -59,7 +59,7 @@ if [[ -d ${workflow_scripts_folder} ]] ; then
 	  fi
 	done
 	if [[ -d ${workflow_model_files_folder} ]] ; then
-		for config_file in $(ls ${workflow_model_files_folder} || true) ; do
+		for config_file in $(ls ${workflow_model_files_folder}) ; do
       if grep -q $'\r' ${workflow_model_files_folder}/${config_file}; then
 	      		echo "Removing windows carriage returns in ${config_file}..."
 	      		sed -i 's/\r$//g' ${workflow_model_files_folder}/$config_file
@@ -71,7 +71,7 @@ fi
 
 workflow_envs_folder="${workflow_path}/ENVS"
 if [[ -d ${workflow_envs_folder} ]] ; then
-	for yaml in $(ls "${workflow_envs_folder}" || true) ; do
+	for yaml in $(ls "${workflow_envs_folder}") ; do
 		if grep -q $'\r' ${workflow_envs_folder}/${yaml}; then
 		  echo "Removing windows carriage returns in ${yaml}..."
 		  sed -i 's/\r$//g' ${workflow_envs_folder}/$yaml
@@ -87,13 +87,13 @@ fi
 
 #workflow_profiles_folder="${workflow_path}/PROFILES"
 #if [[ -d ${workflow_profiles_folder} ]] ; then
-#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SGE/config.yaml || true)
+#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SGE/config.yaml)
 #	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
 #		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SGE/config.yaml..."
 #	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SGE/config.yaml
 #	    sed -i 's/\r/\n/g' ${workflow_profiles_folder}/SGE/config.yaml
 #	fi
-#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SLURM/config.yaml || true)
+#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SLURM/config.yaml)
 #	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
 #		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SLURM/config.yaml..."
 #	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SLURM/config.yaml
@@ -141,8 +141,8 @@ fi
 
 
 # Format
-nb_col_config_file=$(grep -v '^#' $CONFIG | sed 's/#.*$//' | grep -v '^[[:space:]]*$' | awk -F ': ' '{print NF}' | sort | uniq || true)
-nb_tabs_config_file=$(grep -v '^#' $CONFIG | sed 's/#.*$//' | grep -v '^[[:space:]]*$' | grep -c $'\t' || true)
+nb_col_config_file=$(grep -v '^#' $CONFIG | sed 's/#.*$//' | grep -v '^[[:space:]]*$' | awk -F ': ' '{print NF}' | sort | uniq)
+nb_tabs_config_file=$(grep -v '^#' $CONFIG | sed 's/#.*$//' | grep -v '^[[:space:]]*$' | grep -c $'\t')
 if [[ "$nb_col_config_file" != 2 || $nb_tabs_config_file -gt 0 ]] ; then
   echo -e "\nERROR: Your config file (${CONFIG}) does not seem to be properly formated."
   echo "As a reminder:"
@@ -158,7 +158,7 @@ WORKFLOW_SMK="${WORKFLOW}.smk"
 
 # if DataCleaning: is it paired or single
 if [[ "$WORKFLOW" = "DataCleaning" ]] ; then
-	PAIRED_END=$(grep "^PAIRED_END" $CONFIG | cut -f2 -d ' ' || true)
+	PAIRED_END=$(grep "^PAIRED_END" $CONFIG | cut -f2 -d ' ')
 	if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
 		WORKFLOW_SMK="${WORKFLOW}_PairedEnd.smk"
 	elif [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
@@ -237,7 +237,7 @@ fi
 
 
 ### 6/ Check if Mamba is available
-if ! command -v conda &> /dev/null; then
+if ! command -v mamba &> /dev/null; then
   echo -e "\nERROR: Mamba is not available. You must install it, or make it available to your working environment (eg: module load it)."
   echo "As a reminder:"
   awk '/^- Make sure Snakemake and Mamba/,/^$/' ${GeCKO_path}/launcher_files/launcher_help.txt

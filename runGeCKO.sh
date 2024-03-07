@@ -1,23 +1,12 @@
 #!/usr/bin/env bash
 
-set -e -o pipefail
 
-
-### v WRITE YOUR MODULE LOADS HERE v ###
+### v WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE v ###
 
 #module purge
-#source /home/girodollej/.bashrc_new
-#conda activate snakemake7.32.4_mamba_python
-#module load snakemake/7.15.1-conda
-#module load snakemake/8.4.2-conda
-#conda activate snakemake7.15.2_mamba_python
-#conda activate snakemake8.4.2_mamba
-#conda activate snakemake8.4.8_mamba
-#conda activate snakemake8.5.3_mamba
-#module load anaconda/python3.8
+#conda activate GeCKO_env
 
-
-### ^ WRITE YOUR MODULE LOADS HERE ^ ###
+### ^ WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE ^ ###
 
 
 
@@ -30,6 +19,7 @@ HELP="FALSE"
 DRYRUN="FALSE"
 DIAGRAM="FALSE"
 REPORT="FALSE"
+CREATE_GECKO_CONDA_ENV="FALSE"
 USE_CONDA="TRUE"
 CONDA_ENV_PATH=""
 CONDA_ENV_PATH_CMD=""
@@ -90,6 +80,11 @@ do
     shift
     shift
     ;;
+    --create-gecko-env)
+    CREATE_GECKO_CONDA_ENV="TRUE"
+    shift
+    shift
+    ;;
     --conda-env-path)
     CONDA_ENV_PATH="$2"
     shift
@@ -145,13 +140,20 @@ if [[ ! -d "${GeCKO_path}/launcher_files/" ]] ; then
 fi
 
 
-### Remove Windows \r from help file
-
-if grep -q $'\r' ${GeCKO_path}/launcher_files/launcher_help.txt; then
-  sed -i 's/\r$//g' ${GeCKO_path}/launcher_files/launcher_help.txt
-  sed -i 's/\r/\n/g' ${GeCKO_path}/launcher_files/launcher_help.txt
-fi
-
+### Remove CR and make scripts executable
+for file in $(ls "${GeCKO_path}/launcher_files/") ; do
+  if [[ -f "${GeCKO_path}/launcher_files/${file}" ]] ; then
+    if grep -q $'\r' ${GeCKO_path}/launcher_files/${file}; then
+      echo "Removing windows carriage returns in ${file}..."
+      sed -i 's/\r$//g' ${GeCKO_path}/launcher_files/$file
+      sed -i 's/\r/\n/g' ${GeCKO_path}/launcher_files/$file
+    fi
+    if [[ ${file} == *.sh && ! -x "${GeCKO_path}/launcher_files/${file}" ]] ; then
+      echo "Making $file executable..."
+      chmod 755 "${GeCKO_path}/launcher_files/${file}"
+    fi
+  fi
+done
 
 
 ### Print the help
@@ -161,20 +163,17 @@ if [ "${HELP}" = "TRUE" ] ; then
 fi
 
 
-### Make scripts executable
-for script in $(ls "${GeCKO_path}/launcher_files/") ; do
-  if [[ -f "${GeCKO_path}/launcher_files/${script}" ]] ; then
-    if grep -q $'\r' ${GeCKO_path}/launcher_files/${script}; then
-      echo "Removing windows carriage returns in ${script}..."
-      sed -i 's/\r$//g' ${GeCKO_path}/launcher_files/$script
-      sed -i 's/\r/\n/g' ${GeCKO_path}/launcher_files/$script
-    fi
-    if [[ ! -x "${GeCKO_path}/launcher_files/${script}" ]] ; then
-      echo "Making $script executable..."
-      chmod 755 "${GeCKO_path}/launcher_files/${script}"
-    fi
+### Create GeCKO conda environment
+if [ "${CREATE_GECKO_CONDA_ENV}" = "TRUE" ] ; then
+  if ! command -v conda &> /dev/null ; then
+    echo -e "\nERROR: Conda is not available. Please install it, or make it available to your working environment (eg: module load it)."
+    exit 1
+  else
+    echo "Creating GeCKO conda environment..."
+    conda env create -n GeCKO_env -f ${GeCKO_path}/launcher_files/GeCKO_env.yaml
+    exit 0
   fi
-done
+fi
 
 
 ### Check variables and paths

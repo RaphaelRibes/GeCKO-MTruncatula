@@ -13,11 +13,11 @@ fi
 
 
 # Config file variables
-given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ' || true)
-expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ' || true)
+given_variables=$(grep -v '^#' $CONFIG | grep -v '^$' | cut -f1 -d ' ')
+expected_variables=$(grep -v '^#' $model_config | grep -v '^$' | cut -f1 -d ' ')
 
 for var in $expected_variables ; do
-  var_in_config=$(grep "^$var " $CONFIG || true)
+  var_in_config=$(grep "^$var " $CONFIG)
   if [[ -z $var_in_config ]] ; then
     echo -e "\nERROR: The expected variable $var was not found in your config file (${CONFIG}). Please make sure to include it."
     echo -e "\nList of expected variables for PAIRED_END set to ${PAIRED_END} (some can be left empty but must appear in the file nonetheless) :\n${expected_variables}"
@@ -33,10 +33,10 @@ done
 ### Config file variables values
 
 # FASTQ, FASTQ_R1, FASTQ_R2 and DEMULT_DIR
-FASTQ_R1=$(grep "^FASTQ_R1:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-FASTQ_R2=$(grep "^FASTQ_R2:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-DEMULT_DIR=$(grep "^DEMULT_DIR:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-FASTQ=$(grep "^FASTQ:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+FASTQ_R1=$(grep "^FASTQ_R1:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+FASTQ_R2=$(grep "^FASTQ_R2:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+DEMULT_DIR=$(grep "^DEMULT_DIR:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+FASTQ=$(grep "^FASTQ:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 FASTQ_R1=$(absolutePath $FASTQ_R1)
 FASTQ_R2=$(absolutePath $FASTQ_R2)
 DEMULT_DIR=$(absolutePath $DEMULT_DIR)
@@ -59,14 +59,14 @@ if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" ]] ; then # if paired end da
       echo -e "\nExiting.\n"
       exit 1
     else
-      nb_fastq_R1_obs=$(ls ${DEMULT_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l || true)
-      nb_fastq_R2_obs=$(ls ${DEMULT_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l || true)
+      nb_fastq_R1_obs=$(ls ${DEMULT_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
+      nb_fastq_R2_obs=$(ls ${DEMULT_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
       if [[ $nb_fastq_R1_obs -eq 0 || $nb_fastq_R2_obs -eq 0 ]] ; then
         echo -e "\nERROR: The provided DEMULT_DIR (${DEMULT_DIR}) is either empty or the fastq files it contains are not properly named. Input demultiplexed fastq files must end with '.R1.fastq.gz' and '.R2.fastq.gz'."
         echo -e "\nExiting.\n"
         exit 1
       else
-        fastq_R1_list=$(ls -1 ${DEMULT_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null || true)
+        fastq_R1_list=$(ls -1 ${DEMULT_DIR}/*.R1.fastq.gz 2>/dev/null | xargs -n1 basename 2>/dev/null)
         fastq_R2_list_exp=$(echo $fastq_R1_list | sed 's/.R1./.R2./g')
         nb_fastq_R2_exp=$(echo $fastq_R2_list_exp | wc -w)
         if [[ $nb_fastq_R2_obs != $nb_fastq_R2_exp ]] ; then
@@ -107,7 +107,7 @@ else # if single end data is expected
     exit 1
   fi
   if [[ -z "$FASTQ" ]] ; then
-    DEMULT_DIR=$(grep "^DEMULT_DIR:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+    DEMULT_DIR=$(grep "^DEMULT_DIR:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
     if [[ -z "$DEMULT_DIR" ]] ; then
       echo -e "\nERROR: You must provide either FASTQ or DEMULT_DIR in the config_file, but they were both left blank."
       echo -e "\nExiting.\n"
@@ -117,7 +117,7 @@ else # if single end data is expected
       echo -e "\nExiting.\n"
       exit 1
     else
-      nb_fastq=$(ls ${DEMULT_DIR}/*.fastq.gz 2>/dev/null | wc -l || true)
+      nb_fastq=$(ls ${DEMULT_DIR}/*.fastq.gz 2>/dev/null | wc -l)
       if [[ "$nb_fastq" = 0 ]] ; then
         echo -e "\nERROR: The provided DEMULT_DIR (${DEMULT_DIR}) is either empty or the fastq files it contains are not properly named. Input demultiplexed fastq files must end with '.fastq.gz'."
         echo -e "\nExiting.\n"
@@ -136,8 +136,8 @@ else # if single end data is expected
 fi
 
 # DEMULT_CPUS_PER_TASK, DEMULT_SUBSTITUTIONS and DEMULT_CORES
-DEMULT_SUBSTITUTIONS=$(grep "^DEMULT_SUBSTITUTIONS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-DEMULT_CORES=$(grep "^DEMULT_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+DEMULT_SUBSTITUTIONS=$(grep "^DEMULT_SUBSTITUTIONS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+DEMULT_CORES=$(grep "^DEMULT_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 
 if [[ -z "$DEMULT_DIR" && -z "$DEMULT_SUBSTITUTIONS" ]] ; then
@@ -154,8 +154,8 @@ if [[ -z "$DEMULT_DIR" && -z "$DEMULT_CORES" ]] ; then
 fi
 
 # BARCODE_FILE and ADAPT_FILE
-BARCODE_FILE=$(grep "^BARCODE_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-ADAPT_FILE=$(grep "^ADAPT_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+BARCODE_FILE=$(grep "^BARCODE_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+ADAPT_FILE=$(grep "^ADAPT_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 BARCODE_FILE=$(absolutePath $BARCODE_FILE)
 ADAPT_FILE=$(absolutePath $ADAPT_FILE)
 
@@ -227,9 +227,9 @@ if [[ ! -z "$DEMULT_DIR" ]] ; then
         exit 1
       fi
     done
-    for fastq_R1 in $(ls ${DEMULT_DIR}/*.R1.fastq.gz || true) ; do
+    for fastq_R1 in $(ls ${DEMULT_DIR}/*.R1.fastq.gz) ; do
       sample=$(basename $fastq_R1 .R1.fastq.gz)
-      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l  || true)
+      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l )
       if [[ $nb_row_sample -eq 0 ]] ; then
         echo -e "\nERROR: ${sample} could not be found in your ADAPT_FILE. Please make sure all your samples appear in your ADAPT_FILE."
         echo -e "\nExiting.\n"
@@ -246,9 +246,9 @@ if [[ ! -z "$DEMULT_DIR" ]] ; then
         exit 1
       fi
     done
-    for fastq in $(ls ${DEMULT_DIR}/*fastq.gz || true) ; do
+    for fastq in $(ls ${DEMULT_DIR}/*fastq.gz) ; do
       sample=$(basename $fastq .fastq.gz)
-      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l || true)
+      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l)
       if [[ $nb_row_sample -eq 0 ]] ; then
         echo -e "\nERROR: ${sample} could not be found in your ADAPT_FILE. Please make sure all your samples appear in your ADAPT_FILE."
         echo -e "\nExiting.\n"
@@ -260,8 +260,8 @@ fi
 
 # check that BARCODE_FILE and ADAPT_FILE contain the same samples
 if [[ ! -z $BARCODE_FILE ]] ; then
-  nb_uniq_adapt=$(grep -F -x -v -f <(cut -f1 $BARCODE_FILE | sort) <(cut -f1 $ADAPT_FILE | sort) | wc -l || true)
-  nb_uniq_barcode=$(grep -F -x -v -f <(cut -f1 $ADAPT_FILE | sort) <(cut -f1 $BARCODE_FILE | sort) | wc -l || true)
+  nb_uniq_adapt=$(grep -F -x -v -f <(cut -f1 $BARCODE_FILE | sort) <(cut -f1 $ADAPT_FILE | sort) | wc -l)
+  nb_uniq_barcode=$(grep -F -x -v -f <(cut -f1 $ADAPT_FILE | sort) <(cut -f1 $BARCODE_FILE | sort) | wc -l)
   if [[ $nb_uniq_adapt -gt 0 || $nb_uniq_barcode -gt 0 ]] ; then
     echo -e "\nERROR: The samples names given in the ADAPT_FILE and the BARCODE_FILE do not match. Please make sure that they are the same."
     echo -e "\nExiting.\n"
@@ -271,9 +271,9 @@ fi
 
 
 # TRIMMING_CPUS_PER_TASK, TRIMMING_QUAL, TRIMMING_MIN_LENGTH and TRIMMING_CORES
-TRIMMING_QUAL=$(grep "^TRIMMING_QUAL:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-TRIMMING_MIN_LENGTH=$(grep "^TRIMMING_MIN_LENGTH:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
-TRIMMING_CORES=$(grep "^TRIMMING_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g' || true)
+TRIMMING_QUAL=$(grep "^TRIMMING_QUAL:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+TRIMMING_MIN_LENGTH=$(grep "^TRIMMING_MIN_LENGTH:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+TRIMMING_CORES=$(grep "^TRIMMING_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 
 if [[ -z $TRIMMING_QUAL ]] ; then
