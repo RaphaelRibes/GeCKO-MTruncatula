@@ -92,7 +92,7 @@ The information regarding the fastq files, read index etc. will be retrieved fro
 > ##### CONFIGURATION PARAMETERS:  
 > **--cluster-profile [...]**&nbsp;&nbsp;&nbsp;*path to the cluster profile folder*  
 > This folder must contain a yaml configuration file named 'config.yaml'. This file's first part provides information specific to your cluster (queues/partitions names, and needed cpus and memory for each task). The second part determines how jobs should be submitted depending on your cluster's job-scheduler. Please use the GeCKO's templates provided for SGE and SLURM job-shedulers in the example section of each workflow.  
-> If this argument is absent, no jobs will be submitted.  
+> If omitted, the workflow will run without submitting any job and any parallelization. 
 > 
 > **--config-file [...]**&nbsp;&nbsp;&nbsp;*path to the workflow's config file*  
 > If omitted, this script will look for a config_WorkflowName.yml file (eg: config_DataCleaning.yml) in a CONFIG/ folder in the directory it was executed from.  
