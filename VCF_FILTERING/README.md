@@ -18,16 +18,16 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 Needed files:  
 - the full GeCKO/ folder, including the runGeCKO.sh launcher  
 - your variant calling .vcf.gz files
-- the cluster_config_VcfFiltering.yml (in case you work on a cluster) and config_VcfFiltering.yml files 
+- a VF_CLUSTER_PROFILE folder (in case you work on a cluster) and a config_VcfFiltering.yml file  
 
 &nbsp;
 
 To easily launch the workflow, use the runGeCKO.sh launcher. For example, to launch the workflow on the VCF example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```../../runGeCKO.sh --workflow VcfFiltering --workflow-path ../../../GeCKO --config-file CONFIG/config_VcfFiltering.yml --cluster-config CONFIG/cluster_config_VcfFiltering_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```../../runGeCKO.sh --workflow VcfFiltering --config-file CONFIG/config_VcfFiltering.yml --cluster-profile CONFIG/VF_CLUSTER_PROFILE_SLURM --jobs 20```  
 
-To launch it on your own data, if you cloned the repository in /home/user and placed your config_DataCleaning.yml and cluster_config_DataCleaning.yml files in a CONFIG folder:  
+To launch it on your own data, if you cloned the repository in /home/user and placed your config_DataCleaning.yml file and VF_CLUSTER_PROFILE folder in a CONFIG folder:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow VcfFiltering --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow VcfFiltering --cluster-profile CONFIG/VF_CLUSTER_PROFILE --jobs 100```  
 
 &nbsp;
 
@@ -141,10 +141,10 @@ You can run this workflow on a computer or on a computer cluster. You will need 
 **Launching**  
 To launch the VCF_FILTERING workflow, use the launching script runGeCKO.sh with the option --workflow VcfFiltering:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow VcfFiltering --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM``` 
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow VcfFiltering --cluster-profile CONFIG/VF_CLUSTER_PROFILE --jobs 100``` 
  
 For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
-```${WORKFLOW_PATH}/runGeCKO.sh --help --workflow-path ${WORKFLOW_PATH}```  
+```${WORKFLOW_PATH}/runGeCKO.sh --help```  
 
  
 ### 5/ Expected outputs  
