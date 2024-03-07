@@ -43,10 +43,10 @@ This only needs to be run once, and will create a conda environment called “Ge
 You will then have to activate the “GeCKO_env” environment before launching any GeCKO workflow with:  
 ```conda activate GeCKO_env```  
 <ins>**Alternative method:**</ins>   
-Make sure Snakemake (v7) and Mamba are available to your working environment. Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.  
+Make sure Snakemake (v7) and Mamba are available to your working environment. Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.
+⚠ Please be aware that GeCKO may encounter issues with certain versions of Snakemake v7, and is not yet compatible with Snakemake v8.  
     - For clusters using module environment, you can add the 'module load' lines in runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOAD HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the Snakemake and Mamba modules on your cluster, use the 'module avail' command. The modules will be loaded every time you execute the script.  
     - For clusters using Conda environment, you will need to conda activate Snakemake and Mamba. To find out the precise name of the environments, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.  
-⚠ Please be aware that GeCKO may encounter issues with certain versions of Snakemake v7, and is not yet compatible with Snakemake v8.
 
 
 &nbsp;
