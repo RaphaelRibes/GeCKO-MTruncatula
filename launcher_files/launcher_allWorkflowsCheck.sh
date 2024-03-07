@@ -6,7 +6,7 @@ HERE=$PWD
 ### 0/ Variables help
 workflow_help=$(grep -e "^--workflow " ${GeCKO_path}/launcher_files/launcher_help.txt)
 config_file_help=$(grep -e "^--config-file " ${GeCKO_path}/launcher_files/launcher_help.txt)
-#cluster_profile_help=$(grep -e "^--cluster-profile " ${GeCKO_path}/launcher_files/launcher_help.txt)
+cluster_profile_help=$(grep -e "^--cluster-profile " ${GeCKO_path}/launcher_files/launcher_help.txt)
 conda_env_path_help=$(grep -e "^--conda-env-path: " ${GeCKO_path}/launcher_files/launcher_help.txt)
 
 ### 1/ WORKFLOW FOLDER AND ITS CONTENTS ###
