@@ -30,12 +30,12 @@ or
 4) Make the script executable with:  
 ```chmod u+x runGeCKO.sh```
 
-5) Make sure [Conda](#conda) is available to your working environment.  
+5) Make sure [Conda](#conda-and-mamba) is available to your working environment.  
 Either install it on your computer, or if you are working on a cluster, you may need to 'module load' it, depending on your cluster's software management policy. For clusters using Conda environments, Conda will likely be readily available.  
 Once you have conda available and before launching any GeCKO workflow, it is advised to run the following command (once) to help avoid dependency conflicts and reproducibility issues:  
 ```conda config --set channel_priority strict```
 
-6) GeCKO will need [Snakemake](#snakemake) and [Mamba](#mamba) to run its workflows. For this you have two possibilities:  
+6) GeCKO will need [Snakemake](#snakemake) and [Mamba](#conda-and-mamba) to run its workflows. For this you have two possibilities:  
 <ins>**Recommended method:**</ins>  
 Have runGeCKO create a fully operational conda environment for you with:  
 ```./runGeCKO.sh --create-gecko-env```  
@@ -43,10 +43,10 @@ This only needs to be run once, and will create a conda environment called “Ge
 You will then have to activate the “GeCKO_env” environment before launching any GeCKO workflow with:  
 ```conda activate GeCKO_env```  
 <ins>**Alternative method:**</ins>   
-Make sure Snakemake (v7) and Mamba are available to your working environment. Either install them on your computer, or if you are working on a cluster, you may need to 'module load' them, or to 'conda activate' them, depending on your cluster's software management policy.  
+Make sure Snakemake (v7) and Mamba are available to your working environment. Either install them on your computer, or if you are working on a cluster, you may need to ```module load``` them, or to ```conda activate``` them, depending on your cluster's software management policy.  
 ⚠ Please be aware that GeCKO may encounter issues with certain versions of Snakemake v7, and is not yet compatible with Snakemake v8.  
-    - For clusters using module environment, you can add the 'module load' lines in runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOAD HERE" at the top of the script. It is advised to precede it with 'module purge' to avoid potential conflicts with previously loaded modules. To find out the exact name of the Snakemake and Mamba modules on your cluster, use the 'module avail' command. The modules will be loaded every time you execute the script.  
-    - For clusters using Conda environment, you will need to conda activate Snakemake and Mamba. To find out the precise name of the environments, use the 'conda info --envs' command. You may need to call conda activate outside of the script itself.  
+    - For clusters using module environment, you can add the ```module load``` lines in runGeCKO.sh: you will find a dedicated zone "WRITE YOUR MODULE LOAD HERE" at the top of the script. It is advised to precede it with ```module purge``` to avoid potential conflicts with previously loaded modules. To find out the exact name of the Snakemake and Mamba modules on your cluster, use the ```module avail``` command. The modules will be loaded every time you execute the script.  
+    - For clusters using Conda environment, you will need to conda activate Snakemake and Mamba. To find out the precise name of the environments, use the ```conda info --envs``` command. You may need to call conda activate outside of the script itself.  
 
 
 &nbsp;
@@ -136,7 +136,7 @@ We made dedicated efforts to extensively document the usage of our workflows, en
 
 #### Conda and Mamba
 Each workflow will download and find the tools it needs through [Mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html#mamba-install), which means you do not need to have all the softwares installed in your working environment behorehand. Snakemake uses Mamba as a faster and more efficient alternative to [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) to create suitable conda environments to execute the workflow's steps.  
-When called for the first time, the Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the --conda-env-path option of the runGeCKO.sh launcher.  
+When called for the first time, the Snakemake workflow will download the tools' packages in a pkgs_dirs folder, and install them in a conda environment that will be stored in a .snakemake/conda folder, in the directory you called the workflow from. Every time you call the workflow from a new directory, the Conda environment will be generated again. To avoid creating the environment multiple times, which can be both time and resource-consuming, you can provide a specific folder where you want Snakemake to store all of its conda environments with the ```--conda-env-path``` option of the runGeCKO.sh launcher.  
 
 The pkgs_dirs folder is by default common to your whole system or cluster personnal environment. Conda (or Mamba)'s standard behaviour is to create it in your home directory, in a .conda folder. If your home space is limited or if you do not have the right to write there from your cluster's nodes, you will need to tell Conda to store its packages somewhere else, thanks to a .condarc file. Place it in your home folder and specify the directory path where you want Conda to store the packages, following this example:  
 ```
