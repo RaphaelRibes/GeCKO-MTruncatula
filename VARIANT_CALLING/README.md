@@ -20,16 +20,16 @@ Needed files:
 - the full GeCKO/ folder, including the runGeCKO.sh launcher  
 - your mapped .bam files
 - the reference file in fasta format that was used to map your reads
-- the cluster_config_VariantCalling.yml (in case you work on a cluster) and config_VariantCalling.yml files
+- a VC_CLUSTER_PROFILE folder (in case you work on a cluster) and a config_VariantCalling.yml file
 
 &nbsp;
 
 To easily launch the workflow, use the runGeCKO.sh launcher. For example, to launch the workflow on the BAMS example dataset on a Slurm job-scheduler, run the following command from the EXAMPLE directory:  
-```../../runGeCKO.sh --workflow VariantCalling --workflow-path ../../../GeCKO --config-file CONFIG/config_VariantCalling.yml --cluster-config CONFIG/cluster_config_VariantCalling_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```../../runGeCKO.sh --workflow VariantCalling --config-file CONFIG/config_VariantCalling.yml --cluster-profile CONFIG/VC_CLUSTER_PROFILE_SLURM --jobs 20```  
 
-To launch it on your own data, if you cloned the repository in /home/user and placed your config_VariantCalling.yml and cluster_config_VariantCalling.yml files in a CONFIG folder:  
+To launch it on your own data, if you cloned the repository in /home/user and placed your config_VariantCalling.yml file and your VC_CLUSTER_PROFILE folder in a CONFIG folder:   
 ```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow VariantCalling --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow VariantCalling --cluster-profile CONFIG/VC_CLUSTER_PROFILE --jobs 100```  
 
 
 &nbsp;
@@ -87,10 +87,8 @@ For each of the three GATK steps, two options fields are available: options rela
 
 - *GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK HaplotypeCaller function (eg: "-Xmx4g"). Be careful to provide them between quotes.
 - *GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'GATK Haplotypecaller' command. Be careful to provide them between quotes.
-- *GATK_HAPLOTYPE_CALLER_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for each Haplotypecaller task. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.
 - *GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK GenomicsDBImport function (eg: "-Xmx30g"). Be careful to provide them between quotes.
 - *GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'GATK GenomicsDBImport' command (eg: "--merge-contigs-into-num-partitions 20 --batch-size 50 --reader-threads 20"). Be careful to provide them between quotes.
-- *GATK_GENOMICS_DB_IMPORT_CPUS_PER_TASK:*&nbsp;&nbsp;&nbsp;The number of CPUs to allocate for the GenomicsDBImport step. Set to 1 if you are not working on a computing cluster. Be careful to never use quotes around this number.
 - *GATK_GENOTYPE_GVCFS_JAVA_OPTIONS:*&nbsp;&nbsp;&nbsp;Java options for the GATK GenotypeGVCFs function (eg: "-Xmx30g"). Be careful to provide them between quotes.
 - *GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'GATK GenotypeGVCFs' command (eg: "--include-non-variant-sites --heterozygosity 0.001). Be careful to provide them between quotes.
 
@@ -109,10 +107,10 @@ You can run this workflow on a computer or on a computer cluster. You will need 
 **Launching**  
 To launch the VARIANT_CALLING workflow, use the launching script runGeCKO.sh with the option --workflow VariantCalling:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow VariantCalling --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM```   
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow VariantCalling --cluster-profile CONFIG/VC_CLUSTER_PROFILE --jobs 100```   
 
 For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
-```${WORKFLOW_PATH}/runGeCKO.sh --help --workflow-path ${WORKFLOW_PATH}```  
+```${WORKFLOW_PATH}/runGeCKO.sh --help```  
 
 
 ### 5/ Expected outputs  
