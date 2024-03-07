@@ -32,17 +32,17 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 Needed files:  
 - the full GeCKO/ folder, including the runGeCKO.sh launcher  
 - your raw fastq.gz file(s)  
-- the cluster_config_DataCleaning.yml (in case you work on a cluster) and config_DataCleaning.yml files  
+- a DC_CLUSTER_PROFILE folder (in case you work on a cluster) and a config_DataCleaning.yml file  
 - a barcode file in case of multiplexed data and an adapter file  
 
 &nbsp;
 
 To easily launch the workflow, use the runGeCKO.sh launcher. For example, to launch the workflow on the MULTIPLEXED_PAIRED_END dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/MULTIPLEXED_PAIRED_END directory:  
-```../../../runGeCKO.sh --workflow DataCleaning --workflow-path ../../../../GeCKO --config-file CONFIG/config_DataCleaning.yml --cluster-config CONFIG/cluster_config_DataCleaning_SLURM.yml --jobs 20 --job-scheduler SLURM```  
+```../../../runGeCKO.sh --workflow DataCleaning --config-file CONFIG/config_DataCleaning.yml --cluster-profile CONFIG/DC_CLUSTER_PROFILE_SLURM --jobs 20```  
 
-To launch it on your own data, if you cloned the repository in /home/user and placed your config_DataCleaning.yml and cluster_config_DataCleaning.yml files in a CONFIG folder:  
+To launch it on your own data, if you cloned the repository in /home/user and placed your config_DataCleaning.yml file and your DC_CLUSTER_PROFILE folder in a CONFIG folder:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM```  
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --cluster-profile CONFIG/DC_CLUSTER_PROFILE --jobs 100```  
 
 &nbsp;
  
