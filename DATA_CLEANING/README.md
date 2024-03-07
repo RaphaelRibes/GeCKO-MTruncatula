@@ -229,10 +229,10 @@ You can run this workflow on a computer or on a computer cluster. You will need 
 **Launching**  
 To launch the DATA_CLEANING workflow, use the launching script runGeCKO.sh with the option --workflow DataCleaning:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
-```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --workflow-path ${WORKFLOW_PATH} --jobs 50 --job-scheduler SLURM``` 
+```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --cluster-profile CONFIG/DC_CLUSTER_PROFILE --jobs 100``` 
  
 For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
-```${WORKFLOW_PATH}/runGeCKO.sh --help --workflow-path ${WORKFLOW_PATH}```  
+```${WORKFLOW_PATH}/runGeCKO.sh --help```  
 
 ### 5/ Expected outputs  
 
