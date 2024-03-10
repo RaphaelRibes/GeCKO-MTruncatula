@@ -149,7 +149,7 @@ You can run this workflow on a computer or on a computer cluster. You will need 
 ```conda activate GeCKO_env```  
 
 **Launching**  
-To launch the READ_MAPPING workflow, assuming you placed your config_ReadMapping.yml RM_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow ReadMapping:  
+To launch the READ_MAPPING workflow, assuming you placed your config_ReadMapping.yml and RM_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow ReadMapping:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
 ```${WORKFLOW_PATH}/runGeCKO.sh --workflow ReadMapping --cluster-profile CONFIG/RM_CLUSTER_PROFILE --jobs 100``` 
 
