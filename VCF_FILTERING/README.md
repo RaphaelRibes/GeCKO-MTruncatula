@@ -189,7 +189,7 @@ This workflow uses the following tools:
 - [pandas v1.3.5](https://pandas.pydata.org/)
 - [numpy v1.23.1](https://numpy.org/)
 
-These tools are loaded in a CONDA environment from the conda-forge and bioconda channels.
+These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
