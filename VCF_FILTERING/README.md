@@ -17,7 +17,7 @@ This VCF_FILTERING workflow allows to filter the raw VCF file obtained after the
 
 Needed files:  
 - the full GeCKO/ folder, including the runGeCKO.sh launcher  
-- your variant calling .vcf.gz files
+- your variant calling .vcf.gz file along with his .csi index file
 - a VF_CLUSTER_PROFILE folder (in case you work on a cluster) and a config_VcfFiltering.yml file  
 
 &nbsp;
