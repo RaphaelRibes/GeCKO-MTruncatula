@@ -30,17 +30,16 @@ or
 4) Make the script executable with:  
 ```chmod u+x runGeCKO.sh```
 
-5) Make sure [Conda](#conda-and-mamba) is available to your working environment.  
+5) GeCKO will need [Snakemake](#snakemake) and [Mamba](#conda-and-mamba) to run its workflows. For this you have two possibilities:  
+<ins>**Recommended method:**</ins>
+- First make sure [Conda](#conda-and-mamba) is available to your working environment.  
 Either install it on your computer, or if you are working on a cluster, you may need to 'module load' it, depending on your cluster's software management policy. For clusters using Conda environments, Conda will likely be readily available.  
 Once you have conda available and before launching any GeCKO workflow, it is advised to run the following command (once) to help avoid dependency conflicts and reproducibility issues:  
 ```conda config --set channel_priority strict```
-
-6) In addition to Conda, GeCKO will need [Snakemake](#snakemake) and [Mamba](#conda-and-mamba) to run its workflows. For this you have two possibilities:  
-<ins>**Recommended method:**</ins>  
-Have runGeCKO create a fully operational conda environment for you with:  
+- Then have runGeCKO create a fully operational conda environment for you with:  
 ```./runGeCKO.sh --create-gecko-env```  
 This only needs to be run once, and will create a conda environment called 'GeCKO_env', providing compatible versions of Snakemake (v7.32.4), Mamba (v1.4.9) and their dependencies.  
-You will then have to activate the “GeCKO_env” environment before launching any GeCKO workflow with:  
+- You will have to activate the “GeCKO_env” environment before launching any GeCKO workflow with:  
 ```conda activate GeCKO_env```  
 <ins>**Alternative method:**</ins>   
 Make sure Snakemake (v7) and Mamba are available to your working environment. Either install them on your computer, or if you are working on a cluster, you may need to ```module load``` them, or to ```conda activate``` them, depending on your cluster's software management policy.  
