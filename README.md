@@ -35,7 +35,7 @@ Either install it on your computer, or if you are working on a cluster, you may 
 Once you have conda available and before launching any GeCKO workflow, it is advised to run the following command (once) to help avoid dependency conflicts and reproducibility issues:  
 ```conda config --set channel_priority strict```
 
-6) GeCKO will need [Snakemake](#snakemake) and [Mamba](#conda-and-mamba) to run its workflows. For this you have two possibilities:  
+6) In addition to Conda, GeCKO will need [Snakemake](#snakemake) and [Mamba](#conda-and-mamba) to run its workflows. For this you have two possibilities:  
 <ins>**Recommended method:**</ins>  
 Have runGeCKO create a fully operational conda environment for you with:  
 ```./runGeCKO.sh --create-gecko-env```  
