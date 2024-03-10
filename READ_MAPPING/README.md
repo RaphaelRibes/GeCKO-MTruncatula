@@ -102,8 +102,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *BED_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;The minimum length to keep a region after merging. Optional: can be left blank ("").
 
 **MAPPING PARAMETERS**  
-- *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.  
-- *REMOVE_DUP_MARKDUPLICATES:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after the mapping step. They will be marked either way. [TRUE or FALSE]  
+- *MAPPER:*&nbsp;&nbsp;&nbsp;The name of the mapper you want to use. Currently implemented options are 'bwa-mem2_mem', 'bwa_mem', 'bowtie2' and 'minimap2'.   
 - *SEQUENCING_TECHNOLOGY:*&nbsp;&nbsp;&nbsp;The name of the sequencing technology (eg: "ILLUMINA"), which will appear in the reads names after mapping: 'PL:{SEQUENCING_TECHNOLOGY}')  
 - *EXTRA_MAPPER_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the mapper command. Be careful to provide them between quotes. 
 - *PICARD_MARKDUPLICATES_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'picard MarkDuplicates' command. Be careful to provide them between quotes.  
@@ -111,6 +110,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *SAMTOOLS_INDEX_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'samtools index' command. Be careful to provide them between quotes. The "-c" option is already included.
 
 **BAM FILTERING**
+- *REMOVE_DUP_MARKDUPLICATES:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after the mapping step. They will be marked either way. [TRUE or FALSE] 
 - *SAMTOOLS_VIEW_FILTERS1:*&nbsp;&nbsp;&nbsp;Any list of filters you would like to pass to the 'samtools view' command after the mapping step. Eg for CREATE_SUB_BAMS set to TRUE: "-F 256 -F 2048 -f 2" to discard unproperly paired, non primary and supplementary reads before the extraction step. Eg for CREATE_SUB_BAMS set to FALSE: "-q 30" to discard alignments with a mapping quality (MAPQ score) lower than 30.   
 - *SAMTOOLS_VIEW_FILTERS2:*&nbsp;&nbsp;&nbsp;Any list of filters you would like to pass to the 'samtools view' command after the remapping step. Eg: "-q 30" to discard alignments with a mapping quality (MAPQ score) lower than 30. If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway).
 
