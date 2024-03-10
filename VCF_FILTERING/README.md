@@ -71,6 +71,9 @@ Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-c
 #### *B/ The config_VcfFiltering.yml file:*  
 This file is used to pass all the information and tools parameters that will be used by the VCF_FILTERING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
 
+**GENERAL VARIABLES**  
+  - *FILTERING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different filtering parameters, provide a name for an extra folder to create in the VCF_FILTERING output folder. Otherwise leave blank ("").
+
 **INPUT FILES**  
 - *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variant calling file in zipped vcf format (.vcf.gz).
 
