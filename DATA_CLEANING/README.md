@@ -228,7 +228,7 @@ You can run this workflow on a computer or on a computer cluster. You will need 
 ```conda activate GeCKO_env```  
 
 **Launching**  
-To launch the DATA_CLEANING workflow, use the launching script runGeCKO.sh with the option --workflow DataCleaning:  
+To launch the DATA_CLEANING workflow, assuming you placed your config_DataCleaning.yml DC_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow DataCleaning:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
 ```${WORKFLOW_PATH}/runGeCKO.sh --workflow DataCleaning --cluster-profile CONFIG/DC_CLUSTER_PROFILE --jobs 100``` 
  
