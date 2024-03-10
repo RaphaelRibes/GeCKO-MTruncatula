@@ -67,19 +67,13 @@ Input sequences can be:
 ### 3/ Prepare the config files
 
 The READ_MAPPING workflow will need information about the dataset and the analysis parameters to perform its different steps.  
-These information are provided through two files: *cluster_config_ReadMapping.yml* and *config_ReadMapping.yml*.  
-If you name them exactly as written above and place them in a folder named 'CONFIG', the bash launching script will detect them automatically. Otherwise, you will have to pass them as arguments with --config and --cluster-config (see [below](#4-launch-the-analysis) for details).
+These information are provided through two files: a *config.yaml* profile file placed in a specific folder, and a *config_ReadMapping.yml* file. For the latter, if you name it exactly as written above and place it in a folder named 'CONFIG', the bash launching script will detect it automatically. Otherwise, you will have to pass it as an argument with ```--config``` (see [below](#4-launch-the-analysis) for details).
 
-#### *A/ The cluster_config_ReadMapping.yml file:*
-This file will be needed if you run the workflow on a computer cluster and want Snakemake to submit jobs. You will <ins>only need to modify two things: the partitions or queues names</ins> to match those of your cluster, and <ins>the memory to be requested for each submitted job</ins>. The first section of the file gives the default values for the job-scheduler's parameters that Snakemake should use for all its steps (or rules). The following sections correspond to specific Snakemake steps, with new parameters values to overwrite the defaults. If you want to assign a different partition/queue or memory requirement for a specific step that does not yet have its own section, you can create a new section for it:  
-
-	specificStepName:
-    	q or partition: {partition name for specificStep}
-    	mem-per-cpu or h_vmem: {needed memory for each job submitted in specificStep}
+#### *A/ The PROFILE config.yaml file:*
+If you intend to execute the workflow on a computer cluster and want it to run tasks in parallel, you must provide the ```--cluster-profile``` parameter with a PROFILE folder. This folder should contain a file named 'config.yaml', giving the needed information to properly submit jobs on the cluster you work on. <ins>Examples of this file, adapted to SGE and SLURM job-schedulers, are provided in the CONFIG folder for each READ_MAPPING example dataset</ins>. Depending on your job-scheduler, pick either the RM_CLUSTER_PROFILE_SGE or the RM_CLUSTER_PROFILE_SLURM folder, and adapt the config.yaml to your needs.  
+The yaml file is organized into two parts, but you will only need to modify the first one. In this first part, the first section ('default-resources') provides the default values for the cluster's resources (partitions and memory) that the workflow should use for all its steps (or rules). If you want to assign a different partition/queue or memory requirement for a specific step, you can specify it in the second section ('set-resources'), and it will overwrite the defaults. Finally, in the last section ('set-threads') you can provide the number of threads/CPUs needed for each step.  
 
 You will find [the list of the steps names](#list-of-the-snakefile-rules) along with what they do and the tools they use at the end of this page.  
-Our workflows support SGE and Slurm job-schedulers. <ins>You will find cluster-config files for both in the EXAMPLE/.../CONFIG folders</ins>.  
-
 
 #### *B/ The config_ReadMapping.yml file:*  
 This file is used to pass all the information and tools parameters that will be used by the READ_MAPPING workflow. The workflow expects it to contain a specific list of variables and their assigned values, organized in YAML format. Expected variables are:  
