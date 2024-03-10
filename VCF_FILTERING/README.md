@@ -201,12 +201,13 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Filter_Samples                   | Filtering variants by sample (Removing samples that have too many loci with missing data) | bcftools view   |
 | Calculate_LocusExtraStats        | Calculating additional site level statistics (e.g. FIS, He, MAF)                          | Egglib          |
 | Filter_Loci_2                    | Filtering variants based on additional site level statistics (e.g. FIS, He, MAF)          | bcftools filter |
-| Build_StatsReport                | Building statistics reports for unfiltered variants and each filtering step               | bcftools stats  |
+| Build_StatsReports                | Building statistics reports for unfiltered variants and each filtering step               | bcftools stats  |
 | Build_Report                     | Running MultiQC on unfiltered variants and each filtering step                            | MultiQC         |
 | Summarize_FinalVCFVariables      | Recovery and summarize locus statistics                                                   | bcftools query  |
 | Plot_FinalVCFVariablesHistograms | Creating histograms based on locus statistics                                             | seaborn, pyplot |
 | Plot_FinalVCFDPBoxplot           | Creating a boxplot of the depth at each genotype                                          | pyplot          |
 | Plot_FinalVCFVariantsAlongGenome | Creating a plot of the detected variants along the genome                                 | pyplot          |
+| Compute_MissingDataPerSample | Compute the NA % for each sample                                 | bcftools query     |
 
 
 
