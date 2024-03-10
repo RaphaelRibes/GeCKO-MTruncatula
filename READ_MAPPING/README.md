@@ -31,7 +31,7 @@ Needed files:
 To easily launch the workflow, use our runGeCKO.sh launcher. For example, to launch the workflow on our example PAIRED_END DEMULT_TRIM dataset on a Slurm job-scheduler, run the following command from the EXAMPLE/PAIRED_END directory:  
 ```../../../runGeCKO.sh --workflow ReadMapping --config-file CONFIG/config_ReadMapping.yml --cluster-profile CONFIG/RM_CLUSTER_PROFILE_SLURM --jobs 20```  
 
-To launch it on your own data, if you cloned the repository in /home/user and placed your config_ReadMapping.yml file and your RM_CLUSTER_PROFILE folder in a CONFIG folder:
+To launch it on your own data, if you cloned the repository in /home/user and placed your config_ReadMapping.yml file and your RM_CLUSTER_PROFILE folder in a CONFIG folder:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
 ```${WORKFLOW_PATH}/runGeCKO.sh --workflow ReadMapping --cluster-profile CONFIG/RM_CLUSTER_PROFILE --jobs 100``` 
 
