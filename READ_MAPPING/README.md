@@ -145,10 +145,11 @@ Bam filtering options are available after both the initial mapping (SAMTOOLS_VIE
 ### 4/ Launch the analysis
 
 **Environment**  
-You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Conda to be available.
+You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Mamba to be available. If you chose to [create the GeCKO_env conda environment with runGeCKO.sh](https://github.com/GE2POP/GeCKO/tree/main#recommended-method), you first need to activate it:  
+```conda activate GeCKO_env```  
 
 **Launching**  
-To launch the READ_MAPPING workflow, use the launching script runGeCKO.sh with the option --workflow ReadMapping:  
+To launch the READ_MAPPING workflow, assuming you placed your config_ReadMapping.yml RM_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow ReadMapping:  
 ```WORKFLOW_PATH=/home/user/GeCKO```  
 ```${WORKFLOW_PATH}/runGeCKO.sh --workflow ReadMapping --cluster-profile CONFIG/RM_CLUSTER_PROFILE --jobs 100``` 
 
