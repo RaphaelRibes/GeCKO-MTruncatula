@@ -224,7 +224,7 @@ Two-column file specifying the samples names (column 1) and technical sequences 
 ### 4/ Launch the analysis
 
 **Environment**  
-You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Mamba to be available. If you chose to [create the GeCKO_env conda environment with runGeCKO.sh](https://github.com/GE2POP/GeCKO/tree/main#installation), you first need to activate it:  
+You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Mamba to be available. If you chose to [create the GeCKO_env conda environment with runGeCKO.sh](https://github.com/GE2POP/GeCKO/tree/main#recommended-method), you first need to activate it:  
 ```conda activate GeCKO_env```  
 
 **Launching**  
