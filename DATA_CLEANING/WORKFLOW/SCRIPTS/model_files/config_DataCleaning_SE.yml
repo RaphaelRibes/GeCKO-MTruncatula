@@ -15,7 +15,7 @@ DEMULT_DIR: ""
 # Complete this field if the raw fastq files are multiplexed (sequencing Single_end or paired_end), if not leave blank: ""
 BARCODE_FILE: ""
 # Complete this field in all cases
-ADAPT_FILE: ""
+ADAPTER_FILE: ""
 
 
 ### DEMULTIPLEXING PARAMETERS ###

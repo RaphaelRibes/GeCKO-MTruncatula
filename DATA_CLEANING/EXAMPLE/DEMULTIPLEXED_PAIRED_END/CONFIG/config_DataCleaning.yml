@@ -19,7 +19,7 @@ FASTQ_R2: ""
 DEMULT_DIR: "DEMULT"
 
 # Complete this field in all cases
-ADAPT_FILE: "CONFIG/adapter_file_MEL.txt"
+ADAPTER_FILE: "CONFIG/adapter_file_MEL.txt"
 
 # Complete this field if the raw fastq files are multiplexed (sequencing Single_end or paired_end), if not leave blank: ""
 BARCODE_FILE: ""

@@ -153,11 +153,11 @@ if [[ -z "$DEMULT_DIR" && -z "$DEMULT_CORES" ]] ; then
   exit 1
 fi
 
-# BARCODE_FILE and ADAPT_FILE
+# BARCODE_FILE and ADAPTER_FILE
 BARCODE_FILE=$(grep "^BARCODE_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-ADAPT_FILE=$(grep "^ADAPT_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+ADAPTER_FILE=$(grep "^ADAPTER_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 BARCODE_FILE=$(absolutePath $BARCODE_FILE)
-ADAPT_FILE=$(absolutePath $ADAPT_FILE)
+ADAPTER_FILE=$(absolutePath $ADAPTER_FILE)
 
 if [[ -z "$DEMULT_DIR" && -z "$BARCODE_FILE" ]] ; then
   echo -e "\nERROR: A BARCODE_FILE must be provided in the config file."
@@ -188,35 +188,35 @@ if [[ ! -z "$BARCODE_FILE" ]] ; then
   fi
 fi
 
-if [[ -z "$ADAPT_FILE" ]] ; then
-  echo -e "\nERROR: An ADAPT_FILE must be provided in the config file."
+if [[ -z "$ADAPTER_FILE" ]] ; then
+  echo -e "\nERROR: An ADAPTER_FILE must be provided in the config file."
   echo -e "\nExiting.\n"
   exit 1
 fi
-if [[ ! -z "$ADAPT_FILE" && ! -f "$ADAPT_FILE" ]] ; then
-  echo -e "\nERROR: The ADAPT_FILE provided in the config file (${ADAPT_FILE}) does not exist. Please make sure the file exists and its path is correct."
+if [[ ! -z "$ADAPTER_FILE" && ! -f "$ADAPTER_FILE" ]] ; then
+  echo -e "\nERROR: The ADAPTER_FILE provided in the config file (${ADAPTER_FILE}) does not exist. Please make sure the file exists and its path is correct."
   echo -e "\nExiting.\n"
   exit 1
 fi
-if grep -q $'\r' $ADAPT_FILE; then
-  echo "Removing windows carriage returns in ${ADAPT_FILE}..."
-  sed -i 's/\r$//g' $ADAPT_FILE
-  sed -i 's/\r/\n/g' $ADAPT_FILE
+if grep -q $'\r' $ADAPTER_FILE; then
+  echo "Removing windows carriage returns in ${ADAPTER_FILE}..."
+  sed -i 's/\r$//g' $ADAPTER_FILE
+  sed -i 's/\r/\n/g' $ADAPTER_FILE
 fi
 
-nb_col_adapt_file=$(awk -F '\t' '{print NF}' $ADAPT_FILE | sort | uniq)
-if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" && $nb_col_adapt_file != 3 ]] ; then
-  echo -e "\nERROR: The adapter file (${ADAPT_FILE}) provided in the config file does not have a proper format. For paired end data, 3 columns are expected, separated by tabs."
+nb_col_adapter_file=$(awk -F '\t' '{print NF}' $ADAPTER_FILE | sort | uniq)
+if [[ "$WORKFLOW_SMK" = "${WORKFLOW}_PairedEnd.smk" && $nb_col_adapter_file != 3 ]] ; then
+  echo -e "\nERROR: The adapter file (${ADAPTER_FILE}) provided in the config file does not have a proper format. For paired end data, 3 columns are expected, separated by tabs."
   echo -e "\nExiting.\n"
   exit 1
-elif [[ "$WORKFLOW_SMK" = "${WORKFLOW}_SingleEnd.smk" && $nb_col_adapt_file != 2 ]] ; then
-  echo -e "\nERROR: The adapter file (${ADAPT_FILE}) provided in the config file does not have a proper format. For single end data, 2 columns are expected, separated by tabs."
+elif [[ "$WORKFLOW_SMK" = "${WORKFLOW}_SingleEnd.smk" && $nb_col_adapter_file != 2 ]] ; then
+  echo -e "\nERROR: The adapter file (${ADAPTER_FILE}) provided in the config file does not have a proper format. For single end data, 2 columns are expected, separated by tabs."
   echo -e "\nExiting.\n"
   exit 1
 fi
 
 if [[ ! -z "$DEMULT_DIR" ]] ; then
-  samples=$(cut -f1 $ADAPT_FILE)
+  samples=$(cut -f1 $ADAPTER_FILE)
   if [[ $PAIRED = "TRUE" ]] ; then
     for sample in $samples ; do
       fastq_R1="${DEMULT_DIR}/${sample}.R1.fastq.gz"
@@ -229,9 +229,9 @@ if [[ ! -z "$DEMULT_DIR" ]] ; then
     done
     for fastq_R1 in $(ls ${DEMULT_DIR}/*.R1.fastq.gz) ; do
       sample=$(basename $fastq_R1 .R1.fastq.gz)
-      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l )
+      nb_row_sample=$(grep $sample $ADAPTER_FILE | wc -l )
       if [[ $nb_row_sample -eq 0 ]] ; then
-        echo -e "\nERROR: ${sample} could not be found in your ADAPT_FILE. Please make sure all your samples appear in your ADAPT_FILE."
+        echo -e "\nERROR: ${sample} could not be found in your ADAPTER_FILE. Please make sure all your samples appear in your ADAPTER_FILE."
         echo -e "\nExiting.\n"
         exit 1
       fi
@@ -248,9 +248,9 @@ if [[ ! -z "$DEMULT_DIR" ]] ; then
     done
     for fastq in $(ls ${DEMULT_DIR}/*fastq.gz) ; do
       sample=$(basename $fastq .fastq.gz)
-      nb_row_sample=$(grep $sample $ADAPT_FILE | wc -l)
+      nb_row_sample=$(grep $sample $ADAPTER_FILE | wc -l)
       if [[ $nb_row_sample -eq 0 ]] ; then
-        echo -e "\nERROR: ${sample} could not be found in your ADAPT_FILE. Please make sure all your samples appear in your ADAPT_FILE."
+        echo -e "\nERROR: ${sample} could not be found in your ADAPTER_FILE. Please make sure all your samples appear in your ADAPTER_FILE."
         echo -e "\nExiting.\n"
         exit 1
       fi
@@ -258,12 +258,12 @@ if [[ ! -z "$DEMULT_DIR" ]] ; then
   fi
 fi
 
-# check that BARCODE_FILE and ADAPT_FILE contain the same samples
+# check that BARCODE_FILE and ADAPTER_FILE contain the same samples
 if [[ ! -z $BARCODE_FILE ]] ; then
-  nb_uniq_adapt=$(grep -F -x -v -f <(cut -f1 $BARCODE_FILE | sort) <(cut -f1 $ADAPT_FILE | sort) | wc -l)
-  nb_uniq_barcode=$(grep -F -x -v -f <(cut -f1 $ADAPT_FILE | sort) <(cut -f1 $BARCODE_FILE | sort) | wc -l)
+  nb_uniq_adapt=$(grep -F -x -v -f <(cut -f1 $BARCODE_FILE | sort) <(cut -f1 $ADAPTER_FILE | sort) | wc -l)
+  nb_uniq_barcode=$(grep -F -x -v -f <(cut -f1 $ADAPTER_FILE | sort) <(cut -f1 $BARCODE_FILE | sort) | wc -l)
   if [[ $nb_uniq_adapt -gt 0 || $nb_uniq_barcode -gt 0 ]] ; then
-    echo -e "\nERROR: The samples names given in the ADAPT_FILE and the BARCODE_FILE do not match. Please make sure that they are the same."
+    echo -e "\nERROR: The samples names given in the ADAPTER_FILE and the BARCODE_FILE do not match. Please make sure that they are the same."
     echo -e "\nExiting.\n"
     exit 1
   fi

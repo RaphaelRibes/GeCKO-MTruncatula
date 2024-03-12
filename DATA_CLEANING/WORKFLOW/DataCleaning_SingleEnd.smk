@@ -10,7 +10,7 @@ default_threads = 1 #this will be erased by the user's specifications for each r
 
 ### Variables from config file
 samples = []
-with open(config["ADAPT_FILE"], "r") as file:
+with open(config["ADAPTER_FILE"], "r") as file:
     for row in file:
         samples.append(row.split("\t")[0])
 
@@ -202,7 +202,7 @@ rule Fastqc_ConcatDemultFastqs:
 rule Trimming_DemultFastqs:
     input:
         fastqs_demult = demult_dir+"/{base}.fastq.gz",
-        adapt_file = config["ADAPT_FILE"]
+        adapter_file = config["ADAPTER_FILE"]
     output:
         demult_trim_dir+"/{base}.fastq.gz",
         demult_trim_cutadapt_reports_dir+"/trimming_cutadapt_{base}.info"
@@ -215,7 +215,7 @@ rule Trimming_DemultFastqs:
     threads: default_threads
     shell:
         "{scripts_dir}/trimming_with_cutadapt_SE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
-        "--R {input.fastqs_demult} --adapt_file {input.adapt_file} "
+        "--R {input.fastqs_demult} --adapter_file {input.adapter_file} "
         "--cores {params.cores} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
         "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info"
 

@@ -17,7 +17,7 @@ set -e -o pipefail
 # Trimming a pair of fastq files (R1 + R2 ) to remove adapters sequences, low quality sequences et short sequences
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R1 sampleX.R1.fastq.gz --R2 sampleX.R2.fastq.gz --adapt_file adapter_file_DEV.txt --cores 1 --quality_cutoff 30 --minimum_length 36
+#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R1 sampleX.R1.fastq.gz --R2 sampleX.R2.fastq.gz --adapter_file adapter_file_DEV.txt --cores 1 --quality_cutoff 30 --minimum_length 36
 
 #--trimdir
 	# storage space created by the workflow for the outputs of the trimming step: >>> {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
@@ -27,7 +27,7 @@ set -e -o pipefail
 	# path to fastq.gz files corresponding to the R1 sequences by sample (after demultiplexing)
 #--R2
 	# path to fastq.gz files corresponding to the R2 sequences by sample (after demultiplexing)
-#--adapt_file
+#--adapter_file
 	# path to the adapter_file.txt containing the list of samples names (column 1), sequences of adapter in the direction of read 1 after the sequencing fragment (column 2) and sequences of adapter in the direction of read 2 after the sequencing fragment (column 3)
 	# example (no header, tab-separated):
 	#Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
@@ -54,7 +54,7 @@ do
 key="$1"
 
 case $key in
-  --adapt_file)
+  --adapter_file)
   ADAPTERS_SEQ_FILE="$2"
   shift # past argument
   shift # past value
