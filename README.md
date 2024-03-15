@@ -1,6 +1,6 @@
 THIS IS THE UMI BRANCH !!  
 
-To clone this branch:
+To clone this branch:  
 ```git clone -b UMI git@github.com:GE2POP/GeCKO.git```
 
 ## Project overview  
