@@ -22,6 +22,11 @@ if (len(user_demult_dir) == 0):
 else:
     performDemultiplexing = False
 
+if config["UMI"]:
+    extractUMI = True
+else:
+    extractUMI = False
+
 ### Raw fastq files path and base names
 fastq_raw_base = raw_data_dir = ""
 if performDemultiplexing:
@@ -39,20 +44,25 @@ outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING"
 rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 rawdata_fastqc_reports_dir = rawdata_reports_dir+"/FASTQC"
 
+
 if performDemultiplexing:
     demult_dir = outputs_directory+"/DEMULT"
     demult_dir_output = demult_dir
+    demult_dir_input = demult_dir
 else:
     demult_dir = user_demult_dir
-    demult_dir_output = outputs_directory+"/DEMULT"
+    if extractUMI:
+        demult_dir_output = outputs_directory+"/DEMULT_UMI"
+        demult_dir_input = demult_dir_output
+    else:
+        demult_dir_output = outputs_directory+"/DEMULT"
+        demult_dir_input = demult_dir
 
 demult_reports_dir = demult_dir_output+"/REPORTS"
 demult_fastqc_reports_dir = demult_reports_dir+"/FASTQC"
+demult_umitools_reports_dir = demult_reports_dir+"/UMITOOLS_INFOS"
+demult_cutadapt_reports_dir = demult_reports_dir+"/CUTADAPT_INFOS"
 
-if performDemultiplexing:
-    demult_cutadapt_reports_dir = demult_reports_dir+"/CUTADAPT_INFOS"
-else:
-    demult_cutadapt_reports_dir = ""
 
 
 demult_trim_dir = outputs_directory+"/DEMULT_TRIM"
@@ -138,18 +148,34 @@ rule Demultiplex_RawFastqs:
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 
 
+rule ExtractUMI_DemultFastqs:
+    input:
+        fastq = demult_dir+"/{base}.fastq.gz"
+    output:
+        fastq = demult_dir_output+"/{base}.fastq.gz"
+    params:
+        umitools_extract_options = config["UMITOOLS_EXTRACT_OPTIONS"]
+    conda:
+        "ENVS/conda_tools.yml"
+    threads: default_threads
+    shell:
+        "umi_tools extract --stdin {input.fastq} --stdout {output.fastq} {params.umitools_extract_options}"
+
+
 rule CountReads_DemultFastqs:
     input:
-        expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir)
+        expand("{demult_dir_input}/{sample}.fastq.gz", sample=samples, demult_dir_input=demult_dir_input)
     output:
         demult_reports_dir+"/Reads_Count_Demult.txt"
     threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_dir} --output {output}"
 
+
+
 rule Fastqc_DemultFastqs:
     input:
-        demult_dir+"/{base}.fastq.gz"
+        demult_dir_input+"/{base}.fastq.gz"
     output:
         demult_fastqc_reports_dir+"/{base}_fastqc.zip"
     conda:
@@ -178,7 +204,7 @@ rule MultiQC_DemultFastqs:
 
 rule Concatenate_DemultFastqs:
     input:
-        fastqs_demult = expand("{demult_dir}/{sample}.fastq.gz", sample=samples, demult_dir=demult_dir),
+        fastqs_demult = expand("{demult_dir_input}/{sample}.fastq.gz", sample=samples, demult_dir_input=demult_dir_input),
         demult_reads_count = demult_reports_dir+"/Reads_Count_Demult.txt" # necessary to exclude concatenated fastq from read count
     output:
         temp(demult_dir_output+"/All_Samples_Concat_demultiplexed.fastq.gz")
@@ -201,7 +227,7 @@ rule Fastqc_ConcatDemultFastqs:
 
 rule Trimming_DemultFastqs:
     input:
-        fastqs_demult = demult_dir+"/{base}.fastq.gz",
+        fastqs_demult = demult_dir_input+"/{base}.fastq.gz",
         adapter_file = config["ADAPTER_FILE"]
     output:
         demult_trim_dir+"/{base}.fastq.gz",

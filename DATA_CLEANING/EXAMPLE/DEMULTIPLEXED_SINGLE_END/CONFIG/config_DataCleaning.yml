@@ -31,6 +31,9 @@ BARCODE_FILE: ""
 DEMULT_CORES: "" # Cutadapt parameter "--cores"
 DEMULT_SUBSTITUTIONS: "" # Cutadapt parameter "--substitutions"
 
+### UMI EXTRACTION PARAMETERS ###
+UMI: FALSE
+UMITOOLS_EXTRACT_OPTIONS: ""
 
 ### TRIMMING PARAMETERS ###
 TRIMMING_CORES: 1 # Cutadapt parameter "--cores"

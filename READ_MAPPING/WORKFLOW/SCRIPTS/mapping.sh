@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --sample {wildcards.base}
+#{scripts_dir}/mapping.sh --paired_end --fastq_R1 {input.fastq_paired_R1} --fastq_R2 {input.fastq_paired_R2} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --sample {wildcards.base} --MD_options {params.picard_markduplicates_options} --MD_java_options {params.picard_markduplicates_java_options} --reports_dir {bams_reports_dir} --umi {dedupUMI}
 #ou
-#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --sample {wildcards.base}
+#{scripts_dir}/mapping.sh --single_end --fastq {input.fastq_single} --ref {input.ref} --mapper {mapper} --mapper_options {mapper_options} --technology {technology} --output_dir {bams_dir} --sample {wildcards.base} --MD_options {params.picard_markduplicates_options} --MD_java_options {params.picard_markduplicates_java_options} --reports_dir {bams_reports_dir} --umi {dedupUMI}
 
 set -e -o pipefail
 
@@ -83,6 +83,11 @@ do
     ;;
     --reports_dir)
     REPORTS_DIR="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --umi)
+    UMI="$2"
     shift # past argument
     shift # past value
     ;;
@@ -175,4 +180,6 @@ fi
 
 samtools sort -o ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam ${OUTPUT_DIR}/${SAMPLE}_raw.sam
 
-picard ${MD_JAVA_OPTIONS} MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam -O ${OUTPUT_DIR}/${SAMPLE}_markedDup.bam -VALIDATION_STRINGENCY SILENT ${MD_OPTIONS} -REMOVE_DUPLICATES FALSE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
+if [ "${UMI}" == "FALSE" ] ; then
+  picard ${MD_JAVA_OPTIONS} MarkDuplicates -I ${OUTPUT_DIR}/${SAMPLE}_sortcoord.bam -O ${OUTPUT_DIR}/${SAMPLE}_markedDup.bam -VALIDATION_STRINGENCY SILENT ${MD_OPTIONS} -REMOVE_DUPLICATES FALSE -M ${REPORTS_DIR}/DUPLICATES/${SAMPLE}.bam.metrics
+fi

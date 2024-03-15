@@ -4,8 +4,6 @@
 
 #{scripts_dir}/extract_PEreads.sh --bam {input.bams} --sample {wildcards.base} --bed_file {input.bed} --output_dir {subbams_dir}
 
-# module load picard-tools/2.24.0-conda
-# module load samtools/1.14-bin
 
 set -e -o pipefail
 
@@ -104,12 +102,6 @@ fi
 samtools sort -n ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge.bam > ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted.bam
 samtools view -H ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted.bam > ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted_uniq.sam
 samtools view ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted.bam | uniq >> ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted_uniq.sam
-#samtools view -H ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge.bam > ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_uniq.sam
-#samtools view ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge.bam | sort | uniq >> ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_uniq.sam
-
-#samtools sort -n ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_coordSorted_uniq.sam -o ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted.bam
-#samtools sort -n ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_uniq.sam -o ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted.bam
-#samtools fixmate -m ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted.bam  ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted_fixed.bam
 samtools fixmate -m ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_nameSorted_uniq.sam  ${OUTPUT_DIR}/${SAMPLE}_PP_extract_merge_fixed.bam
 
 # Transform the bam into fastq
