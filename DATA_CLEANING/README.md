@@ -114,8 +114,8 @@ This file is used to pass all the information and tools parameters that will be 
 
 **TRIMMING PARAMETERS** (mandatory)  
 - *TRIMMING_CORES:*&nbsp;&nbsp;&nbsp;Number of cores to be allocated on your cluster for the trimming step with Cutadapt (will be passed to the "--cores" Cutadapt parameter)  
-- *TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality_cutoff" Cutadapt parameter)  
-- *TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum_length" Cutadapt parameter)
+- *TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality-cutoff" Cutadapt parameter)  
+- *TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum-length" Cutadapt parameter)
 
 &nbsp;
 
