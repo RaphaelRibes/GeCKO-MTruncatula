@@ -34,5 +34,5 @@ DEMULT_SUBSTITUTIONS: 0.1 # Cutadapt parameter "--substitutions"
 
 ### TRIMMING PARAMETERS ###
 TRIMMING_CORES: 1 # Cutadapt parameter "--cores"
-TRIMMING_QUAL: 30 # Cutadapt parameter "--quality_cutoff"
-TRIMMING_MIN_LENGTH: 36 # Cutadapt parameter "--minimum_length"
+TRIMMING_QUAL: 30 # Cutadapt parameter "--quality-cutoff"
+TRIMMING_MIN_LENGTH: 36 # Cutadapt parameter "--minimum-length"
