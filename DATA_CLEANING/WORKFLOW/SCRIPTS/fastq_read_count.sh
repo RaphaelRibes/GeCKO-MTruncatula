@@ -70,4 +70,4 @@ fi
 
 #### SCRIPT:
 
-for gz in ${FASTQ_DIR}/*fastq.gz ; do rows=$(gunzip -c $gz | wc -l) ; ((reads=${rows}/4)) ; name=$(basename $gz) ; echo -e ${name}"\t"${reads} ; done | sort > ${OUTPUT}
+for gz in ${FASTQ_DIR}/*fastq.gz ; do rows=$(gunzip -c $gz | wc -l) ; reads=$((rows/4)) ; name=$(basename $gz) ; echo -e ${name}"\t"${reads} ; done | sort > ${OUTPUT}
