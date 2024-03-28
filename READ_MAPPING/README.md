@@ -89,7 +89,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
 
 *If you set CREATE_SUB_BAMS to TRUE, you either have to provide a bed file:*
-- *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in, in format "chr start end". Optional: can be left blank ("").  
+- *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in, in format "chr start end", separated with tabulations. Optional: can be left blank ("").  
 
 *Or to provide ALL of the three following parameters to automatically create a bed file containing the genomic regions with enough coverage in your dataset:*
 - *BED_MIN_MEAN_COV:*&nbsp;&nbsp;&nbsp;The minimum mean depth per sample (number of reads per base) to keep a genomic region. Optional: can be left blank ("").
