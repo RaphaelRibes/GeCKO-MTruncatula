@@ -61,8 +61,9 @@ The input data must be sequences from an Illumina sequencer (Miseq/Hiseq/Novaseq
 
 Input sequences can be:  
 - single-end sequences (SE): you must provide fastq files named in the format \*name\*.fastq.gz  
-- paired-end sequences (PE): you must provide pairs of fastq files named in the format \*name\*.R1.fastq.gz and \*name\*.R2.fastq.gz  
+- paired-end sequences (PE): you must provide pairs of fastq files named in the format \*name\*.R1.fastq.gz and \*name\*.R2.fastq.gz
 
+If you processed your raw data using GeCKO's DataCleaning workflow, the resulting fastq files located in the WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM directory would serve as the input files for this workflow.
 
 ### 3/ Prepare the config files
 
