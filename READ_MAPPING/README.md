@@ -81,7 +81,7 @@ This file is used to pass all the information and tools parameters that will be 
 
 **GENERAL VARIABLES**  
 - *PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end. [TRUE or FALSE]  
-- *CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. Cannot be set to TRUE if the BED variable is left blank. If set to TRUE, please read [this section](#filling-in-the-config-file-if-you-want-to-extract-and-remap-reads-from-specific-zones-create_sub_bams-set-to-true) to understand how to properly set up your config file. [TRUE or FALSE]  
+- *CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. <ins>If your reference genome includes chromosomes longer than 512 Mb, and you intend to call variants on your data, we recommend performing a read extraction, since SNP callers such as GATK cannot process chromosomes of such lengths effectively.</ins> Cannot be set to TRUE if the BED variable is left blank. If set to TRUE, please read [this section](#how-to-fill-in-the-configuration-file-for-extracting-and-remapping-reads-from-specific-zones-create_sub_bams-set-to-true) to understand how to properly set up your config file. [TRUE or FALSE]  
 - *MAPPING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different mapping parameters (different reference, mapping options...), provide a name for an extra folder to create in the READ_MAPPING output folder. Otherwise leave blank ("").  
 
 **INPUT FILES**  
