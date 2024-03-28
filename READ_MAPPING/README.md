@@ -11,7 +11,7 @@ It can be used to process:
 2) Reads are mapped to the reference, the resulting bams are sorted, the duplicates are removed if needed, the reads are filtered as specified by the user, and the final bams are indexed.
 3) Total and mapped reads are counted at each step, and a MultiQC report is created, showing the reads numbers and quality after the mapping step.
 4) [Optional] For each genomic region provided in a bed file (or automatically determined by the workflow), reads are counted in each sample.
-5) [Optional] A sub-reference corresponding to the bed regions is produced. The reads that mapped to these regions are extracted and re-mapped to the sub-reference. The resulting sub-bams are sorted, filtered as specified by the user, and the final sub-bams are indexed.
+5) [Optional] Targeted remapping: a sub-reference corresponding to the bed regions is produced. The reads that mapped to these regions are extracted and re-mapped to the sub-reference. The resulting sub-bams are sorted, filtered as specified by the user, and the final sub-bams are indexed.
 6) [Optional] Total and mapped reads are counted before and after the second filtering step, and a MultiQC report is created, showing the reads numbers and quality after remapping the reads to the sub-reference.
 
 
