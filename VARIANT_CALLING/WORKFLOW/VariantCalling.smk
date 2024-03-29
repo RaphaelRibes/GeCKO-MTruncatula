@@ -50,6 +50,15 @@ GenomicsDBImport_dir = vc_dir+"/GENOMICS_DB_IMPORT"
 GenotypeGVCFs_dir = vc_dir+"/GENOTYPE_GVCFS"
 GenotypeGVCFs_REPORTS_dir = GenotypeGVCFs_dir+"/REPORTS"
 
+## Expected output
+if performConvertPositions:
+    final_vcf = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz"
+    final_vcf_index = final_vcf+".csi"
+else:
+    final_vcf = GenotypeGVCFs_dir+"/variant_calling.vcf.gz"
+    final_vcf_index = final_vcf+".tbi"
+
+
 ### Generate the workflow_info name
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{vc_dir}/workflow_info_{timestamp}.txt"
@@ -75,7 +84,9 @@ def find_latest_info_file(directory):
 
 rule FinalTargets:
     input:
-        vc_dir+"/summary.sentinel"
+        vc_dir+"/summary.sentinel",
+        final_vcf,
+        final_vcf_index
 
 
 rule Index_Reference:
@@ -164,8 +175,8 @@ rule GenotypeGVCFs:
         reference = reference,
         DB = GenomicsDBImport_dir
     output:
-        vcf_gz = GenotypeGVCFs_dir+"/variant_calling.vcf.gz",
-        vcf_gz_tbi = GenotypeGVCFs_dir+"/variant_calling.vcf.gz.tbi",
+        vcf_gz = temp(GenotypeGVCFs_dir+"/variant_calling.vcf.gz") if performConvertPositions else GenotypeGVCFs_dir+"/variant_calling.vcf.gz",
+        vcf_gz_tbi = temp(GenotypeGVCFs_dir+"/variant_calling.vcf.gz.tbi") if performConvertPositions else GenotypeGVCFs_dir+"/variant_calling.vcf.gz.tbi",
         tmp_GVCF = temp(directory(GenotypeGVCFs_dir+"/tmp_dir_GVCF"))
     params:
         java_options = config["GATK_GENOTYPE_GVCFS_JAVA_OPTIONS"],
@@ -195,17 +206,12 @@ rule ConvertPositions:
         "python3 {scripts_dir}/convert_vcf_positions.py --vcf {output.vcf} --chr_size {input.reference_chr_size} --vcf_converted {GenotypeGVCFs_dir}/variant_calling_converted.vcf;"
         "bgzip {GenotypeGVCFs_dir}/variant_calling_converted.vcf;"
         "tabix --csi {output.vcf_converted_gz};"
-        "rm {input.vcf_gz_tbi}"
+
 
 
 rule Summarize_GVCFVariables:
     input:
-        buildExpectedFiles(
-        [GenotypeGVCFs_dir+"/variant_calling.vcf.gz",
-        GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz"],
-
-        [ not performConvertPositions, performConvertPositions ]
-        )
+        final_vcf
     output:
         stats_tsv = GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv",
         DP_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_VC.tsv"),
