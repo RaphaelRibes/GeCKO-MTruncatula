@@ -11,7 +11,7 @@ It can be used to process:
 2) Reads are mapped to the reference, the resulting bams are sorted, the duplicates are removed if needed, the reads are filtered as specified by the user, and the final bams are indexed.
 3) Total and mapped reads are counted at each step, and a MultiQC report is created, showing the reads numbers and quality after the mapping step.
 4) [Optional] For each genomic region provided in a bed file (or automatically determined by the workflow), reads are counted in each sample.
-5) [Optional] A sub-reference corresponding to the bed regions is produced. The reads that mapped to these regions are extracted and re-mapped to the sub-reference. The resulting sub-bams are sorted, filtered as specified by the user, and the final sub-bams are indexed.
+5) [Optional] Targeted remapping: a sub-reference corresponding to the bed regions is produced. The reads that mapped to these regions are extracted and re-mapped to the sub-reference. The resulting sub-bams are sorted, filtered as specified by the user, and the final sub-bams are indexed.
 6) [Optional] Total and mapped reads are counted before and after the second filtering step, and a MultiQC report is created, showing the reads numbers and quality after remapping the reads to the sub-reference.
 
 
@@ -61,8 +61,9 @@ The input data must be sequences from an Illumina sequencer (Miseq/Hiseq/Novaseq
 
 Input sequences can be:  
 - single-end sequences (SE): you must provide fastq files named in the format \*name\*.fastq.gz  
-- paired-end sequences (PE): you must provide pairs of fastq files named in the format \*name\*.R1.fastq.gz and \*name\*.R2.fastq.gz  
+- paired-end sequences (PE): you must provide pairs of fastq files named in the format \*name\*.R1.fastq.gz and \*name\*.R2.fastq.gz
 
+If you processed your raw data using GeCKO's DataCleaning workflow, the resulting fastq files located in the WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM directory would serve as the input files for this workflow.
 
 ### 3/ Prepare the config files
 
@@ -80,7 +81,7 @@ This file is used to pass all the information and tools parameters that will be 
 
 **GENERAL VARIABLES**  
 - *PAIRED_END:*&nbsp;&nbsp;&nbsp;Whether your data is paired-end or single-end. [TRUE or FALSE]  
-- *CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams. Cannot be set to TRUE if the BED variable is left blank. If set to TRUE, please read [this section](#filling-in-the-config-file-if-you-want-to-extract-and-remap-reads-from-specific-zones-create_sub_bams-set-to-true) to understand how to properly set up your config file. [TRUE or FALSE]  
+- *CREATE_SUB_BAMS:*&nbsp;&nbsp;&nbsp;Whether to extract reads from regions of interest (listed in bed file) and to create the corresponding sub-bams (we call this process "targeted remapping"). <ins>If your reference genome includes chromosomes longer than 512 Mb and you intend to call variants on your data, please note that SNP callers such as GATK cannot process chromosomes of such lengths effectively. In such cases, performing a targeted remapping is advised, as it will produce reads mapped to shorter contigs.</ins> Cannot be set to TRUE if the BED variable is left blank. If set to TRUE, please read [this section](#how-to-fill-in-the-configuration-file-for-extracting-and-remapping-reads-from-specific-zones-create_sub_bams-set-to-true) to understand how to properly set up your config file. [TRUE or FALSE]  
 - *MAPPING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different mapping parameters (different reference, mapping options...), provide a name for an extra folder to create in the READ_MAPPING output folder. Otherwise leave blank ("").  
 
 **INPUT FILES**  
@@ -88,7 +89,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
 
 *If you set CREATE_SUB_BAMS to TRUE, you either have to provide a bed file:*
-- *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in. Optional: can be left blank ("").  
+- *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in, in format "chr start end", separated with tabulations. Optional: can be left blank ("").  
 
 *Or to provide ALL of the three following parameters to automatically create a bed file containing the genomic regions with enough coverage in your dataset:*
 - *BED_MIN_MEAN_COV:*&nbsp;&nbsp;&nbsp;The minimum mean depth per sample (number of reads per base) to keep a genomic region. Optional: can be left blank ("").
@@ -241,5 +242,3 @@ Name, description and tools used for each of the snakemake workflow rules:
 
 
 ![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/ReadMapping_Workflow.jpg?raw=true)
-
-
