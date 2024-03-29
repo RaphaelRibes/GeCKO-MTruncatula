@@ -17,7 +17,7 @@ set -e -o pipefail
 # Trimming a pair of fastq files (R1 + R2 ) to remove adapters sequences, low quality sequences et short sequences
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R1 sampleX.R1.fastq.gz --R2 sampleX.R2.fastq.gz --adapter_file adapter_file_DEV.txt --cores 1 --quality_cutoff 30 --minimum_length 36
+#./trimming_with_cutadapt.sh --trimdir {working_directory}/DEMULT_TRIM --sample sampleX --R1 sampleX.R1.fastq.gz --R2 sampleX.R2.fastq.gz --adapter_file adapter_file_DEV.txt --quality_cutoff 30 --minimum_length 36 --cutadapt_trimming_extra_options
 
 #--trimdir
 	# storage space created by the workflow for the outputs of the trimming step: >>> {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
@@ -33,13 +33,14 @@ set -e -o pipefail
 	#Tc2208a	TGCGCTAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	TGCGCTAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
 	#Tc2235a	GCTGAGAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GCTGAGAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
 	#Tc2249a	GATCTAAGATCGGAAGAGCACACGTCTGAACTCCAGTCACGTCCGCATCTCGTATGCCGTCTTCTGCTTGA	GATCTAAGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTGGCCGTATCATTA
-#--cores
-	# number of cores to be allocated on cluster
 #--quality_cutoff
 	# parameter can be used to trim low-quality ends from reads. exemple: --quality_cutoff 30 > replacement of nucleotides by N if the quality is lower than Q30 (1 chance out of 30 that the base is wrong)
 #--minimum_length
 	# parameter to indicate the minimum size of the sequences to be kept.
-# this script launches cutapdat with one option by default: --no-indels
+#--cutadapt_trimming_extra_options
+	# parameter to indicate other parameters to cutadapt. by example: number of cores to be allocated on cluster (--cores)
+	
+
 
 # >>> OUTPUTS
 # two files by sample contain sequences demultiplexed : sample_trimmed.R1.fastq.gz and sample_trimmed.R2.fastq.gz >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT_TRIM
@@ -79,11 +80,6 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --cores)
-  CORES="$2"
-  shift # past argument
-  shift # past value
-  ;;
   --quality_cutoff)
   QUALITY_CUTOFF="$2"
   shift # past argument
@@ -91,6 +87,11 @@ case $key in
   ;;
   --minimum_length)
   MINIMUM_LENGTH="$2"
+  shift # past argument
+  shift # past value
+  ;;
+  --cutadapt_trimming_extra_options)
+  CUTADAPT_TRIMMING_EXTRA_OPTIONS="$2"
   shift # past argument
   shift # past value
   ;;
@@ -130,4 +131,4 @@ R1_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f2)
 R2_readthrough_seq=$(grep -w ${SAMPLE} ${ADAPTERS_SEQ_FILE} | cut -f3)
 
 ## 2/ RUN CUTADAPT - TRIMMING
-cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} --no-indels --cores ${CORES} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info
+cutadapt --action=trim --quality-cutoff ${QUALITY_CUTOFF} --minimum-length ${MINIMUM_LENGTH} ${CUTADAPT_TRIMMING_EXTRA_OPTIONS} -a ${R1_readthrough_seq} -A ${R2_readthrough_seq} -o ${TRIM_DIR}/${SAMPLE}.R1.fastq.gz -p ${TRIM_DIR}/${SAMPLE}.R2.fastq.gz ${R1_DEMULT} ${R2_DEMULT} > ${TRIM_DIR}/trimming_cutadapt_${SAMPLE}.info

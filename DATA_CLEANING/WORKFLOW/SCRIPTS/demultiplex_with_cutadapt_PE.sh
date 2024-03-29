@@ -18,7 +18,7 @@ set -e -o pipefail
 # Assignment of sequences to each of the genotypes according to the barcode or tag, located at the P5 and P7 ends, which were assigned to them during the construction of the libraries.
 
 # >>> LAUNCHING EXAMPLE AND SETTINGS:
-#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R1 DEV.R1.fastq.gz --R2 DEV.R2.fastq.gz --barcode_file barcode_file_DEV.txt --cores 1 --substitutions 0.15
+#./demultiplex_with_cutadapt.sh --demultdir {demult_dir} --R1 DEV.R1.fastq.gz --R2 DEV.R2.fastq.gz --barcode_file barcode_file_DEV.txt --substitutions 0.15 --cutadapt_demult_extra_options
 
 #--demultdir
 	# folders that will contain the demultiplexing output files
@@ -32,11 +32,12 @@ set -e -o pipefail
 	#Tc2208a	AGCGCA	AGCGCA
 	#Tc2235a	CTCAGC	CTCAGC
 	#Tc2249a	TAGATC	TAGATC
-#--cores
-	# number of cores to be allocated on cluster
 #--substitutions
 	# percentage of substitution by barcode. Example: 1 substitution on a barcode of 8pb, note 0.15
-# this script launches cutapdat with two options by default: --no-indels --pair-adapters
+#--cutadapt_demult_extra_options
+	# parameter to indicate other parameters to cutadapt. by example: number of cores to be allocated on cluster (--cores)
+	
+# this script launches cutapdat with option by default: --pair-adapters
 
 # >>> OUTPUTS
 # two files by sample, listed in the sample file, contain sequences : sample.R1.fastq.gz and sample.R1.fastq.gz >>> storage in: {OUTPUTS_DIRNAME}/DATA_CLEANING/DEMULT
@@ -71,13 +72,13 @@ case $key in
   shift # past argument
   shift # past value
   ;;
-  --cores)
-  CORES="$2"
+  --substitutions)
+  SUBSTITUTIONS="$2"
   shift # past argument
   shift # past value
   ;;
-  --substitutions)
-  SUBSTITUTIONS="$2"
+  --cutadapt_demult_extra_options)
+  CUTADAPT_DEMULT_EXTRA_OPTIONS="$2"
   shift # past argument
   shift # past value
   ;;
@@ -120,4 +121,4 @@ awk '{print ">"$1"\n^"$2}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R1_barco
 awk '{print ">"$1"\n^"$3}' ${BARCODE_FILE} > ${DEMULT_DIR}/Cutadapt_tmp/R2_barcode_cutadapt.fasta
 
 ## 2/ RUN CUTADAPT - DEMULTIPLEXING
-cutadapt -e ${SUBSTITUTIONS} --no-indels --pair-adapters --cores ${CORES} -g file:${DEMULT_DIR}/Cutadapt_tmp/R1_barcode_cutadapt.fasta -G file:${DEMULT_DIR}/Cutadapt_tmp/R2_barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.R1.fastq.gz -p ${DEMULT_DIR}/{name}.R2.fastq.gz ${R1} ${R2} > ${DEMULT_DIR}/demultiplexing_cutadapt.info
+cutadapt -e ${SUBSTITUTIONS} ${CUTADAPT_DEMULT_EXTRA_OPTIONS} --pair-adapters -g file:${DEMULT_DIR}/Cutadapt_tmp/R1_barcode_cutadapt.fasta -G file:${DEMULT_DIR}/Cutadapt_tmp/R2_barcode_cutadapt.fasta -o ${DEMULT_DIR}/{name}.R1.fastq.gz -p ${DEMULT_DIR}/{name}.R2.fastq.gz ${R1} ${R2} > ${DEMULT_DIR}/demultiplexing_cutadapt.info

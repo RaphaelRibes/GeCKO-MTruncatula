@@ -144,14 +144,14 @@ rule Demultiplex_RawFastqs:
         demult_cutadapt_reports_dir+"/demultiplexing_cutadapt.info"
     params:
         substitutions = config["DEMULT_SUBSTITUTIONS"],
-        cores = config["DEMULT_CORES"]
+        cutadapt_demult_extra_options = config["CUTADAPT_DEMULT_EXTRA_OPTIONS"]
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_PE.sh --demultdir {demult_dir} --R1 {input.fastq_R1_raw} "
-        "--R2 {input.fastq_R2_raw} --barcode_file {input.barcode_file} --cores {params.cores} "
-        "--substitutions {params.substitutions};"
+        "--R2 {input.fastq_R2_raw} --barcode_file {input.barcode_file} --substitutions {params.substitutions} "
+        "--cutadapt_demult_extra_options \"{params.cutadapt_demult_extra_options}\" ;"
         "mv {demult_dir}/demultiplexing_cutadapt.info {demult_cutadapt_reports_dir}"
 
 
@@ -248,14 +248,14 @@ rule Trimming_DemultFastqs:
     params:
         quality_cutoff = config["TRIMMING_QUAL"],
         minimum_length = config["TRIMMING_MIN_LENGTH"],
-        cores = config["TRIMMING_CORES"]
+        cutadapt_trimming_extra_options = config["CUTADAPT_TRIMMING_EXTRA_OPTIONS"]
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
     shell:
         "{scripts_dir}/trimming_with_cutadapt_PE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
         "--R1 {input.fastqs_R1_demult} --R2 {input.fastqs_R2_demult} --adapter_file {input.adapter_file} "
-        "--cores {params.cores} --quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length};"
+        "--quality_cutoff {params.quality_cutoff} --minimum_length {params.minimum_length} --cutadapt_trimming_extra_options \"{params.cutadapt_trimming_extra_options}\" ;"
         "mv {demult_trim_dir}/trimming_cutadapt_{wildcards.base}.info {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info;"
         "{scripts_dir}/modify_cutadapt_info_for_multiQC_PE.sh {demult_trim_cutadapt_reports_dir}/trimming_cutadapt_{wildcards.base}.info"
 

@@ -135,10 +135,8 @@ else # if single end data is expected
   fi
 fi
 
-# DEMULT_CPUS_PER_TASK, DEMULT_SUBSTITUTIONS and DEMULT_CORES
+# DEMULT_SUBSTITUTIONS
 DEMULT_SUBSTITUTIONS=$(grep "^DEMULT_SUBSTITUTIONS:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-DEMULT_CORES=$(grep "^DEMULT_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-
 
 if [[ -z "$DEMULT_DIR" && -z "$DEMULT_SUBSTITUTIONS" ]] ; then
   echo -e "\nERROR: A DEMULT_SUBSTITUTIONS value must be provided in the config file."
@@ -147,11 +145,6 @@ if [[ -z "$DEMULT_DIR" && -z "$DEMULT_SUBSTITUTIONS" ]] ; then
 fi
 
 
-if [[ -z "$DEMULT_DIR" && -z "$DEMULT_CORES" ]] ; then
-  echo -e "\nERROR: A DEMULT_CORES value must be provided in the config file."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
 
 # BARCODE_FILE and ADAPTER_FILE
 BARCODE_FILE=$(grep "^BARCODE_FILE:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
@@ -270,10 +263,9 @@ if [[ ! -z $BARCODE_FILE ]] ; then
 fi
 
 
-# TRIMMING_CPUS_PER_TASK, TRIMMING_QUAL, TRIMMING_MIN_LENGTH and TRIMMING_CORES
+# TRIMMING_QUAL and TRIMMING_MIN_LENGTH
 TRIMMING_QUAL=$(grep "^TRIMMING_QUAL:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 TRIMMING_MIN_LENGTH=$(grep "^TRIMMING_MIN_LENGTH:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
-TRIMMING_CORES=$(grep "^TRIMMING_CORES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 
 if [[ -z $TRIMMING_QUAL ]] ; then
@@ -284,12 +276,6 @@ fi
 
 if [[ -z $TRIMMING_MIN_LENGTH ]] ; then
   echo -e "\nERROR: You must provide the TRIMMING_MIN_LENGTH in the config_file."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
-
-if [[ -z $TRIMMING_CORES ]] ; then
-  echo -e "\nERROR: You must provide the TRIMMING_CORES in the config_file."
   echo -e "\nExiting.\n"
   exit 1
 fi
