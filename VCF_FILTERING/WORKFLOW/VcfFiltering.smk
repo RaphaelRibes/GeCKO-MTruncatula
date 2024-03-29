@@ -71,7 +71,6 @@ rule Filter_Loci_1:
     input:
         outputs_directory+"/01__Genotype_Filtered.vcf"
     output:
-        #tmp_Locus_Filtered = temp(outputs_directory+"/tmp_Locus_Filtered.vcf.gz"),
         outputs_directory+"/02__Genotype_Locus1_Filtered.vcf"
     conda:
         "ENVS/conda_tools.yml"

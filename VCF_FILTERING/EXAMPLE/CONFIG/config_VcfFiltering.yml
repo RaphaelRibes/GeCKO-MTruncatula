@@ -5,7 +5,7 @@ FILTERING_SUBFOLDER: ""
 
 #### INPUT FILES ###
 
-## Provide the VCF file to be filtered. The vcf need to be gzipped
+## Provide the VCF file to be filtered
 VCF_FILE: "VCF/variant_calling_converted.vcf.gz"
 
 

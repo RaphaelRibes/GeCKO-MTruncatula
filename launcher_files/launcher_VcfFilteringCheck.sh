@@ -38,8 +38,8 @@ elif [[ ! -f "$VCF_FILE" ]] ; then
   echo -e "\nExiting.\n"
   exit 1
 fi
-if [[ "$VCF_FILE" != *.vcf.gz ]] ; then
-  echo -e "\nERROR: The VCF_FILE file (${VCF_FILE}) provided in your config file (${CONFIG}) does not have a proper vcf extension. Please make sure the file is a zipped vcf file and ends with '.vcf.gz'."
+if [[ "$VCF_FILE" != *.vcf.gz && "$VCF_FILE" != *.vcf ]] ; then
+  echo -e "\nERROR: The VCF_FILE file (${VCF_FILE}) provided in your config file (${CONFIG}) does not have a proper vcf extension. Please make sure the file is a .vcf or .vcf.gz file."
   echo -e "\nExiting.\n"
   exit 1
 fi
