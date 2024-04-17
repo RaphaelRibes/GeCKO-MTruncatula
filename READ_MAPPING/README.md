@@ -88,7 +88,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *TRIM_DIRS:*&nbsp;&nbsp;&nbsp;The path(s) to the directory or directories containing the trimmed fastq files to be mapped. If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to the DATA_CLEANING workflow output files. To provide several directories, separate them with spaces, e.g.: "/home/user/trim_dir1 /home/user/trim_dir2". Be careful to provide them between quotes.   
 - *REFERENCE:*&nbsp;&nbsp;&nbsp;The path to the reference file in fasta format (must end with .fa, .fas or .fasta).  
 
-*If you set CREATE_SUB_BAMS to TRUE, you either have to provide a bed file (see [here](#how-to-create-your-own-bed-file-create_sub_bams-set-to-true)) for more information on how to create it):*
+*If you set CREATE_SUB_BAMS to TRUE, you either have to provide a bed file (see [here](#how-to-create-your-own-bed-file-create_sub_bams-set-to-true) for more information on how to create it):*
 - *BED:*&nbsp;&nbsp;&nbsp;The path to the bed file listing regions of interest to count reads in, in format "chr start end", separated with tabulations. Optional: can be left blank ("").  
 
 *Or to provide ALL of the three following parameters to automatically create a bed file containing the genomic regions with enough coverage in your dataset:*
@@ -138,7 +138,10 @@ We advise setting the BED_MIN_DIST parameter to a value exceeding the difference
 Bam filtering options are available after both the initial mapping (SAMTOOLS_VIEW_FILTERS1) and remapping (SAMTOOLS_VIEW_FILTERS2) steps. To ensure the integrity of read extraction and remapping, it is best to remove improperly paired reads, as well as non-primary and supplementary alignments, after the first mapping. This precaution helps prevent the misclassification of improperly paired reads as single reads if only one read of a pair is preserved or if the two reads mapped in different zones. Furthermore, in the absence of the primary read (in case it mapped out of the extracted zones), secondary or supplementary alignments could be incorrectly designated as primary during the remapping step. Such misclassifications can lead to the erroneous interpretation of mapping quality, resulting in inaccuracies in downstream analysis and the potential overestimation of certain reads' reliability. To filter out improperly paired, non primary and supplementary reads, set SAMTOOLS_VIEW_FILTERS1 to "-F 256 -F2048 -f2" (see [here](https://broadinstitute.github.io/picard/explain-flags.html) to understand sam flags and [here](https://www.htslib.org/doc/samtools-view.html) for more information on samtools view's -F and -f options).
 
 ### *How to create your own bed file (CREATE_SUB_BAMS set to TRUE)*
-blablbla
+If you wish to provide your own bed file listing zones targeted by your baits, you can use the ncbi 'blast' tool to blast your baits onto the reference genome and identify potential capture regions:  
+```blastn -task blastn -query baits.fasta -db reference.fasta -out blast_baits_on_reference.txt -outfmt '6 qseqid sseqid qstart qend qlen sstart send slen length pident evalue nident'```
+
+Based on metrics such as e-value or nident, filter the blast output to select genomic zones that exhibit sufficient similarity and are likely to hybridize with your baits during the capture step. The resultant bed file should contain three columns (chromosome, start, end), separated with tabs. When converting blast coordinates to bed format, ensure that for all lines the start position is less than the end position, which will require reversing the coordinates when the alignment is to the reverse complement of the reference (indicated as the negative strand in blast output). Additionally, consider whether to include margins around the targeted regions (e.g., start-300, stop+300) to ensure coverage of sequenced fragments that might extend beyond the length of the baits.
 
 ### 4/ Launch the analysis
 
