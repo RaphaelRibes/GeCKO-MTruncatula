@@ -35,8 +35,6 @@ or
 #### &nbsp;&nbsp;&nbsp;&nbsp;<ins>Recommended method:</ins>
 - First make sure [Conda](#conda-and-mamba) is available to your working environment.  
 Either install it on your computer, or if you are working on a cluster, you may need to 'module load' it, depending on your cluster's software management policy. For clusters using Conda environments, Conda will likely be readily available.  
-Once you have conda available and before launching any GeCKO workflow, it is advised to run the following command (once) to help avoid dependency conflicts and reproducibility issues:  
-```conda config --set channel_priority strict```
 - Then have runGeCKO create a fully operational conda environment for you with:  
 ```./runGeCKO.sh --create-gecko-env```  
 This only needs to be run once, and will create a conda environment called 'GeCKO_env', providing compatible versions of Snakemake (v7.32.4), Mamba (v1.4.9) and their dependencies.  
