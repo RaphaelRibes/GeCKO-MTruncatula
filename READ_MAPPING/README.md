@@ -204,6 +204,7 @@ This workflow uses the following tools:
 - [minimap2 v2.24](https://github.com/lh3/minimap2)
 - [samtools v1.14](http://www.htslib.org/)
 - [picard v2.26.10](https://broadinstitute.github.io/picard/)
+- [UMI-tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
 - [bedtools v2.30.0](https://github.com/arq5x/bedtools2)
 
