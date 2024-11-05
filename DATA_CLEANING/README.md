@@ -18,7 +18,7 @@ Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise.
 2) Counting the number of reads in one (SE) or two (PE) fastq.gz input files  
 3) Demultiplex one (SE) or two (PE) fastq.gz files into individual fastq files based on the barcode or tag specific to each sample (CUTADAPT)  
 4) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
-5) Trimming one (SE) or two (PE) fastq.gz files per sample to remove adapters sequences, low quality sequences et short sequences (CUTADAPT)  
+5) Trimming one (SE) or two (PE) fastq.gz files per sample to remove adapters sequences, low quality sequences and short sequences (CUTADAPT)  
 6) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
 7) Quality analysis of each sample's reads, after demultiplexing and trimming (FASTQC)  
 8) Creation of two reports (MultiQC) allowing to visualise the impact of the trimming step on the quality of the sequences (for each individual sample), and the impact of the whole workflow (for all samples merged together).  
