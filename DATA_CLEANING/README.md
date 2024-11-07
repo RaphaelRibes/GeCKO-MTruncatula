@@ -104,8 +104,8 @@ This file is used to pass all the information and tools parameters that will be 
 - *FASTQ_R1:*&nbsp;&nbsp;&nbsp;Path to the R1 raw data fastq.gz file, name format must be: name_R1.fastq.gz (for paired-end AND multiplexed data only, otherwise leave blank: "")  
 - *FASTQ_R2:*&nbsp;&nbsp;&nbsp;Path to the R2 raw data fastq.gz file, name format must be: name_R2.fastq.gz (for paired-end AND multiplexed data only, otherwise leave blank: "")  
 - *DEMULT_DIR:*&nbsp;&nbsp;&nbsp;Path to the folder containing the demultiplexed input files (for demultiplexed data only, otherwise leave blank: ""). Fastq files in the DEMULT_DIR folder must have the following name format: sampleX.R1.fastq.gz and sampleX.R2.fastq.gz for paired-end data; sampleX.fastq.gz for single-end data.  
-- *BARCODE_FILE:*&nbsp;&nbsp;&nbsp;Path to the barcode file (for multiplexed data only otherwise leave blank: ""). See description [below](#barcode-file) for more details.  
-- *ADAPTER_FILE:*&nbsp;&nbsp;&nbsp;Path to the adapter file. See description [below](#adapter-file) for more details.  
+- *BARCODE_FILE:*&nbsp;&nbsp;&nbsp;Path to the barcode file (for multiplexed data only otherwise leave blank: ""). See the description [below](#barcode-file) for more details.  
+- *ADAPTER_FILE:*&nbsp;&nbsp;&nbsp;Path to the adapter file. See the description [below](#adapter-file) for more details.  
 
 
 **DEMULTIPLEXING PARAMETERS** (mandatory if the raw fastq files are multiplexed, otherwise leave blank: "")  
@@ -114,7 +114,7 @@ This file is used to pass all the information and tools parameters that will be 
 
 **UMI EXTRACTION PARAMETERS**
 - *UMI:*&nbsp;&nbsp;&nbsp;Wether or not UMI sequences should be extracted from reads. Set to TRUE if UMIs were incorporated during library construction. This option is currently only supported for demultiplexed data. [TRUE or FALSE]
-- *UMITOOLS_EXTRACT_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the '[umi-tools extract](https://umi-tools.readthedocs.io/en/latest/reference/extract.html)' command. Be careful to provide them between quotes. For example, if you expect the UMI sequences to be 8 bp long at the 5' end of your R1 reads, you should use: "--extract-method=string --bc-pattern=NNNNNNNN". See description [below](#extracting-umi-sequences) for more details.
+- *UMITOOLS_EXTRACT_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the '[umi-tools extract](https://umi-tools.readthedocs.io/en/latest/reference/extract.html)' command. Be careful to provide them between quotes. For example, if you expect the UMI sequences to be 8 bp long at the 5' end of your R1 reads, you should use: "--extract-method=string --bc-pattern=NNNNNNNN". See the description [below](#extracting-umi-sequences) for more details.
 
 **TRIMMING PARAMETERS** (mandatory)    
 - *TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality_cutoff" Cutadapt parameter)  
