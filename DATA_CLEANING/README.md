@@ -112,6 +112,10 @@ This file is used to pass all the information and tools parameters that will be 
 - *DEMULT_SUBSTITUTIONS:*&nbsp;&nbsp;&nbsp;Fraction of authorized substitutions per barcode (tag). Example: to allow 1 substitution for an 8bp barcode, use '0.15'. (will be passed to the "--substitutions" Cutadapt parameter)    
 - *CUTADAPT_DEMULT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the cutadapt command. Be careful to provide them between quotes. The '--pair-adapters' option is automatically added if PAIRED_END is set to TRUE.
 
+**UMI EXTRACTION PARAMETERS**
+- *UMI:*&nbsp;&nbsp;&nbsp;Wether or not UMI sequences should be extracted from reads. Set to TRUE if UMIs were incorporated during library construction. [TRUE or FALSE]
+- *UMITOOLS_EXTRACT_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the '[umi-tools extract](https://umi-tools.readthedocs.io/en/latest/reference/extract.html)' command. Be careful to provide them between quotes. For example, if you expect the UMI sequences to be 8 bp long at the 5' end of your R1 reads, you should use: "--extract-method=string --bc-pattern=NNNNNNNN". See description [below](#extracting-umi-sequences) for more details.
+
 **TRIMMING PARAMETERS** (mandatory)    
 - *TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality_cutoff" Cutadapt parameter)  
 - *TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum_length" Cutadapt parameter)  
@@ -214,6 +218,13 @@ Two-column file specifying the samples names (column 1) and technical sequences 
 
 &nbsp;
 
+
+#### *Extracting UMI sequences:* 
+Unique Molecular Identifiers (UMIs) are short sequences added to each DNA fragment during library construction. They help identify and distinguish between original molecules and duplicates, which can arise from PCR amplification. If UMIs were incorporated during your library construction, they need to be extracted from the reads prior to further processing steps such as read mapping. This can be done with this workflow by setting ```UMI: TRUE```. In this case, ```umi-tools```'s ```extract``` command will be used to extract the UMI sequences and move them to the read name for easy tracking. For more details about the command's options, see [here](https://umi-tools.readthedocs.io/en/latest/reference/extract.html).
+
+⚠ At this stage, <ins>duplicate reads are not yet removed</ins>. Deduplication will be handled after mapping, using the UMI information stored in the read names. If you proceed with the ReadMapping workflow, be sure to set REMOVE_DUP_UMI: TRUE to enable duplicate removal based on UMIs.
+
+&nbsp;
 
 ### 4/ Launch the analysis
 
