@@ -33,6 +33,9 @@ SAMTOOLS_INDEX_OPTIONS: "" # param "-c" is already included in the samtools comm
 ### BAM FILTERING ###
 ## After the first mapping
 REMOVE_DUP_MARKDUPLICATES: TRUE
+REMOVE_DUP_UMI: FALSE
+UMITOOLS_DEDUP_OPTIONS: ""
+
 # options passed to 'samtools view'
 SAMTOOLS_VIEW_FILTERS1: "-F 256 -F 2048 -f 2"
 

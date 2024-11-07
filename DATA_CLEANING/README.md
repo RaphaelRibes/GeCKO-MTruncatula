@@ -13,15 +13,16 @@ Besides, input sequences can be :
 
 
 ### The DATA_CLEANING workflow's steps
-Steps 1, 2, 3 are done for mulitplexed data and skipped otherwise. 
+*Steps 1, 2, 3, 4 are only performed for multiplexed data.* 
 1) Quality analysis of raw sequences/reads from sequencing (FASTQC)  
 2) Counting the number of reads in one (SE) or two (PE) fastq.gz input files  
-3) Demultiplex one (SE) or two (PE) fastq.gz files into individual fastq files based on the barcode or tag specific to each sample (CUTADAPT)  
-4) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
-5) Trimming one (SE) or two (PE) fastq.gz files per sample to remove adapters sequences, low quality sequences et short sequences (CUTADAPT)  
-6) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
-7) Quality analysis of each sample's reads, after demultiplexing and trimming (FASTQC)  
-8) Creation of two reports (MultiQC) allowing to visualise the impact of the trimming step on the quality of the sequences (for each individual sample), and the impact of the whole workflow (for all samples merged together).  
+3) Demultiplexing one (SE) or two (PE) fastq.gz files into individual fastq files based on the barcode or tag specific to each sample (CUTADAPT)  
+4) *[Optional]* Extracting UMI sequences from reads and storing them in read names (using umi_tools extract).  
+5) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
+6) Trimming one (SE) or two (PE) fastq.gz files per sample to remove adapters sequences, low quality sequences and short sequences (CUTADAPT)  
+7) Counting the number of reads in one (SE) or two (PE) fastq.gz files per sample  
+8) Quality analysis of each sample's reads, after demultiplexing and trimming (FASTQC)  
+9) Creation of two reports (MultiQC) allowing to visualise the impact of the trimming step on the quality of the sequences (for each individual sample), and the impact of the whole workflow (for all samples merged together).  
 
 
 &nbsp;
@@ -103,19 +104,22 @@ This file is used to pass all the information and tools parameters that will be 
 - *FASTQ_R1:*&nbsp;&nbsp;&nbsp;Path to the R1 raw data fastq.gz file, name format must be: name_R1.fastq.gz (for paired-end AND multiplexed data only, otherwise leave blank: "")  
 - *FASTQ_R2:*&nbsp;&nbsp;&nbsp;Path to the R2 raw data fastq.gz file, name format must be: name_R2.fastq.gz (for paired-end AND multiplexed data only, otherwise leave blank: "")  
 - *DEMULT_DIR:*&nbsp;&nbsp;&nbsp;Path to the folder containing the demultiplexed input files (for demultiplexed data only, otherwise leave blank: ""). Fastq files in the DEMULT_DIR folder must have the following name format: sampleX.R1.fastq.gz and sampleX.R2.fastq.gz for paired-end data; sampleX.fastq.gz for single-end data.  
-- *BARCODE_FILE:*&nbsp;&nbsp;&nbsp;Path to the barcode file (for multiplexed data only otherwise leave blank: ""). See description [below](#barcode-file) for more details.  
-- *ADAPTER_FILE:*&nbsp;&nbsp;&nbsp;Path to the adapter file. See description [below](#adapter-file) for more details.  
+- *BARCODE_FILE:*&nbsp;&nbsp;&nbsp;Path to the barcode file (for multiplexed data only otherwise leave blank: ""). See the description [below](#barcode-file) for more details.  
+- *ADAPTER_FILE:*&nbsp;&nbsp;&nbsp;Path to the adapter file. See the description [below](#adapter-file) for more details.  
 
 
 **DEMULTIPLEXING PARAMETERS** (mandatory if the raw fastq files are multiplexed, otherwise leave blank: "")  
-- *DEMULT_CORES:*&nbsp;&nbsp;&nbsp;Number of cores to be allocated on your cluster for the demultiplexing step with Cutadapt (will be passed to the "--cores" Cutadapt parameter)  
 - *DEMULT_SUBSTITUTIONS:*&nbsp;&nbsp;&nbsp;Fraction of authorized substitutions per barcode (tag). Example: to allow 1 substitution for an 8bp barcode, use '0.15'. (will be passed to the "--substitutions" Cutadapt parameter)    
+- *CUTADAPT_DEMULT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the cutadapt command. Be careful to provide them between quotes. The '--pair-adapters' option is automatically added if PAIRED_END is set to TRUE.
 
+**UMI EXTRACTION PARAMETERS**
+- *UMI:*&nbsp;&nbsp;&nbsp;Wether or not UMI sequences should be extracted from reads. Set to TRUE if UMIs were incorporated during library construction. This option is currently only supported for demultiplexed data. [TRUE or FALSE]
+- *UMITOOLS_EXTRACT_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the '[umi_tools extract](https://umi-tools.readthedocs.io/en/latest/reference/extract.html)' command. Be careful to provide them between quotes. For example, if you expect the UMI sequences to be 8 bp long at the 5' end of your R1 reads, you should use: "--extract-method=string --bc-pattern=NNNNNNNN". See the description [below](#extracting-umi-sequences) for more details.
 
-**TRIMMING PARAMETERS** (mandatory)  
-- *TRIMMING_CORES:*&nbsp;&nbsp;&nbsp;Number of cores to be allocated on your cluster for the trimming step with Cutadapt (will be passed to the "--cores" Cutadapt parameter)  
-- *TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality-cutoff" Cutadapt parameter)  
-- *TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum-length" Cutadapt parameter)
+**TRIMMING PARAMETERS** (mandatory)    
+- *TRIMMING_QUAL:*&nbsp;&nbsp;&nbsp;This parameter is used to trim low-quality ends from reads. Example:  If '30': nucleotides with quality score < Q30 (1 chance out of 1000 that the sequenced base is incorrect) will be replaced by N (will be passed to the "--quality_cutoff" Cutadapt parameter)  
+- *TRIMMING_MIN_LENGTH:*&nbsp;&nbsp;&nbsp;parameter to indicate the minimum size of the sequences to be kept, after applying the TRIMMING_QUAL parameter (will be passed to the "--minimum_length" Cutadapt parameter)  
+- *CUTADAPT_TRIMMING_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the 'cutadapt --action=trim' command. Be careful to provide them between quotes.
 
 &nbsp;
 
@@ -215,6 +219,15 @@ Two-column file specifying the samples names (column 1) and technical sequences 
 &nbsp;
 
 
+#### *Extracting UMI sequences:* 
+Unique Molecular Identifiers (UMIs) are short sequences added to each DNA fragment during library construction. They help identify and distinguish between original molecules and duplicates, which can arise from PCR amplification. If UMIs were incorporated during your library construction, they need to be extracted from the reads prior to further processing steps such as read mapping. This can be done with this workflow by setting ```UMI: TRUE```. In this case, ```umi_tools```'s ```extract``` command will be used to extract the UMI sequences and move them to the read name for easy tracking. See the [umi_tools extract documentation](https://umi-tools.readthedocs.io/en/latest/reference/extract.html) for more details about the command's options to pass to ```UMITOOLS_EXTRACT_OPTIONS``` in the config_DataCleaning.yml file.
+
+**Note:** At this stage, <ins>duplicate reads are not yet removed</ins>. Deduplication will be handled after mapping, using the UMI information stored in the read names. If you proceed with the ReadMapping workflow, be sure to set REMOVE_DUP_UMI: TRUE to enable duplicate removal based on UMIs.
+
+⚠ **Warning:** Currently, ```UMI: TRUE``` can only be used with <ins>demultiplexed data</ins>. If UMI is set to TRUE for multiplexed data, UMI sequences <ins>will not</ins> be extracted.
+
+&nbsp;
+
 ### 4/ Launch the analysis
 
 **Environment**  
@@ -246,8 +259,8 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 - *FASTQC directory*:&nbsp;&nbsp;&nbsp;Graphics representations (R1 /R2) of the quality of the raw reads before cleaning (fastQC)  
 - *Reads_Count_RawData.txt*:&nbsp;&nbsp;&nbsp;Number of reads per initial fastq.gz file (illumina sequencer)  
 
-**DEMULT directory** (if the data is multiplexed using barcodes)  
-- *fastq.gz files*:&nbsp;&nbsp;&nbsp;One pair per sample after demultiplexing (sample1.R1.fastq.gz + sample1.R2.fastq.gz) and unassigned reads in "unknown" files  
+**DEMULT (or DEMULT_UMI) directory** (if the data is multiplexed using barcodes)  
+- *fastq.gz files*:&nbsp;&nbsp;&nbsp;One pair per sample after demultiplexing and optionnal UMI extraction (sample1.R1.fastq.gz + sample1.R2.fastq.gz) and unassigned reads in "unknown" files.  
 
 **DEMULT/REPORTS directory**  
 - *Reads_Count_Demult.txt*:&nbsp;&nbsp;&nbsp;Number of reads per sample after demultiplexing  
@@ -271,6 +284,7 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 ## Tools
 This workflow uses the following tools: 
 - [Cutadapt v3.5](https://cutadapt.readthedocs.io/en/v3.5/)
+- [UMI_tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
 - [FastQC v11.9](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
 - [MultiQC v1.11](https://github.com/ewels/MultiQC/releases)
  
@@ -284,6 +298,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Fastqc_RawFastqs           | Runing FastQC on raw fastq files                                                 | FastQC    |
 | CountReads_RawFastqs       | Counting reads in raw fastq files                                                |           |
 | Demultiplex_RawFastqs      | Demultiplexing raw fastq files                                                   | Cutadapt  |
+| ExtractUMI_DemultFastqs    | Extracting UMI sequences from reads in demultiplexed fastq files and storing them in read names    | umi_tools extract  |
 | CountReads_DemultFastqs    | Counting reads in demultiplexed fastq files                                      |           |
 | Fastqc_DemultFastqs        | Runing FastQC on demultiplexed fastq files                                       | FastQC    |
 | MultiQC_DemultFastqs       | Runing MultiQC on demultiplexed fastq files                                      | MultiQC   |
@@ -299,5 +314,5 @@ Name, description and tools used for each of the snakemake workflow rules:
 
 
 
-![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true)
+<!-- ![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true) -->
 

@@ -49,7 +49,7 @@ Follow the procedure described [here](https://github.com/GE2POP/GeCKO/tree/main#
 
 ### 2/ Prepare your input data
 
-The input data is the .vcf file obtained after the variants calling step (variants_calling.vcf.gz) and its associated index file (variants_calling.vcf.gz.tbi). 
+If you used GeCKO's VARIANT_CALLING workflow to call variants on your data, the input file for this VCF_FILTERING workflow would be the .vcf file obtained after the variant calling step (variants_calling.vcf.gz) and its associated index file (variants_calling.vcf.gz.tbi). You can also provide a non-zipped .vcf. 
 
 ### 3/ Prepare the config files
 
@@ -70,7 +70,7 @@ This file is used to pass all the information and tools parameters that will be 
   - *FILTERING_SUBFOLDER:*&nbsp;&nbsp;&nbsp;If you want to separate results from different filtering parameters, provide a name for an extra folder to create in the VCF_FILTERING output folder. Otherwise leave blank ("").
 
 **INPUT FILES**  
-- *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variant calling file in zipped vcf format (.vcf.gz).
+- *VCF_FILE*&nbsp;&nbsp;&nbsp;The path to the variant calling file in zipped or non-zipped vcf format (.vcf.gz or .vcf).
 
 **VCF FILTERING PARAMETERS**  
 

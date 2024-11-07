@@ -28,11 +28,15 @@ BARCODE_FILE: ""
 ### DEMULTIPLEXING PARAMETERS ###
 
 # Complete these three fields if the raw fastq files is multiplexed, if not leave blank: ""
-DEMULT_CORES: "" # Cutadapt parameter "--cores"
 DEMULT_SUBSTITUTIONS: "" # Cutadapt parameter "--substitutions"
+CUTADAPT_DEMULT_EXTRA_OPTIONS: "" #"--cores 2"
 
+### UMI EXTRACTION PARAMETERS ###
+UMI: FALSE
+UMITOOLS_EXTRACT_OPTIONS: ""
 
 ### TRIMMING PARAMETERS ###
-TRIMMING_CORES: 1 # Cutadapt parameter "--cores"
-TRIMMING_QUAL: 30 # Cutadapt parameter "--quality-cutoff"
-TRIMMING_MIN_LENGTH: 36 # Cutadapt parameter "--minimum-length"
+TRIMMING_QUAL: 30 # Cutadapt parameter "--quality_cutoff"
+TRIMMING_MIN_LENGTH: 36 # Cutadapt parameter "--minimum_length"
+CUTADAPT_TRIMMING_EXTRA_OPTIONS: "--no-indels" #"--cores 2" 
+

@@ -28,7 +28,10 @@ else:
     rm_dup = "FALSE"
 
 
-
+if config["REMOVE_DUP_UMI"]:
+    dedupUMI = "TRUE"
+else:
+    dedupUMI = "FALSE"
 
 ref = os.path.abspath(config["REFERENCE"])
 mapping_subfolder = ""
@@ -142,6 +145,7 @@ def find_latest_info_file(directory):
 
 ### PIPELINE ###
 ruleorder: MarkDuplicates_Bams > Filter_Bams
+ruleorder: DedupUMI_Bams > Filter_Bams
 ruleorder: Mapping_PairedEndFastqs > Filter_Bams
 ruleorder: Mapping_SingleEndFastqs > Filter_Bams
 ruleorder: Stats_Bams > Filter_Bams
@@ -182,7 +186,7 @@ rule Mapping_PairedEndFastqs:
         temp(bams_dir+"/{base}_sortcoord.bam"),
         bams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
-        [ paired_end, paired_end, paired_end, paired_end ])
+        [ paired_end and not config["REMOVE_DUP_UMI"], paired_end, paired_end, paired_end and not config["REMOVE_DUP_UMI"] ])
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
@@ -196,7 +200,8 @@ rule Mapping_PairedEndFastqs:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
         "--output_dir {bams_dir} --sample {wildcards.base} --MD_options \"{params.picard_markduplicates_options}\" "
-        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {bams_reports_dir}"
+        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {bams_reports_dir} --umi {dedupUMI}"
+
 
 
 rule Mapping_SingleEndFastqs:
@@ -210,7 +215,7 @@ rule Mapping_SingleEndFastqs:
         temp(bams_dir+"/{base}_sortcoord.bam"),
         bams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
-        [ not paired_end, not paired_end, not paired_end, not paired_end ])
+        [ not paired_end and not config["REMOVE_DUP_UMI"], not paired_end, not paired_end, not paired_end and not config["REMOVE_DUP_UMI"] ])
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
@@ -224,19 +229,19 @@ rule Mapping_SingleEndFastqs:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
         "--output_dir {bams_dir} --sample {wildcards.base} --MD_options \"{params.picard_markduplicates_options}\" "
-        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {bams_reports_dir}"
+        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {bams_reports_dir} --umi {dedupUMI}"
 
 
 rule Stats_Bams:
     input:
-        bam = bams_dir+"/{base}_markedDup.bam",
+        bams_dir+"/{base}_sortcoord.bam" if config["REMOVE_DUP_UMI"] else bams_dir+"/{base}_markedDup.bam"
     output:
         bams_stats_reports_dir+"/stats_{base}"
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
     shell:
-        "samtools stats {input.bam} > {output}"
+        "samtools stats {input} > {output}"
 
 
 rule MarkDuplicates_Bams:
@@ -255,9 +260,27 @@ rule MarkDuplicates_Bams:
         "picard {params.picard_markduplicates_java_options} MarkDuplicates -I {input} -O {output.MD_bam} -VALIDATION_STRINGENCY SILENT {params.picard_markduplicates_options} -REMOVE_DUPLICATES TRUE -M {output.metrics}"
 
 
+rule DedupUMI_Bams:
+    input:
+        bams_dir+"/{base}_sortcoord.bam"
+    output:
+        csi = temp(bams_dir+"/{base}_sortcoord.bam.csi"),
+        bam_dedup = temp(bams_dir+"/{base}_UMIdedup.bam")
+    conda:
+        "ENVS/conda_tools.yml"
+    params:
+        samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"],
+        umitools_dedup_options = config["UMITOOLS_DEDUP_OPTIONS"] + (" --paired" if paired_end else "")
+    threads: default_threads
+    shell:
+        "samtools index -c {params.samtools_index_options} {input};"
+        "umi_tools dedup --stdin={input} --stdout={output.bam_dedup} {params.umitools_dedup_options}"
+
+
+
 rule Filter_Bams:
     input:
-        bams_dir+"/{base}_rmDup.bam" if config["REMOVE_DUP_MARKDUPLICATES"] else bams_dir+"/{base}_markedDup.bam"
+        bams_dir+"/{base}_UMIdedup.bam" if config["REMOVE_DUP_UMI"] else (bams_dir+"/{base}_rmDup.bam" if config["REMOVE_DUP_MARKDUPLICATES"] else bams_dir+"/{base}_markedDup.bam")
     output:
         bams_dir+"/{base}.bam"
     conda:
@@ -274,16 +297,17 @@ rule Summarize_BamsReadsCount:
         buildExpectedFiles([
         expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir),
         expand("{bams_dir}/{sample}_rmDup.bam", sample=samples, bams_dir=bams_dir),
+        expand("{bams_dir}/{sample}_UMIdedup.bam", sample=samples, bams_dir=bams_dir),
         expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir) ],
 
-        [ True, config["REMOVE_DUP_MARKDUPLICATES"], True ])
+        [ True, config["REMOVE_DUP_MARKDUPLICATES"], config["REMOVE_DUP_UMI"], True ])
     output:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
     shell:
-        "{scripts_dir}/summarize_stats.sh --stats_folder {bams_stats_reports_dir} --bams_folder {bams_dir} --rmdup {rm_dup} --output {output};"
+        "{scripts_dir}/summarize_stats.sh --stats_folder {bams_stats_reports_dir} --bams_folder {bams_dir} --rmdup {rm_dup} --umi {dedupUMI} --output {output};"
         "rm -rf {bams_reports_dir}/DUPLICATES_TMP"
 
 
@@ -424,7 +448,7 @@ rule Remapping_PairedEndExtractedFastqs:
         temp(subbams_dir+"/{base}_sortcoord.bam"),
         subbams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
-        [ paired_end, paired_end, paired_end, paired_end, paired_end, paired_end ])
+        [ paired_end and not config["REMOVE_DUP_UMI"], paired_end, paired_end, paired_end, paired_end, paired_end and not config["REMOVE_DUP_UMI"] ])
     conda:
         "ENVS/conda_tools.yml"
     params:
@@ -438,7 +462,7 @@ rule Remapping_PairedEndExtractedFastqs:
         "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" --fastq_U \"{input.fastq_unpaired}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
         "--output_dir {subbams_dir} --sample {wildcards.base} --MD_options \"{params.picard_markduplicates_options}\" "
-        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {subbams_reports_dir}"
+        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {subbams_reports_dir} --umi {dedupUMI}"
 
 
 rule Extract_SingleEndReads:
@@ -467,7 +491,7 @@ rule Remapping_SingleEndExtractedFastqs:
         temp(subbams_dir+"/{base}_sortcoord.bam"),
         subbams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
-        [ not paired_end, not paired_end, not paired_end, not paired_end ])
+        [ not paired_end and not config["REMOVE_DUP_UMI"], not paired_end, not paired_end, not paired_end and not config["REMOVE_DUP_UMI"] ])
     conda:
         "ENVS/conda_tools.yml"
     params:
@@ -481,24 +505,24 @@ rule Remapping_SingleEndExtractedFastqs:
         "{scripts_dir}/mapping.sh --single_end --fastq \"{input.fastq_single}\" "
         "--ref {input.subref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
         "--output_dir {subbams_dir} --sample {wildcards.base} --MD_options \"{params.picard_markduplicates_options}\" "
-        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {subbams_reports_dir}"
+        "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {subbams_reports_dir} --umi {dedupUMI}"
 
 
 rule Stats_Subbams:
     input:
-        bam = subbams_dir+"/{base}_markedDup.bam"
+        subbams_dir+"/{base}_sortcoord.bam" if config["REMOVE_DUP_UMI"] else subbams_dir+"/{base}_markedDup.bam"
     output:
         subbams_stats_reports_dir+"/stats_{base}"
     conda:
         "ENVS/conda_tools.yml"
     threads: default_threads
     shell:
-        "samtools stats {input.bam} > {output}"
+        "samtools stats {input} > {output}"
 
 
 rule Filter_Subbams:
     input:
-        subbams_dir+"/{base}_markedDup.bam"
+        subbams_dir+"/{base}_sortcoord.bam" if config["REMOVE_DUP_UMI"] else subbams_dir+"/{base}_markedDup.bam"
     output:
         subbams_dir+"/{base}.bam"
     conda:
@@ -520,7 +544,7 @@ rule Summarize_SubbamsReadsCount:
         "ENVS/conda_tools.yml"
     threads: default_threads
     shell:
-        "{scripts_dir}/summarize_stats.sh --stats_folder {subbams_stats_reports_dir} --bams_folder {subbams_dir} --rmdup FALSE --output {output};"
+        "{scripts_dir}/summarize_stats.sh --stats_folder {subbams_stats_reports_dir} --bams_folder {subbams_dir} --rmdup FALSE --umi FALSE --output {output};"
 
 
 rule MultiQC_Subbams:
@@ -576,8 +600,7 @@ rule Create_RefChrSizeFile:
 rule Write_Summary:
     input:
         buildExpectedFiles(
-        [ expand("{bams_dir}/{sample}.bam.csi", sample=samples, bams_dir=bams_dir),
-        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
+        [ bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
         bams_reports_dir+"/nb_reads_per_sample.tsv",
         mapping_dir+"/bams_list.txt",
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv",
@@ -587,7 +610,7 @@ rule Write_Summary:
         subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
         mapping_dir+"/subbams_list.txt",
         mapping_dir+"/reference_chr_size.txt" ],
-        [ True, True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
+        [ True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
     output:
         temp(mapping_dir+"/summary.sentinel")
     params:
