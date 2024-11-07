@@ -300,5 +300,5 @@ Name, description and tools used for each of the snakemake workflow rules:
 
 
 
-![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true)
+<!-- ![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/DataCleaning_Workflow.jpg?raw=true) -->
 
