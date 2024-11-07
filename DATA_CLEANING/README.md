@@ -245,8 +245,8 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 - *FASTQC directory*:&nbsp;&nbsp;&nbsp;Graphics representations (R1 /R2) of the quality of the raw reads before cleaning (fastQC)  
 - *Reads_Count_RawData.txt*:&nbsp;&nbsp;&nbsp;Number of reads per initial fastq.gz file (illumina sequencer)  
 
-**DEMULT directory** (if the data is multiplexed using barcodes)  
-- *fastq.gz files*:&nbsp;&nbsp;&nbsp;One pair per sample after demultiplexing (sample1.R1.fastq.gz + sample1.R2.fastq.gz) and unassigned reads in "unknown" files  
+**DEMULT (or DEMULT_UMI) directory** (if the data is multiplexed using barcodes)  
+- *fastq.gz files*:&nbsp;&nbsp;&nbsp;One pair per sample after demultiplexing and optionnal UMI extraction (sample1.R1.fastq.gz + sample1.R2.fastq.gz) and unassigned reads in "unknown" files.  
 
 **DEMULT/REPORTS directory**  
 - *Reads_Count_Demult.txt*:&nbsp;&nbsp;&nbsp;Number of reads per sample after demultiplexing  
