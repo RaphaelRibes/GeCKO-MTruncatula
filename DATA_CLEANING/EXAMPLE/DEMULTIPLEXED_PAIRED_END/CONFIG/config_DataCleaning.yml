@@ -39,3 +39,4 @@ UMITOOLS_EXTRACT_OPTIONS: ""
 TRIMMING_QUAL: 30 # Cutadapt parameter "--quality_cutoff"
 TRIMMING_MIN_LENGTH: 36 # Cutadapt parameter "--minimum_length"
 CUTADAPT_TRIMMING_EXTRA_OPTIONS: "--no-indels" #"--cores 2" 
+

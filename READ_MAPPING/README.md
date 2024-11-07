@@ -16,6 +16,7 @@ It can be used to process:
 
 
 
+
 ## QUICK START
 
 Needed files:  
@@ -126,10 +127,17 @@ However, it remains possible that paired reads (either properly or improperly pa
 
 - Bed file  
 <ul>
-In case you <ins>provide your own bed file</ins>, we strongly recommend merging proximal regions. This will prevent the potential issue of initially (properly or improperly) paired reads being remapped into distinct zones, which would result in them both being considered single during the remapping step.  
+In case you <ins>provide your own bed file</ins>, you will probably want to list zones targeted by your baits. To do so, you can use the ncbi 'blast' tool to blast your baits onto the reference genome and identify potential capture regions:
+
+```blastn -task blastn -query baits.fasta -db reference.fasta -out blast_baits_on_reference.txt -outfmt '6 qseqid sseqid qstart qend qlen sstart send slen length pident evalue nident'```  
+
+Based on metrics such as e-value or nident, filter the blast output to select genomic zones that exhibit sufficient similarity and are likely to hybridize with your baits during the capture step. The resultant bed file should contain three columns (chromosome, start, end), separated with tabs. When converting blast coordinates to bed format, ensure that for all lines the start position is less than the end position, which will require reversing the coordinates when the alignment is to the reverse complement of the reference (indicated as the negative strand in blast output). Additionally, consider whether to include margins around the targeted regions (e.g., start-300, stop+300) to ensure coverage of sequenced fragments that might extend beyond the length of the baits.  
+
+We also strongly recommend merging proximal regions. This will prevent the potential issue of initially (properly or improperly) paired reads being remapped into distinct zones, which would result in them both being considered single during the remapping step.
 
 Please note that any overlapping regions present in your BED file will be automatically merged into a single contiguous region. The resulting BED file (user_clean.bed), featuring the merged zones, will be available in the WORKFLOWS_OUTPUTS/READ_MAPPING/*/EXTRACTED_BAMS/REFERENCE_zones/ output folder.
 </ul>
+&nbsp
 <ul>
 Should you prefer to have the workflow <ins>automatically identify regions of interest</ins>, it will compute the read depth across the genome for all samples, and only retain zones that exceed the BED_MIN_MEAN_COV mean depth threshold. Subsequently, regions within a distance less than BED_MIN_DIST will be merged together, and any resulting regions shorter than BED_MIN_LENGTH will be excluded.  
 
@@ -138,6 +146,7 @@ We advise setting the BED_MIN_DIST parameter to a value exceeding the difference
 
 - Filtering  
 Bam filtering options are available after both the initial mapping (SAMTOOLS_VIEW_FILTERS1) and remapping (SAMTOOLS_VIEW_FILTERS2) steps. To ensure the integrity of read extraction and remapping, it is best to remove improperly paired reads, as well as non-primary and supplementary alignments, after the first mapping. This precaution helps prevent the misclassification of improperly paired reads as single reads if only one read of a pair is preserved or if the two reads mapped in different zones. Furthermore, in the absence of the primary read (in case it mapped out of the extracted zones), secondary or supplementary alignments could be incorrectly designated as primary during the remapping step. Such misclassifications can lead to the erroneous interpretation of mapping quality, resulting in inaccuracies in downstream analysis and the potential overestimation of certain reads' reliability. To filter out improperly paired, non primary and supplementary reads, set SAMTOOLS_VIEW_FILTERS1 to "-F 256 -F2048 -f2" (see [here](https://broadinstitute.github.io/picard/explain-flags.html) to understand sam flags and [here](https://www.htslib.org/doc/samtools-view.html) for more information on samtools view's -F and -f options).
+
 
 ### 4/ Launch the analysis
 
@@ -243,6 +252,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | MultiQC_Subbams             | Running MultiQC on samtools stats output                                                                                             | MultiQC                                                                                                                                |
 | Create_SubbamsList          | Writing list of subbams files                                                                                                       |                                                                                                                                        |
 | Create_RefChrSizeFile       | Creating file with the name and size of each chromosome in the genomic reference                                                    | samtools faidx                                                                                                                         |
+
 
 
 <!-- ![](https://github.com/GE2POP/GeCKO/blob/main/readme_img/ReadMapping_Workflow.jpg?raw=true) -->
