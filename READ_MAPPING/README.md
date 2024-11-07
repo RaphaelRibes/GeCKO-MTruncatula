@@ -8,7 +8,7 @@ It can be used to process:
 
 ### The READ_MAPPING workflow's steps
 1) An index of the provided reference is created if it does not exist yet.
-2) Reads are mapped to the reference, the resulting bams are sorted, the duplicates are removed if needed, the reads are filtered as specified by the user, and the final bams are indexed.
+2) Reads are mapped to the reference, the resulting bams are sorted, duplicates are removed if needed (using either Picard MarkDuplicates for standard data or umi-tools if UMIs were incorporated during library construction), the reads are filtered as specified by the user, and the final bams are indexed.
 3) Total and mapped reads are counted at each step, and a MultiQC report is created, showing the reads numbers and quality after the mapping step.
 4) [Optional] For each genomic region provided in a bed file (or automatically determined by the workflow), reads are counted in each sample.
 5) [Optional] Targeted remapping: a sub-reference corresponding to the bed regions is produced. The reads that mapped to these regions are extracted and re-mapped to the sub-reference. The resulting sub-bams are sorted, filtered as specified by the user, and the final sub-bams are indexed.
