@@ -113,7 +113,7 @@ This file is used to pass all the information and tools parameters that will be 
 - *CUTADAPT_DEMULT_EXTRA_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the cutadapt command. Be careful to provide them between quotes. The '--pair-adapters' option is automatically added if PAIRED_END is set to TRUE.
 
 **UMI EXTRACTION PARAMETERS**
-- *UMI:*&nbsp;&nbsp;&nbsp;Wether or not UMI sequences should be extracted from reads. Set to TRUE if UMIs were incorporated during library construction. [TRUE or FALSE]
+- *UMI:*&nbsp;&nbsp;&nbsp;Wether or not UMI sequences should be extracted from reads. Set to TRUE if UMIs were incorporated during library construction. This option is currently only supported for demultiplexed data. [TRUE or FALSE]
 - *UMITOOLS_EXTRACT_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options or parameters you would like to pass to the '[umi-tools extract](https://umi-tools.readthedocs.io/en/latest/reference/extract.html)' command. Be careful to provide them between quotes. For example, if you expect the UMI sequences to be 8 bp long at the 5' end of your R1 reads, you should use: "--extract-method=string --bc-pattern=NNNNNNNN". See description [below](#extracting-umi-sequences) for more details.
 
 **TRIMMING PARAMETERS** (mandatory)    
@@ -222,7 +222,9 @@ Two-column file specifying the samples names (column 1) and technical sequences 
 #### *Extracting UMI sequences:* 
 Unique Molecular Identifiers (UMIs) are short sequences added to each DNA fragment during library construction. They help identify and distinguish between original molecules and duplicates, which can arise from PCR amplification. If UMIs were incorporated during your library construction, they need to be extracted from the reads prior to further processing steps such as read mapping. This can be done with this workflow by setting ```UMI: TRUE```. In this case, ```umi-tools```'s ```extract``` command will be used to extract the UMI sequences and move them to the read name for easy tracking. For more details about the command's options to pass to ```UMITOOLS_EXTRACT_OPTIONS``` in the config_DataCleaning.yml file, see [here](https://umi-tools.readthedocs.io/en/latest/reference/extract.html).
 
-⚠ At this stage, <ins>duplicate reads are not yet removed</ins>. Deduplication will be handled after mapping, using the UMI information stored in the read names. If you proceed with the ReadMapping workflow, be sure to set REMOVE_DUP_UMI: TRUE to enable duplicate removal based on UMIs.
+**Note:** At this stage, <ins>duplicate reads are not yet removed</ins>. Deduplication will be handled after mapping, using the UMI information stored in the read names. If you proceed with the ReadMapping workflow, be sure to set REMOVE_DUP_UMI: TRUE to enable duplicate removal based on UMIs.
+
+⚠ **Warning:** Currently, ```UMI: TRUE``` can only be used with <ins>demultiplexed data</ins>. If UMI is set to TRUE for multiplexed data, UMI sequences <ins>will not</ins> be extracted.
 
 &nbsp;
 
