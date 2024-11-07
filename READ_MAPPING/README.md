@@ -8,7 +8,7 @@ It can be used to process:
 
 ### The READ_MAPPING workflow's steps
 1) An index of the provided reference is created if it does not exist yet.
-2) Reads are mapped to the reference, the resulting bams are sorted, duplicates are removed if needed (using either Picard MarkDuplicates for standard data or umi-tools if UMIs were incorporated during library construction), the reads are filtered as specified by the user, and the final bams are indexed.
+2) Reads are mapped to the reference, the resulting bams are sorted, duplicates are removed if needed (using either Picard MarkDuplicates for standard data or umi_tools if UMIs were incorporated during library construction), the reads are filtered as specified by the user, and the final bams are indexed.
 3) Total and mapped reads are counted at each step, and a MultiQC report is created, showing the reads numbers and quality after the mapping step.
 4) *[Optional]* For each genomic region provided in a bed file (or automatically determined by the workflow), reads are counted in each sample.
 5) *[Optional]* Targeted remapping: a sub-reference corresponding to the bed regions is produced. The reads that mapped to these regions are extracted and re-mapped to the sub-reference. The resulting sub-bams are sorted, filtered as specified by the user, and the final sub-bams are indexed.
@@ -105,7 +105,9 @@ This file is used to pass all the information and tools parameters that will be 
 - *SAMTOOLS_INDEX_OPTIONS:*&nbsp;&nbsp;&nbsp;Any list of options you would like to pass to the 'samtools index' command. Be careful to provide them between quotes. The "-c" option is already included.
 
 **BAM FILTERING**
-- *REMOVE_DUP_MARKDUPLICATES:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates after the mapping step. They will be marked either way. [TRUE or FALSE] 
+- *REMOVE_DUP_MARKDUPLICATES:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates with 'picard MarkDuplicates' after the mapping step. If set to TRUE, set REMOVE_DUP_UMI to FALSE. If both REMOVE_DUP_MARKDUPLICATES and REMOVE_DUP_UMI are set to FALSE, duplicates will be marked with 'picard MarkDuplicates'. Setting both REMOVE_DUP_MARKDUPLICATES and REMOVE_DUP_UMI to TRUE will raise an error. [TRUE or FALSE]  
+- *REMOVE_DUP_UMI:*&nbsp;&nbsp;&nbsp;Whether or not to remove duplicates with 'umi_tools dedup' after the mapping step. This option requires prior extraction of UMI sequences from the reads using 'umi_tools extract' (this can be done with the DataCleaning workflow by setting UMI: TRUE). If set to TRUE, set REMOVE_DUP_MARKDUPLICATES to FALSE. If both REMOVE_DUP_UMI and REMOVE_DUP_MARKDUPLICATES are set to FALSE, duplicates will be marked with 'picard MarkDuplicates'. Setting both REMOVE_DUP_MARKDUPLICATES and REMOVE_DUP_UMI to TRUE will raise an error. [TRUE or FALSE]  
+- *UMITOOLS_DEDUP_OPTIONS:*&nbsp;&nbsp;&nbsp;
 - *SAMTOOLS_VIEW_FILTERS1:*&nbsp;&nbsp;&nbsp;Any list of filters you would like to pass to the 'samtools view' command after the mapping step. Eg for CREATE_SUB_BAMS set to TRUE: "-F 256 -F 2048 -f 2" to discard unproperly paired, non primary and supplementary reads before the extraction step. Eg for CREATE_SUB_BAMS set to FALSE: "-q 30" to discard alignments with a mapping quality (MAPQ score) lower than 30.   
 - *SAMTOOLS_VIEW_FILTERS2:*&nbsp;&nbsp;&nbsp;Any list of filters you would like to pass to the 'samtools view' command after the remapping step. Eg: "-q 30" to discard alignments with a mapping quality (MAPQ score) lower than 30. If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway).
 
@@ -204,7 +206,7 @@ This workflow uses the following tools:
 - [minimap2 v2.24](https://github.com/lh3/minimap2)
 - [samtools v1.14](http://www.htslib.org/)
 - [picard v2.26.10](https://broadinstitute.github.io/picard/)
-- [UMI-tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
+- [UMI_tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
 - [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
 - [bedtools v2.30.0](https://github.com/arq5x/bedtools2)
 
@@ -220,7 +222,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Mapping_SingleEndFastqs     | Mapping the input fastq files onto the reference (single end reads)                                                                 | bwa mem // bwa-mem2 mem // bowtie2 // minimap2; samtools sort; picard MarkDuplicates                                                          |
 | Stats_Bams                  | Computing mapping stats                                                                                                             | samtools stats                                                                                                                         |
 | MarkDuplicates_Bams         | Marking and removing duplicates if needed                                                                                      | picard MarkDuplicates                                                                                                  |
-| DedupUMI_Bams         | Removing true duplicates using UMI information                                                                                       | UMI-tools dedup                                                                                                  |
+| DedupUMI_Bams         | Removing true duplicates using UMI information                                                                                       | umi_tools dedup                                                                                                  |
 | Filter_Bams                  | Filtering bams after the first mapping step                                                                                                                 | samtools view                                                                                                                         |
 | Index_Bams                  | Creating bams index                                                                                                                 | samtools index                                                                                                                         |
 | Summarize_BamsReadsCount    | Summarizing reads count in bams from samtools stats output                                                                          |                                                                                                                                        |
