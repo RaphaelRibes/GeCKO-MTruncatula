@@ -284,6 +284,7 @@ Name, description and tools used for each of the snakemake workflow rules:
 | Fastqc_RawFastqs           | Runing FastQC on raw fastq files                                                 | FastQC    |
 | CountReads_RawFastqs       | Counting reads in raw fastq files                                                |           |
 | Demultiplex_RawFastqs      | Demultiplexing raw fastq files                                                   | Cutadapt  |
+| ExtractUMI_DemultFastqs    | Extracting UMI sequences from reads in demultiplexed fatsq files and storing them in read names    | umi_tools extract  |
 | CountReads_DemultFastqs    | Counting reads in demultiplexed fastq files                                      |           |
 | Fastqc_DemultFastqs        | Runing FastQC on demultiplexed fastq files                                       | FastQC    |
 | MultiQC_DemultFastqs       | Runing MultiQC on demultiplexed fastq files                                      | MultiQC   |
