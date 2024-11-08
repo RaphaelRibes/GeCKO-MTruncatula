@@ -1,3 +1,11 @@
+--------------------------------------------------------------------
+🔥🐲 THIS IS THE APPTAINER BRANCH 🔥🐲  
+
+To clone it:  
+```git clone -b Apptainer git@github.com:GE2POP/GeCKO.git```
+
+--------------------------------------------------------------------
+
 ## Project overview  
 This repository provides several workflows to clean sequenced reads, map them to the reference of your choice, call variants and filter the resulting VCF file. They are especially appropriate for data sequenced after target enrichment capture, but can be used for other types of sequenced reads.
 
