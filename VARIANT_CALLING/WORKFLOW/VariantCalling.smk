@@ -6,6 +6,8 @@ from datetime import datetime
 
 default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
 
+WF="VARIANT_CALLING"
+
 ### Variables from config file
 reference = config["REFERENCE"]
 vc_subfolder = ""
@@ -36,6 +38,7 @@ else:
 ### remove .fa .fas .fasta file extension
 reference_base = reference.rsplit('.fa', 1)[0].rsplit('.fn', 1)[0]
 
+
 ### Define paths
 path_to_snakefile = workflow.snakefile
 snakefile_dir = path_to_snakefile.rsplit('/', 1)[0]
@@ -43,7 +46,7 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ## Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VARIANT_CALLING"
+outputs_directory = f"{working_directory}/WORKFLOWS_OUTPUTS/{WF}"
 vc_dir = outputs_directory+vc_subfolder
 HaplotypeCaller_dir = vc_dir+"/HAPLOTYPE_CALLER"
 GenomicsDBImport_dir = vc_dir+"/GENOMICS_DB_IMPORT"
@@ -63,6 +66,9 @@ else:
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{vc_dir}/workflow_info_{timestamp}.txt"
 
+### Container path
+GeCKO_container = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/container/GeCKO.sif"))
+
 
 ### FUNCTIONS
 
@@ -78,7 +84,6 @@ def find_latest_info_file(directory):
     return latest_file
 
 
- # ----------------------------------------------------------------------------------------------- #
 
 ### PIPELINE ###
 
@@ -88,14 +93,16 @@ rule FinalTargets:
         final_vcf,
         final_vcf_index
 
+# ----------------------------------------------------------------------------------------------- #
+
 
 rule Index_Reference:
     input:
         reference
     output:
         reference+".fai"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "samtools faidx {input};"
@@ -106,8 +113,8 @@ rule Dictionary_Reference:
         reference
     output:
         reference_base+".dict"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "gatk CreateSequenceDictionary REFERENCE={input} OUTPUT={output}"
@@ -118,6 +125,8 @@ rule ListIntervalsReference_Dictionary:
         reference_base+".dict"
     output:
         reference_base+"_intervals_for_GATK.list"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "grep '@SQ' {input} | cut -f2,3 | sed 's/SN://' | sed 's/LN://' | awk '{{print $1\":1-\"$2}}' > {output}"
@@ -135,8 +144,8 @@ rule HaplotypeCaller:
     params:
         java_options = config["GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS"],
         extra_options = config["GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS"]
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "gatk --java-options \"{params.java_options}\" HaplotypeCaller --reference {input.reference} --input {input.bams} --output {output.vcf} {params.extra_options} -ERC GVCF"
@@ -147,6 +156,8 @@ rule List_Haplotype:
         expand("{HaplotypeCaller_dir}/{sample}.g.vcf.gz", sample=samples, HaplotypeCaller_dir=HaplotypeCaller_dir)
     output:
         HaplotypeCaller_dir+"/vcf.list.txt"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "for vcf in {input} ; do sample=$(basename ${{vcf}} .g.vcf.gz) ; echo ${{sample}}\"\t\"${{vcf}} ; done > {HaplotypeCaller_dir}/vcf.list.txt"
@@ -162,8 +173,8 @@ rule GenomicsDBImport:
     params:
         java_options = config["GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS"],
         extra_options = config["GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS"]
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "mkdir -p {output.tmp_DB};"
@@ -181,8 +192,8 @@ rule GenotypeGVCFs:
     params:
         java_options = config["GATK_GENOTYPE_GVCFS_JAVA_OPTIONS"],
         extra_options = config["GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS"]
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "mkdir -p {output.tmp_GVCF};"
@@ -198,8 +209,8 @@ rule ConvertPositions:
         vcf = temp(GenotypeGVCFs_dir+"/variant_calling.vcf"),
         vcf_converted_gz = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz",
         vcf_converted_gz_csi = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz.csi"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "gunzip {input.vcf_gz};"
@@ -218,8 +229,8 @@ rule Summarize_GVCFVariables:
         GT_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv"),
         pos_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/variants_pos.tsv"),
         lengths_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/contigs_lengths.tsv")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {output.pos_tsv} {output.lengths_tsv} {GenotypeGVCFs_REPORTS_dir}"
@@ -230,8 +241,8 @@ rule Plot_GVCFVariablesHistograms:
         GenotypeGVCFs_REPORTS_dir+"/variants_stats_VC.tsv"
     output:
         GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
@@ -243,8 +254,8 @@ rule Plot_GVCFDPBoxplot:
         GT_tsv = GenotypeGVCFs_REPORTS_dir+"/genotypes_GT_VC.tsv"
     output:
         GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
@@ -256,8 +267,8 @@ rule Plot_GVCFVariantsAlongGenome:
         lengths_tsv = GenotypeGVCFs_REPORTS_dir+"/contigs_lengths.tsv"
     output:
         GenotypeGVCFs_REPORTS_dir+"/variants_along_genome_VC.pdf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_along_genome.py --snp-pos {input.pos_tsv} --contigs-lengths {input.lengths_tsv} --output {output}"

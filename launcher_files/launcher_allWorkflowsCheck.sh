@@ -7,7 +7,7 @@ HERE=$PWD
 workflow_help=$(grep -e "^--workflow " ${GeCKO_path}/launcher_files/launcher_help.txt)
 config_file_help=$(grep -e "^--config-file " ${GeCKO_path}/launcher_files/launcher_help.txt)
 cluster_profile_help=$(grep -e "^--cluster-profile " ${GeCKO_path}/launcher_files/launcher_help.txt)
-conda_env_path_help=$(grep -e "^--conda-env-path: " ${GeCKO_path}/launcher_files/launcher_help.txt)
+
 
 ### 1/ WORKFLOW FOLDER AND ITS CONTENTS ###
 
@@ -69,37 +69,8 @@ if [[ -d ${workflow_scripts_folder} ]] ; then
 	fi
 fi
 
-workflow_envs_folder="${workflow_path}/ENVS"
-if [[ -d ${workflow_envs_folder} ]] ; then
-	for yaml in $(ls "${workflow_envs_folder}") ; do
-		if grep -q $'\r' ${workflow_envs_folder}/${yaml}; then
-		  echo "Removing windows carriage returns in ${yaml}..."
-		  sed -i 's/\r$//g' ${workflow_envs_folder}/$yaml
-		  sed -i 's/\r/\n/g' ${workflow_envs_folder}/$yaml
-		fi
-	done
-else
-	echo -e "\nERROR: No ${workflow_folder_name}/WORKFLOW/ENVS folder was found in the provided workflow path (${GeCKO_path}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
-	echo -e "\nExiting.\n"
-	exit 1
-fi
 
 
-#workflow_profiles_folder="${workflow_path}/PROFILES"
-#if [[ -d ${workflow_profiles_folder} ]] ; then
-#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SGE/config.yaml)
-#	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
-#		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SGE/config.yaml..."
-#	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SGE/config.yaml
-#	    sed -i 's/\r/\n/g' ${workflow_profiles_folder}/SGE/config.yaml
-#	fi
-#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SLURM/config.yaml)
-#	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
-#		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SLURM/config.yaml..."
-#	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SLURM/config.yaml
-#	    sed -i 's/\r/\n/g' ${workflow_profiles_folder}/SLURM/config.yaml
-#	fi
-#fi
 
 ### 2/ CONFIG_FILE ###
 
@@ -190,8 +161,6 @@ fi
 ### 4/ Check if Snakemake module is available
 if ! command -v snakemake &> /dev/null; then
   echo -e "\nERROR: Snakemake is not available. You must install it, or make it available to your working environment (eg: module load it or activate it with conda)."
-  echo "As a reminder:"
-  awk '/^- Make sure Snakemake and Conda/,/^$/' ${GeCKO_path}/launcher_files/launcher_help.txt
   echo -e "\nExiting.\n"
   exit 1
 fi
@@ -236,26 +205,11 @@ else
 fi
 
 
-### 6/ Check if Mamba is available
-if ! command -v mamba &> /dev/null; then
-  echo -e "\nERROR: Mamba is not available. You must install it, or make it available to your working environment (eg: module load it)."
-  echo "As a reminder:"
-  awk '/^- Make sure Snakemake and Mamba/,/^$/' ${GeCKO_path}/launcher_files/launcher_help.txt
+### 6/ Check if Singularity is available
+if ! command -v singularity &> /dev/null; then
+  echo -e "\nERROR: Singularity is not available. You must install it, or make it available to your working environment (eg: module load it)."
   echo -e "\nExiting.\n"
   exit 1
 fi
 
 
-### 7/ CONDA environment path
-if [[ ! -z "$CONDA_ENV_PATH" && ! -d "$CONDA_ENV_PATH" ]] ; then
-    echo -e "\nERROR: the path passed to the --conda-env-path parameter is not valid. Please make sure the folder exists and the path is correctly written."
-		echo "As a reminder:"
-		echo $conda_env_path_help
-		echo -e "\nExiting.\n"
-    exit 1
-fi
-
-if [[ ! -z "$CONDA_ENV_PATH" ]] ; then
-  CONDA_ENV_PATH=$(absolutePath $CONDA_ENV_PATH)
-  CONDA_ENV_PATH_CMD="--conda-prefix $CONDA_ENV_PATH"
-fi
