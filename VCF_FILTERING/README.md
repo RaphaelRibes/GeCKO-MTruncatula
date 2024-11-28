@@ -134,8 +134,7 @@ For example, if you want to make sure all variants still have less than 50% miss
 ### 4/ Launch the analysis
 
 **Environment**  
-You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Mamba to be available. If you chose to [create the GeCKO_env conda environment with runGeCKO.sh](https://github.com/GE2POP/GeCKO/tree/main#recommended-method), you first need to activate it:  
-```conda activate GeCKO_env``` 
+You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Singularity to be available.   
 
 **Launching**  
 To launch the VCF_FILTERING workflow, assuming you placed your config_VcfFiltering.yml and VF_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow VcfFiltering:  
