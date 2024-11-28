@@ -3,9 +3,9 @@
 
 ### v WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE v ###
 
-module purge
-module load snakemake/7.32.4-conda
-module load singularity/3.6.3
+#module purge
+#module load snakemake/7.32.4-conda
+#module load singularity/3.6.3
 
 ### ^ WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE ^ ###
 
