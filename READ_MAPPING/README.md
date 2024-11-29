@@ -213,10 +213,10 @@ This workflow uses the following tools:
 - [bowtie2 v2.5.4](https://github.com/BenLangmead/bowtie2)
 - [minimap2 v2.28](https://github.com/lh3/minimap2)
 - [samtools v1.21](http://www.htslib.org/)
-- [picard v2.26.10](https://broadinstitute.github.io/picard/)
+- [picard v3.3.0](https://broadinstitute.github.io/picard/)
 - [UMI_tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
-- [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
-- [bedtools v2.30.0](https://github.com/arq5x/bedtools2)
+- [multiqc v1.25.1](https://github.com/ewels/MultiQC/releases)
+- [bedtools v2.31.1](https://github.com/arq5x/bedtools2)
 
 These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
 
