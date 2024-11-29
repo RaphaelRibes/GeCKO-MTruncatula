@@ -282,10 +282,10 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 
 ## Tools
 This workflow uses the following tools: 
-- [Cutadapt v3.5](https://cutadapt.readthedocs.io/en/v3.5/)
+- [Cutadapt v4.9](https://cutadapt.readthedocs.io/en/v4.9/)
 - [UMI_tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
-- [FastQC v11.9](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
-- [MultiQC v1.11](https://github.com/ewels/MultiQC/releases)
+- [FastQC v0.12.1](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
+- [MultiQC v1.25.1](https://github.com/ewels/MultiQC/releases)
  
 These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
 
