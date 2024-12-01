@@ -144,7 +144,7 @@ This workflow uses the following tools:
 - [pandas v1.3.5](https://pandas.pydata.org/)
 - [numpy v1.23.1](https://numpy.org/)
 
-These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
+These tools are pre-installed in the Singularity image automatically downloaded by the launcher and used by Snakemake to run each rule.
 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
