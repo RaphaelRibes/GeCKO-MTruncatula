@@ -218,7 +218,7 @@ This workflow uses the following tools:
 - [multiqc v1.25.1](https://github.com/ewels/MultiQC/releases)
 - [bedtools v2.31.1](https://github.com/arq5x/bedtools2)
 
-These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
+These tools are pre-installed in the Singularity image automatically downloaded by the launcher and used by Snakemake to run each rule.
 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
