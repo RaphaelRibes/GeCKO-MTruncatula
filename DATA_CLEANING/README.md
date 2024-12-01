@@ -287,7 +287,7 @@ This workflow uses the following tools:
 - [FastQC v0.12.1](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
 - [MultiQC v1.25.1](https://github.com/ewels/MultiQC/releases)
  
-These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
+These tools are pre-installed in the Singularity image automatically downloaded by the launcher and used by Snakemake to run each rule.
 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:
