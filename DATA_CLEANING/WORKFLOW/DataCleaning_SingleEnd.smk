@@ -22,10 +22,6 @@ if (len(user_demult_dir) == 0):
 else:
     performDemultiplexing = False
 
-if config["UMI"]:
-    extractUMI = True
-else:
-    extractUMI = False
 
 ### Raw fastq files path and base names
 fastq_raw_base = raw_data_dir = ""
@@ -51,7 +47,7 @@ if performDemultiplexing:
     demult_dir_input = demult_dir
 else:
     demult_dir = user_demult_dir
-    if extractUMI:
+    if config["UMI"]:
         demult_dir_output = outputs_directory+"/DEMULT_UMI"
         demult_dir_input = demult_dir_output
     else:

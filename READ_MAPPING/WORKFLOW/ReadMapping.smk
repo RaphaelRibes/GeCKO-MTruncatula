@@ -21,7 +21,6 @@ trim_dirs = list(config["TRIM_DIRS"].split(" "))
 if (len(config["TRIM_DIRS"]) == 0):
     trim_dirs = [working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"]
 
-
 if config["REMOVE_DUP_MARKDUPLICATES"]:
     rm_dup = "TRUE"
 else:
@@ -52,10 +51,6 @@ if (len(existing_bed) == 0 and len(config["BED_MIN_MEAN_COV"]) == 0):
 else:
     count_reads_zones = True
 
-if config["CREATE_SUB_BAMS"]:
-    create_sub_bams = True
-else:
-    create_sub_bams = False
 
 mapper = config["MAPPER"]
 
@@ -610,7 +605,7 @@ rule Write_Summary:
         subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
         mapping_dir+"/subbams_list.txt",
         mapping_dir+"/reference_chr_size.txt" ],
-        [ True, True, True, count_reads_zones, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams, create_sub_bams ])
+        [ True, True, True, count_reads_zones, config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"] ])
     output:
         temp(mapping_dir+"/summary.sentinel")
     params:

@@ -85,22 +85,6 @@ else
 fi
 
 
-#workflow_profiles_folder="${workflow_path}/PROFILES"
-#if [[ -d ${workflow_profiles_folder} ]] ; then
-#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SGE/config.yaml)
-#	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
-#		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SGE/config.yaml..."
-#	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SGE/config.yaml
-#	    sed -i 's/\r/\n/g' ${workflow_profiles_folder}/SGE/config.yaml
-#	fi
-#	nb_carriage_returns=$(grep -c $'\r' ${workflow_profiles_folder}/SLURM/config.yaml)
-#	if [[ "$nb_carriage_returns" -gt 0 ]] ; then
-#		echo "Removing windows carriage returns in ${workflow_profiles_folder}/SLURM/config.yaml..."
-#	    sed -i 's/\r$//g' ${workflow_profiles_folder}/SLURM/config.yaml
-#	    sed -i 's/\r/\n/g' ${workflow_profiles_folder}/SLURM/config.yaml
-#	fi
-#fi
-
 ### 2/ CONFIG_FILE ###
 
 CONFIG=$(absolutePath $CONFIG)
@@ -159,9 +143,9 @@ WORKFLOW_SMK="${WORKFLOW}.smk"
 # if DataCleaning: is it paired or single
 if [[ "$WORKFLOW" = "DataCleaning" ]] ; then
 	PAIRED_END=$(grep "^PAIRED_END" $CONFIG | cut -f2 -d ' ')
-	if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
+	if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" ]] ; then
 		WORKFLOW_SMK="${WORKFLOW}_PairedEnd.smk"
-	elif [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
+	elif [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" ]] ; then
 		WORKFLOW_SMK="${WORKFLOW}_SingleEnd.smk"
 	else
 		echo -e "\nERROR: The PAIRED_END variable is either missing or incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
