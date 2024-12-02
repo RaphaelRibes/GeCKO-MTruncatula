@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+SingularityImageVersion=1.2.0
 
 ### v WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE v ###
 
@@ -130,8 +131,12 @@ fi
 ### Download the singularity container if it can't be found
 if [[ ! -f "${GeCKO_path}/launcher_files/container/GeCKO.sif" ]] ; then
   mkdir -p ${GeCKO_path}/launcher_files/container
-  echo -e "\nDownloading the singularity container from Sylabs cloud..."
-  singularity pull ${GeCKO_path}/launcher_files/container/GeCKO.sif library://ge2pop_gecko/gecko/gecko:1.2.0
+  echo -e "\nDownloading the Singularity image from Sylabs cloud..."
+  singularity pull ${GeCKO_path}/launcher_files/container/GeCKO.sif library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}
+  if [[ $? -ne 0 ]]; then
+    echo -e "\nError: Failed to download the Singularity image. Exiting."
+    exit 1
+  fi
 fi
 
 ### Remove CR and make scripts executable
