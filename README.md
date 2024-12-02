@@ -1,8 +1,12 @@
 --------------------------------------------------------------------
 🔥🐲 THIS IS THE APPTAINER BRANCH 🔥🐲  
 
+Work in progress, use it at your own risk...  
+
 To clone it:  
 ```git clone -b Apptainer git@github.com:GE2POP/GeCKO.git```
+
+For a stable version of GeCKO, see the main branch: https://github.com/GE2POP/GeCKO
 
 --------------------------------------------------------------------
 
