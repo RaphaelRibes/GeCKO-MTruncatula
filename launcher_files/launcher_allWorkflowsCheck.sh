@@ -71,7 +71,6 @@ fi
 
 
 
-
 ### 2/ CONFIG_FILE ###
 
 CONFIG=$(absolutePath $CONFIG)
@@ -130,9 +129,9 @@ WORKFLOW_SMK="${WORKFLOW}.smk"
 # if DataCleaning: is it paired or single
 if [[ "$WORKFLOW" = "DataCleaning" ]] ; then
 	PAIRED_END=$(grep "^PAIRED_END" $CONFIG | cut -f2 -d ' ')
-	if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
+	if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" ]] ; then
 		WORKFLOW_SMK="${WORKFLOW}_PairedEnd.smk"
-	elif [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
+	elif [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" ]] ; then
 		WORKFLOW_SMK="${WORKFLOW}_SingleEnd.smk"
 	else
 		echo -e "\nERROR: The PAIRED_END variable is either missing or incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."

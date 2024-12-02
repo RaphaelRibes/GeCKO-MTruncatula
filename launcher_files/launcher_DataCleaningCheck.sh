@@ -262,6 +262,15 @@ if [[ ! -z $BARCODE_FILE ]] ; then
   fi
 fi
 
+# UMI
+UMI=$(grep "^UMI:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+if [[ "$UMI" != "TRUE" && "$UMI" != "True" && "$UMI" != "true" && "$UMI" != "FALSE" && "$UMI" != "False" && "$UMI" != "false" ]] ; then
+  echo -e "\nERROR: The UMI variable is incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
+  echo "As a reminder:"
+  echo "UMI: Wether or not UMI sequences should be extracted from reads. Set to TRUE if UMIs were incorporated during library construction. This option is currently only supported for demultiplexed data. [TRUE or FALSE]"
+  echo -e "\nExiting.\n"
+  exit 1
+fi
 
 # TRIMMING_QUAL and TRIMMING_MIN_LENGTH
 TRIMMING_QUAL=$(grep "^TRIMMING_QUAL:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')

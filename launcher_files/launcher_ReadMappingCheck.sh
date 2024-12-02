@@ -36,9 +36,9 @@ if [[ -z "$PAIRED_END" ]] ; then
   echo "PAIRED_END: set to TRUE in case of paired end data (R1 + R2), to FALSE in case of single end data."
   echo -e "\nExiting.\n"
   exit 1
-elif [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
+elif [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" ]] ; then
   echo -e "\nINFO: Paired end data is expected (PAIRED_END set to TRUE)\n"
-elif [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
+elif [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" ]] ; then
   echo -e "\nINFO: Single end data is expected (PAIRED_END set to FALSE)\n"
 else
   echo -e "\nERROR: The PAIRED_END variable is incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
@@ -69,7 +69,7 @@ for TRIM_DIR in $TRIM_DIRS ; do
     echo -e "\nExiting.\n"
     exit 1
   fi
-  if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" || "$PAIRED_END" == "T" ]] ; then
+  if [[ "$PAIRED_END" == "TRUE" || "$PAIRED_END" == "True" || "$PAIRED_END" == "true" ]] ; then
     nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*.R1.fastq.gz 2>/dev/null | wc -l)
     nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*.R2.fastq.gz 2>/dev/null | wc -l)
     if [[ $nb_fastq_R1_obs -eq 0 || $nb_fastq_R2_obs -eq 0 ]] ; then
@@ -94,7 +94,7 @@ for TRIM_DIR in $TRIM_DIRS ; do
       done
     fi
   fi
-  if [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" || "$PAIRED_END" == "F" ]] ; then
+  if [[ "$PAIRED_END" == "FALSE" || "$PAIRED_END" == "False" || "$PAIRED_END" == "false" ]] ; then
     nb_fastq=$(ls ${TRIM_DIR}/*.fastq.gz 2>/dev/null | wc -l)
     nb_fastq_R1_obs=$(ls ${TRIM_DIR}/*R1*fastq.gz 2>/dev/null | wc -l)
     nb_fastq_R2_obs=$(ls ${TRIM_DIR}/*R2*fastq.gz 2>/dev/null | wc -l)
@@ -158,14 +158,14 @@ if [[ -z "$CREATE_SUB_BAMS" ]] ; then
   echo "CREATE_SUB_BAMS: set to TRUE in case you provided a bed file AND want to extract the reads mapping onto the specified regions, to FALSE otherwise. If set to TRUE, the extracted reads will be stored in new bams, and a new reference (matching the bams) containing only the bed regions will be created."
   echo -e "\nExiting.\n"
   exit 1
-elif [[ "$CREATE_SUB_BAMS" != "TRUE" && "$CREATE_SUB_BAMS" != "True" && "$CREATE_SUB_BAMS" != "true" && "$CREATE_SUB_BAMS" != "T" && "$CREATE_SUB_BAMS" != "FALSE" && "$CREATE_SUB_BAMS" != "False" && "$CREATE_SUB_BAMS" != "false" && "$CREATE_SUB_BAMS" != "F" ]] ; then
+elif [[ "$CREATE_SUB_BAMS" != "TRUE" && "$CREATE_SUB_BAMS" != "True" && "$CREATE_SUB_BAMS" != "true" && "$CREATE_SUB_BAMS" != "FALSE" && "$CREATE_SUB_BAMS" != "False" && "$CREATE_SUB_BAMS" != "false" ]] ; then
   echo -e "\nERROR: The CREATE_SUB_BAMS variable is incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
   echo "As a reminder:"
   echo "CREATE_SUB_BAMS: set to TRUE in case you provided a bed file AND want to extract the reads mapping onto the specified regions, to FALSE otherwise. If set to TRUE, the extracted reads will be stored in new bams, and a new reference (matching the bams) containing only the bed regions will be created."
   echo -e "\nExiting.\n"
   exit 1
 fi
-if [[ "$CREATE_SUB_BAMS" == "TRUE" || "$CREATE_SUB_BAMS" == "True" || "$CREATE_SUB_BAMS" == "true" || "$CREATE_SUB_BAMS" == "T" ]] ; then
+if [[ "$CREATE_SUB_BAMS" == "TRUE" || "$CREATE_SUB_BAMS" == "True" || "$CREATE_SUB_BAMS" == "true" ]] ; then
   if [[ -z "$BED" && (-z "$BED_MIN_MEAN_COV" || -z "$BED_MIN_DIST" || -z "$BED_MIN_LENGTH") ]] ; then
     echo -e "\nERROR: CREATE_SUB_BAM was set to TRUE but neither the bed file nor the parameters to automatically create it were provided in your config file (${CONFIG}). Please either provide a bed file, or values for BED_MIN_MEAN_COV, BED_MIN_DIST and BED_MIN_LENGTH, or set CREATE_SUB_BAM to FALSE."
     echo -e "\nExiting.\n"
@@ -182,6 +182,7 @@ fi
 ## Mapping parameters ##
 MAPPER=$(grep "^MAPPER:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 REMOVE_DUP_MARKDUPLICATES=$(grep "^REMOVE_DUP_MARKDUPLICATES:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
+REMOVE_DUP_UMI=$(grep "^REMOVE_DUP_UMI:" $CONFIG | sed 's/#.*$//' | cut -d ' ' -f2 | sed 's/"//g')
 
 # **MAPPER**
 if [[ -z "$MAPPER" ]] ; then
@@ -200,10 +201,29 @@ if [[ "$MAPPER" != "bwa-mem2_mem" && "$MAPPER" != "bwa_mem" && "$MAPPER" != "bow
 fi
 
 # **REMOVE_DUP_MARKDUPLICATES**
-if [[ "$REMOVE_DUP_MARKDUPLICATES" != "TRUE" && "$REMOVE_DUP_MARKDUPLICATES" != "True" && "$REMOVE_DUP_MARKDUPLICATES" != "true" && "$REMOVE_DUP_MARKDUPLICATES" != "T" && "$REMOVE_DUP_MARKDUPLICATES" != "FALSE" && "$REMOVE_DUP_MARKDUPLICATES" != "False" && "$REMOVE_DUP_MARKDUPLICATES" != "false" && "$REMOVE_DUP_MARKDUPLICATES" != "F" ]] ; then
+if [[ "$REMOVE_DUP_MARKDUPLICATES" != "TRUE" && "$REMOVE_DUP_MARKDUPLICATES" != "True" && "$REMOVE_DUP_MARKDUPLICATES" != "true" && "$REMOVE_DUP_MARKDUPLICATES" != "FALSE" && "$REMOVE_DUP_MARKDUPLICATES" != "False" && "$REMOVE_DUP_MARKDUPLICATES" != "false" ]] ; then
   echo -e "\nERROR: The REMOVE_DUP_MARKDUPLICATES variable is incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
   echo "As a reminder:"
-  echo "REMOVE_DUP_MARKDUPLICATES: set to TRUE to remove duplicates after mapping (picard MarkDuplicates -REMOVE_DUPLICATES TRUE), to FALSE otherwise."
+  echo "REMOVE_DUP_MARKDUPLICATES: Whether or not to remove duplicates with 'picard MarkDuplicates' after the mapping step. [TRUE or FALSE]"
+  echo -e "\nExiting.\n"
+  exit 1
+fi
+
+
+# **REMOVE_DUP_UMI**
+if [[ "$REMOVE_DUP_UMI" != "TRUE" && "$REMOVE_DUP_UMI" != "True" && "$REMOVE_DUP_UMI" != "true" && "$REMOVE_DUP_UMI" != "FALSE" && "$REMOVE_DUP_UMI" != "False" && "$REMOVE_DUP_UMI" != "false" ]] ; then
+  echo -e "\nERROR: The REMOVE_DUP_UMI variable is incorrect in your config file (${CONFIG}). Please set it to TRUE or FALSE."
+  echo "As a reminder:"
+  echo "REMOVE_DUP_UMI: Whether or not to remove duplicates with 'umi_tools dedup' after the mapping step. [TRUE or FALSE]"
+  echo -e "\nExiting.\n"
+  exit 1
+fi
+
+if [[ "$REMOVE_DUP_UMI" == "TRUE" || "$REMOVE_DUP_UMI" == "True" || "$REMOVE_DUP_UMI" == "true" ]] && [[ "$REMOVE_DUP_MARKDUPLICATES" == "TRUE" || "$REMOVE_DUP_MARKDUPLICATES" == "True" || "$REMOVE_DUP_MARKDUPLICATES" == "true" ]] ; then
+  echo -e "\nERROR: You cannot set both REMOVE_DUP_MARKDUPLICATES and REMOVE_DUP_UMI variable to TRUE in your config file (${CONFIG})."
+  echo "As a reminder:"
+  echo "REMOVE_DUP_MARKDUPLICATES: Whether or not to remove duplicates with 'picard MarkDuplicates' after the mapping step. If set to TRUE, set REMOVE_DUP_UMI to FALSE. If both REMOVE_DUP_MARKDUPLICATES and REMOVE_DUP_UMI are set to FALSE, duplicates will be marked with 'picard MarkDuplicates'. Setting both REMOVE_DUP_MARKDUPLICATES and REMOVE_DUP_UMI to TRUE will raise an error. [TRUE or FALSE]"
+  echo "REMOVE_DUP_UMI: Whether or not to remove duplicates with 'umi_tools dedup' after the mapping step. This option requires prior extraction of UMI sequences from the reads using 'umi_tools extract' (this can be done with the DataCleaning workflow by setting UMI: TRUE). If set to TRUE, set REMOVE_DUP_MARKDUPLICATES to FALSE. If both REMOVE_DUP_UMI and REMOVE_DUP_MARKDUPLICATES are set to FALSE, duplicates will be marked with 'picard MarkDuplicates'. Setting both REMOVE_DUP_MARKDUPLICATES and REMOVE_DUP_UMI to TRUE will raise an error. [TRUE or FALSE]"
   echo -e "\nExiting.\n"
   exit 1
 fi
