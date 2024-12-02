@@ -231,8 +231,7 @@ Unique Molecular Identifiers (UMIs) are short sequences added to each DNA fragme
 ### 4/ Launch the analysis
 
 **Environment**  
-You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Mamba to be available. If you chose to [create the GeCKO_env conda environment with runGeCKO.sh](https://github.com/GE2POP/GeCKO/tree/main#recommended-method), you first need to activate it:  
-```conda activate GeCKO_env```  
+You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Singularity to be available.  
 
 **Launching**  
 To launch the DATA_CLEANING workflow, assuming you placed your config_DataCleaning.yml and DC_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow DataCleaning:  
@@ -283,12 +282,12 @@ This workflow will create a "DATA_CLEANING" directory in the "WORKFLOWS_OUTPUTS"
 
 ## Tools
 This workflow uses the following tools: 
-- [Cutadapt v3.5](https://cutadapt.readthedocs.io/en/v3.5/)
+- [Cutadapt v4.9](https://cutadapt.readthedocs.io/en/v4.9/)
 - [UMI_tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
-- [FastQC v11.9](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
-- [MultiQC v1.11](https://github.com/ewels/MultiQC/releases)
+- [FastQC v0.12.1](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
+- [MultiQC v1.25.1](https://github.com/ewels/MultiQC/releases)
  
-These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
+These tools are pre-installed in the Singularity image automatically downloaded by the launcher and used by Snakemake to run each rule.
 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:

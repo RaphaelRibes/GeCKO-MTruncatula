@@ -134,8 +134,7 @@ For example, if you want to make sure all variants still have less than 50% miss
 ### 4/ Launch the analysis
 
 **Environment**  
-You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Mamba to be available. If you chose to [create the GeCKO_env conda environment with runGeCKO.sh](https://github.com/GE2POP/GeCKO/tree/main#recommended-method), you first need to activate it:  
-```conda activate GeCKO_env``` 
+You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Singularity to be available.   
 
 **Launching**  
 To launch the VCF_FILTERING workflow, assuming you placed your config_VcfFiltering.yml and VF_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow VcfFiltering:  
@@ -177,15 +176,15 @@ This workflow will create a "VCF_FILTERING" directory in the "WORKFLOWS_OUTPUTS"
 
 ## Tools
 This workflow uses the following tools: 
-- [bcftools v1.15](https://samtools.github.io/bcftools/bcftools.html)
-- [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
+- [bcftools v1.21](https://samtools.github.io/bcftools/bcftools.html)
+- [multiqc v1.25.1](https://github.com/ewels/MultiQC/releases)
 - [egglib v3.1.0](https://www.egglib.org/)
-- [seaborn v0.12.2](https://seaborn.pydata.org/)
-- [matplotlib v3.2.1](https://matplotlib.org/)
-- [pandas v1.3.5](https://pandas.pydata.org/)
-- [numpy v1.23.1](https://numpy.org/)
+- [seaborn v0.13.2](https://seaborn.pydata.org/)
+- [matplotlib v3.9.1](https://matplotlib.org/)
+- [pandas v2.2.3](https://pandas.pydata.org/)
+- [numpy v2.0.2](https://numpy.org/)
 
-These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
+These tools are pre-installed in the Singularity image automatically downloaded by the launcher and used by Snakemake to run each rule.
 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:

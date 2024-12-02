@@ -151,8 +151,7 @@ Bam filtering options are available after both the initial mapping (SAMTOOLS_VIE
 ### 4/ Launch the analysis
 
 **Environment**  
-You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Mamba to be available. If you chose to [create the GeCKO_env conda environment with runGeCKO.sh](https://github.com/GE2POP/GeCKO/tree/main#recommended-method), you first need to activate it:  
-```conda activate GeCKO_env```  
+You can run this workflow on a computer or on a computer cluster. You will need Snakemake and Singularity to be available.    
 
 **Launching**  
 To launch the READ_MAPPING workflow, assuming you placed your config_ReadMapping.yml and RM_CLUSTER_PROFILE folder in a CONFIG folder, use the launching script runGeCKO.sh with the option --workflow ReadMapping:  
@@ -210,16 +209,16 @@ This workflow will create a "READ_MAPPING" directory in the "WORKFLOWS_OUTPUTS" 
 ## Tools
 This workflow uses the following tools: 
 - [bwa-mem2 v2.2.1](https://github.com/bwa-mem2/bwa-mem2)
-- [bwa v0.7.17](https://github.com/lh3/bwa)
-- [bowtie2 v2.4.5](https://github.com/BenLangmead/bowtie2)
-- [minimap2 v2.24](https://github.com/lh3/minimap2)
-- [samtools v1.14](http://www.htslib.org/)
-- [picard v2.26.10](https://broadinstitute.github.io/picard/)
+- [bwa v0.7.18](https://github.com/lh3/bwa)
+- [bowtie2 v2.5.4](https://github.com/BenLangmead/bowtie2)
+- [minimap2 v2.28](https://github.com/lh3/minimap2)
+- [samtools v1.21](http://www.htslib.org/)
+- [picard v3.3.0](https://broadinstitute.github.io/picard/)
 - [UMI_tools v1.1.5](https://umi-tools.readthedocs.io/en/latest/index.html)
-- [multiqc v1.11](https://github.com/ewels/MultiQC/releases)
-- [bedtools v2.30.0](https://github.com/arq5x/bedtools2)
+- [multiqc v1.25.1](https://github.com/ewels/MultiQC/releases)
+- [bedtools v2.31.1](https://github.com/arq5x/bedtools2)
 
-These tools are automatically downloaded from the conda-forge and bioconda channels and installed in a Conda environment by Snakemake with Mamba.
+These tools are pre-installed in the Singularity image automatically downloaded by the launcher and used by Snakemake to run each rule.
 
 ##  List of the snakefile rules
 Name, description and tools used for each of the snakemake workflow rules:

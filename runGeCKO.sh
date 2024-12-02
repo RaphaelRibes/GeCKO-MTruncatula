@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+SingularityImageVersion=1.2.0
 
 ### v WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE v ###
 
 #module purge
-#conda activate GeCKO_env
+#module load snakemake/7.32.4-conda
+#module load singularity/3.6.3
 
 ### ^ WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE ^ ###
 
@@ -19,10 +21,6 @@ HELP="FALSE"
 DRYRUN="FALSE"
 DIAGRAM="FALSE"
 REPORT="FALSE"
-CREATE_GECKO_CONDA_ENV="FALSE"
-USE_CONDA="TRUE"
-CONDA_ENV_PATH=""
-CONDA_ENV_PATH_CMD=""
 
 ### ARGUMENTS
 POSITIONAL=()
@@ -80,16 +78,6 @@ do
     shift
     shift
     ;;
-    --create-gecko-env)
-    CREATE_GECKO_CONDA_ENV="TRUE"
-    shift
-    shift
-    ;;
-    --conda-env-path)
-    CONDA_ENV_PATH="$2"
-    shift
-    shift
-    ;;
     --extra-snakemake-options)
     EXTRA_SNAKEMAKE_OPTIONS="$2"
     shift
@@ -124,7 +112,7 @@ absolutePath () {
 
 # --------------------------------------------------------------------------------------------------------------#
 
-### GeCKO_path (needed for next steps)
+### GeCKO_path
 
 GeCKO_path=$(dirname $(absolutePath "$0"))
 
@@ -132,13 +120,24 @@ GeCKO_path=$(dirname $(absolutePath "$0"))
 # --------------------------------------------------------------------------------------------------------------#
 
 
-### Check if folder exists
+### Check if launcher_files folder exists
 if [[ ! -d "${GeCKO_path}/launcher_files/" ]] ; then
   echo -e "\nERROR: No launcher_files/ folder was found in the provided workflow path (${GeCKO_path}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
   echo -e "\nExiting.\n"
   exit 1
 fi
 
+
+### Download the singularity container if it can't be found
+if [[ ! -f "${GeCKO_path}/launcher_files/container/GeCKO.sif" ]] ; then
+  mkdir -p ${GeCKO_path}/launcher_files/container
+  echo -e "\nDownloading the Singularity image from Sylabs cloud..."
+  singularity pull ${GeCKO_path}/launcher_files/container/GeCKO.sif library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}
+  if [[ $? -ne 0 ]]; then
+    echo -e "\nError: Failed to download the Singularity image. Exiting."
+    exit 1
+  fi
+fi
 
 ### Remove CR and make scripts executable
 for file in $(ls "${GeCKO_path}/launcher_files/") ; do
@@ -163,19 +162,6 @@ if [ "${HELP}" = "TRUE" ] ; then
 fi
 
 
-### Create GeCKO conda environment
-if [ "${CREATE_GECKO_CONDA_ENV}" = "TRUE" ] ; then
-  if ! command -v conda &> /dev/null ; then
-    echo -e "\nERROR: Conda is not available. Please install it, or make it available to your working environment (eg: module load it)."
-    exit 1
-  else
-    echo "Creating GeCKO conda environment..."
-    conda env create -n GeCKO_env -f ${GeCKO_path}/launcher_files/GeCKO_env.yaml
-    exit 0
-  fi
-fi
-
-
 ### Check variables and paths
 source "${GeCKO_path}/launcher_files/launcher_allWorkflowsCheck.sh"
 if [[ -f "${GeCKO_path}/launcher_files/launcher_${WORKFLOW}Check.sh" ]] ; then
@@ -193,7 +179,7 @@ if [ "${DRYRUN}" = "TRUE" ] ; then
   snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
-  $snakemake_command
+  eval $snakemake_command
   exit 0
 fi
 
@@ -203,7 +189,7 @@ if [ "${DIAGRAM}" = "TRUE" ] ; then
   snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
-  $snakemake_command
+  eval $snakemake_command
   exit 0
 fi
 
@@ -213,16 +199,14 @@ if [ "${REPORT}" = "TRUE" ] ; then
   snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
   echo -e "\nCalling Snakemake:"
   echo -e $snakemake_command"\n"
-  $snakemake_command
+  eval $snakemake_command
   exit 0
 fi
 
 
-## RUN WITH CONDA ##
-if [ "${USE_CONDA}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-conda --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${CONDA_ENV_PATH_CMD} ${EXTRA_SNAKEMAKE_OPTIONS}"
-  echo -e "\nCalling Snakemake:"
-  echo -e $snakemake_command"\n"
-  $snakemake_command
-  exit 0
-fi
+## RUN ##
+snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-singularity --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${EXTRA_SNAKEMAKE_OPTIONS} --singularity-args \"--bind ${GeCKO_path} --bind $(pwd)\""
+echo -e "\nCalling Snakemake:"
+echo -e $snakemake_command"\n"
+eval $snakemake_command
+exit 0

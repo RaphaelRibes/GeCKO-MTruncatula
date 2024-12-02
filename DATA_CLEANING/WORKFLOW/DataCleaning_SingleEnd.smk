@@ -6,6 +6,8 @@ from datetime import datetime
 
 default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
 
+WF="DATA_CLEANING"
+
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Variables from config file
@@ -31,12 +33,12 @@ if performDemultiplexing:
 
 ### Define paths
 path_to_snakefile = workflow.snakefile
-snakefile_dir = path_to_snakefile.rsplit('/', 1)[0]
+snakefile_dir = path_to_snakefile.rsplit('/', 1)[0] #**
 scripts_dir = snakefile_dir+"/SCRIPTS"
-working_directory = os.getcwd()
+working_directory = os.getcwd() #**
 
 ### Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING"
+outputs_directory = f"{working_directory}/WORKFLOWS_OUTPUTS/{WF}" #**
 rawdata_reports_dir = outputs_directory+"/RAWDATA/REPORTS"
 rawdata_fastqc_reports_dir = rawdata_reports_dir+"/FASTQC"
 
@@ -70,6 +72,9 @@ demult_trim_fastqc_reports_dir = demult_trim_reports_dir+"/FASTQC"
 ### Generate the workflow_info name
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{outputs_directory}/workflow_info_{timestamp}.txt"
+
+### Container path
+GeCKO_container = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/container/GeCKO.sif"))
 
 
 ### FUNCTIONS
@@ -107,8 +112,8 @@ rule Fastqc_RawFastqs:
         raw_data_dir+"/{base}.fastq.gz"
     output:
         rawdata_fastqc_reports_dir+"/{base}_fastqc.zip"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "fastqc -o {rawdata_fastqc_reports_dir} {input}"
@@ -119,6 +124,8 @@ rule CountReads_RawFastqs:
         fastq_raw
     output:
         rawdata_reports_dir+"/Reads_Count_RawData.txt"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {raw_data_dir} --output {output}"
@@ -134,8 +141,8 @@ rule Demultiplex_RawFastqs:
     params:
         substitutions = config["DEMULT_SUBSTITUTIONS"],
         cutadapt_demult_extra_options = config["CUTADAPT_DEMULT_EXTRA_OPTIONS"]
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_SE.sh --demultdir {demult_dir} --R {input.fastq_raw} "
@@ -151,8 +158,8 @@ rule ExtractUMI_DemultFastqs:
         fastq = demult_dir_output+"/{base}.fastq.gz"
     params:
         umitools_extract_options = config["UMITOOLS_EXTRACT_OPTIONS"]
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "umi_tools extract --stdin {input.fastq} --stdout {output.fastq} {params.umitools_extract_options}"
@@ -163,6 +170,8 @@ rule CountReads_DemultFastqs:
         expand("{demult_dir_input}/{sample}.fastq.gz", sample=samples, demult_dir_input=demult_dir_input)
     output:
         demult_reports_dir+"/Reads_Count_Demult.txt"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_dir} --output {output}"
@@ -174,8 +183,8 @@ rule Fastqc_DemultFastqs:
         demult_dir_input+"/{base}.fastq.gz"
     output:
         demult_fastqc_reports_dir+"/{base}_fastqc.zip"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "fastqc -o {demult_fastqc_reports_dir} {input}"
@@ -188,8 +197,8 @@ rule MultiQC_DemultFastqs:
     output:
         demult_reports_dir+"/multiQC_Demult_Report.html",
         temp(demult_reports_dir+"/config_multiQC.yaml")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
@@ -204,6 +213,8 @@ rule Concatenate_DemultFastqs:
         demult_reads_count = demult_reports_dir+"/Reads_Count_Demult.txt" # necessary to exclude concatenated fastq from read count
     output:
         temp(demult_dir_output+"/All_Samples_Concat_demultiplexed.fastq.gz")
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "cat {input.fastqs_demult} > {output}"
@@ -214,8 +225,8 @@ rule Fastqc_ConcatDemultFastqs:
         demult_dir_output+"/All_Samples_Concat_demultiplexed.fastq.gz"
     output:
         demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed_fastqc.zip"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "fastqc -o {demult_fastqc_reports_dir} {input} ;"
@@ -232,8 +243,8 @@ rule Trimming_DemultFastqs:
         quality_cutoff = config["TRIMMING_QUAL"],
         minimum_length = config["TRIMMING_MIN_LENGTH"],
         cutadapt_trimming_extra_options = config["CUTADAPT_TRIMMING_EXTRA_OPTIONS"]
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/trimming_with_cutadapt_SE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
@@ -247,6 +258,8 @@ rule CountReads_TrimmedFastqs:
         expand("{demult_trim_dir}/{sample}.fastq.gz", sample=samples, demult_trim_dir=demult_trim_dir)
     output:
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_trim_dir} --output {output}"
@@ -257,8 +270,8 @@ rule Fastqc_TrimmedFastqs:
         demult_trim_dir+"/{base}.fastq.gz"
     output:
         demult_trim_fastqc_reports_dir+"/{base}_fastqc.zip"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "fastqc -o {demult_trim_fastqc_reports_dir} {input}"
@@ -272,8 +285,8 @@ rule MultiQC_TrimmedFastqs:
     output:
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
         temp(demult_trim_reports_dir+"/config_multiQC.yaml")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
@@ -287,6 +300,8 @@ rule Concatenate_TrimmedFastqs:
         demult_trim_reads_count = demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt" # necessary to exclude concatenated fastq from read count
     output:
         temp(demult_trim_dir+"/All_Samples_Concat_trimmed.fastq.gz")
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "cat {input.fastqs_trim} > {output}"
@@ -296,8 +311,8 @@ rule Fastqc_ConcatTrimmedFastqs:
         demult_trim_dir+"/All_Samples_Concat_trimmed.fastq.gz"
     output:
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed_fastqc.zip"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "fastqc -o {demult_trim_fastqc_reports_dir} {input} ;"
@@ -316,8 +331,8 @@ rule MultiQC_Global:
     output:
         outputs_directory+"/multiQC_DataCleaning_Report.html",
         temp(outputs_directory+"/config_multiQC.yaml")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "sum_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T}}' {demult_trim_reports_dir}/Reads_Count_DemultTrim.txt | sed 's/\..*//');"

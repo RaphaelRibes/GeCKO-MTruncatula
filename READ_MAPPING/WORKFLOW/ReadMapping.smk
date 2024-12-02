@@ -6,6 +6,8 @@ from datetime import datetime
 
 default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
 
+WF="READ_MAPPING"
+
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Define paths
@@ -19,7 +21,7 @@ paired_end = config["PAIRED_END"]
 trim_dirs = list(config["TRIM_DIRS"].split(" "))
 
 if (len(config["TRIM_DIRS"]) == 0):
-    trim_dirs = [working_directory+"/WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"]
+    trim_dirs = [f"WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM"]
 
 if config["REMOVE_DUP_MARKDUPLICATES"]:
     rm_dup = "TRUE"
@@ -89,7 +91,7 @@ else:
 
 
 ### Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/READ_MAPPING"
+outputs_directory = f"{working_directory}/WORKFLOWS_OUTPUTS/{WF}"
 mapping_dir = outputs_directory+mapping_subfolder
 bams_dir = mapping_dir+"/BAMS"
 bams_reports_dir = bams_dir+"/REPORTS"
@@ -123,6 +125,9 @@ if mapper == "minimap2":
 ### Generate the workflow_info name
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{mapping_dir}/workflow_info_{timestamp}.txt"
+
+### Container path
+GeCKO_container = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/container/GeCKO.sif"))
 
 
 ### FUNCTIONS
@@ -162,8 +167,8 @@ rule Index_Reference:
         ref
     output:
         ref_index
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/index_ref.sh {input} {mapper}"
@@ -182,8 +187,8 @@ rule Mapping_PairedEndFastqs:
         bams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
         [ paired_end and not config["REMOVE_DUP_UMI"], paired_end, paired_end, paired_end and not config["REMOVE_DUP_UMI"] ])
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     params:
         mapper = mapper,
@@ -211,8 +216,8 @@ rule Mapping_SingleEndFastqs:
         bams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
         [ not paired_end and not config["REMOVE_DUP_UMI"], not paired_end, not paired_end, not paired_end and not config["REMOVE_DUP_UMI"] ])
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     params:
         mapper = config["MAPPER"],
@@ -232,8 +237,8 @@ rule Stats_Bams:
         bams_dir+"/{base}_sortcoord.bam" if config["REMOVE_DUP_UMI"] else bams_dir+"/{base}_markedDup.bam"
     output:
         bams_stats_reports_dir+"/stats_{base}"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "samtools stats {input} > {output}"
@@ -245,8 +250,8 @@ rule MarkDuplicates_Bams:
     output:
         MD_bam = temp(bams_dir+"/{base}_rmDup.bam"),
         metrics = bams_reports_dir+"/DUPLICATES_TMP/{base}.bam.metrics"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
@@ -261,8 +266,8 @@ rule DedupUMI_Bams:
     output:
         csi = temp(bams_dir+"/{base}_sortcoord.bam.csi"),
         bam_dedup = temp(bams_dir+"/{base}_UMIdedup.bam")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"],
         umitools_dedup_options = config["UMITOOLS_DEDUP_OPTIONS"] + (" --paired" if paired_end else "")
@@ -278,8 +283,8 @@ rule Filter_Bams:
         bams_dir+"/{base}_UMIdedup.bam" if config["REMOVE_DUP_UMI"] else (bams_dir+"/{base}_rmDup.bam" if config["REMOVE_DUP_MARKDUPLICATES"] else bams_dir+"/{base}_markedDup.bam")
     output:
         bams_dir+"/{base}.bam"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS1"]
     threads: default_threads
@@ -298,8 +303,8 @@ rule Summarize_BamsReadsCount:
         [ True, config["REMOVE_DUP_MARKDUPLICATES"], config["REMOVE_DUP_UMI"], True ])
     output:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/summarize_stats.sh --stats_folder {bams_stats_reports_dir} --bams_folder {bams_dir} --rmdup {rm_dup} --umi {dedupUMI} --output {output};"
@@ -311,8 +316,8 @@ rule MultiQC_Bams:
         stats_files = expand("{bams_stats_reports_dir}/stats_{sample}", sample=samples, bams_stats_reports_dir=bams_stats_reports_dir)
     output:
         bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report -f"
@@ -324,8 +329,8 @@ rule Index_Bams:
         bam = bams_dir+"/{base}.bam"
     output:
         csi = bams_dir+"/{base}.bam.csi"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     threads: default_threads
@@ -338,6 +343,8 @@ rule Create_BamsList:
         expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir)
     output:
         mapping_dir+"/bams_list.txt"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "ls -d {bams_dir}/*.bam > {output}"
@@ -348,8 +355,8 @@ rule Clean_BedFile:
         existing_bed
     output:
         clean_bed
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         """
@@ -371,8 +378,8 @@ rule Create_BedFile:
         expand("{bams_dir}/{sample}.bam.csi", sample=samples, bams_dir=bams_dir)
     output:
         bed_to_create
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         min_cov = float(config["BED_MIN_MEAN_COV"]) * len(expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir)) if len(config["BED_MIN_MEAN_COV"]) > 0 else 0,
         min_dist = config["BED_MIN_DIST"],
@@ -389,8 +396,8 @@ rule CountReadsZones_Bams:
         bed = bed_to_create if create_bed else clean_bed
     output:
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "echo ZONE {samples} | sed 's/ /\t/g' > {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv ;"
@@ -404,8 +411,8 @@ rule Create_SubReference:
     output:
         subref = subref_dir+"/"+ref_name+"_zones.fasta",
         tmp_bed = temp(subref_dir+"/tmp_zones.bed")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "awk '{{print $1\":\"$2\"-\"$3}}' {input.bed} > {output.tmp_bed} ;"
@@ -422,8 +429,8 @@ rule Extract_PairedEndReads:
         tmp_extracted_fastq_paired_R1 = temp(subbams_dir+"/{base}_extract.R1.fastq.gz"),
         tmp_extracted_fastq_paired_R2 = temp(subbams_dir+"/{base}_extract.R2.fastq.gz"),
         tmp_extracted_fastq_unpaired = temp(subbams_dir+"/{base}_extract.U.fastq.gz")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/extract_PEreads.sh --bam {input.bams} --sample {wildcards.base} --bed_file {input.bed} --output_dir {subbams_dir}"
@@ -444,8 +451,8 @@ rule Remapping_PairedEndExtractedFastqs:
         subbams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
         [ paired_end and not config["REMOVE_DUP_UMI"], paired_end, paired_end, paired_end, paired_end, paired_end and not config["REMOVE_DUP_UMI"] ])
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
@@ -467,8 +474,8 @@ rule Extract_SingleEndReads:
     output:
         tmp_extract_bams = temp(subbams_dir+"/{base}_extract.bam"),
         tmp_extracted_fastq = temp(subbams_dir+"/{base}_extract.fastq.gz"),
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "samtools view -F 4 -b -L {input.bed} {input.bams} > {output.tmp_extract_bams} ;"
@@ -487,8 +494,8 @@ rule Remapping_SingleEndExtractedFastqs:
         subbams_reports_dir+"/DUPLICATES/{base}.bam.metrics" ],
 
         [ not paired_end and not config["REMOVE_DUP_UMI"], not paired_end, not paired_end, not paired_end and not config["REMOVE_DUP_UMI"] ])
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
@@ -508,8 +515,8 @@ rule Stats_Subbams:
         subbams_dir+"/{base}_sortcoord.bam" if config["REMOVE_DUP_UMI"] else subbams_dir+"/{base}_markedDup.bam"
     output:
         subbams_stats_reports_dir+"/stats_{base}"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "samtools stats {input} > {output}"
@@ -520,8 +527,8 @@ rule Filter_Subbams:
         subbams_dir+"/{base}_sortcoord.bam" if config["REMOVE_DUP_UMI"] else subbams_dir+"/{base}_markedDup.bam"
     output:
         subbams_dir+"/{base}.bam"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS2"]
     threads: default_threads
@@ -535,8 +542,8 @@ rule Summarize_SubbamsReadsCount:
         expand("{subbams_dir}/{sample}.bam", sample=samples, subbams_dir=subbams_dir)
     output:
         subbams_reports_dir+"/nb_reads_per_sample.tsv"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "{scripts_dir}/summarize_stats.sh --stats_folder {subbams_stats_reports_dir} --bams_folder {subbams_dir} --rmdup FALSE --umi FALSE --output {output};"
@@ -547,8 +554,8 @@ rule MultiQC_Subbams:
         stats_files = expand("{subbams_stats_reports_dir}/stats_{sample}", sample=samples, subbams_stats_reports_dir=subbams_stats_reports_dir)
     output:
         subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report -f"
@@ -559,8 +566,8 @@ rule Index_Subbams:
         bam = subbams_dir+"/{base}.bam"
     output:
         csi = subbams_dir+"/{base}.bam.csi"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     threads: default_threads
@@ -573,6 +580,8 @@ rule Create_SubbamsList:
         expand("{subbams_dir}/{sample}.bam", sample=samples, subbams_dir=subbams_dir)
     output:
         mapping_dir+"/subbams_list.txt"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "ls -d {subbams_dir}/*.bam > {output}"
@@ -584,8 +593,8 @@ rule Create_RefChrSizeFile:
     output:
         ref_fai = ref+".fai",
         chr_size = mapping_dir+"/reference_chr_size.txt"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_container
     threads: default_threads
     shell:
         "samtools faidx {input};"
