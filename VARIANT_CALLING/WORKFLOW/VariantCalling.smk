@@ -66,8 +66,8 @@ else:
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{vc_dir}/workflow_info_{timestamp}.txt"
 
-### Container path
-GeCKO_container = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/container/GeCKO.sif"))
+### Image path
+GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/singularity_image/GeCKO.sif"))
 
 
 ### FUNCTIONS
@@ -102,7 +102,7 @@ rule Index_Reference:
     output:
         reference+".fai"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "samtools faidx {input};"
@@ -114,7 +114,7 @@ rule Dictionary_Reference:
     output:
         reference_base+".dict"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "gatk CreateSequenceDictionary REFERENCE={input} OUTPUT={output}"
@@ -126,7 +126,7 @@ rule ListIntervalsReference_Dictionary:
     output:
         reference_base+"_intervals_for_GATK.list"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "grep '@SQ' {input} | cut -f2,3 | sed 's/SN://' | sed 's/LN://' | awk '{{print $1\":1-\"$2}}' > {output}"
@@ -145,7 +145,7 @@ rule HaplotypeCaller:
         java_options = config["GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS"],
         extra_options = config["GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS"]
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "gatk --java-options \"{params.java_options}\" HaplotypeCaller --reference {input.reference} --input {input.bams} --output {output.vcf} {params.extra_options} -ERC GVCF"
@@ -157,7 +157,7 @@ rule List_Haplotype:
     output:
         HaplotypeCaller_dir+"/vcf.list.txt"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "for vcf in {input} ; do sample=$(basename ${{vcf}} .g.vcf.gz) ; echo ${{sample}}\"\t\"${{vcf}} ; done > {HaplotypeCaller_dir}/vcf.list.txt"
@@ -174,7 +174,7 @@ rule GenomicsDBImport:
         java_options = config["GATK_GENOMICS_DB_IMPORT_JAVA_OPTIONS"],
         extra_options = config["GATK_GENOMICS_DB_IMPORT_EXTRA_OPTIONS"]
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "mkdir -p {output.tmp_DB};"
@@ -193,7 +193,7 @@ rule GenotypeGVCFs:
         java_options = config["GATK_GENOTYPE_GVCFS_JAVA_OPTIONS"],
         extra_options = config["GATK_GENOTYPE_GVCFS_EXTRA_OPTIONS"]
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "mkdir -p {output.tmp_GVCF};"
@@ -210,7 +210,7 @@ rule ConvertPositions:
         vcf_converted_gz = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz",
         vcf_converted_gz_csi = GenotypeGVCFs_dir+"/variant_calling_converted.vcf.gz.csi"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "gunzip {input.vcf_gz};"
@@ -230,7 +230,7 @@ rule Summarize_GVCFVariables:
         pos_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/variants_pos.tsv"),
         lengths_tsv = temp(GenotypeGVCFs_REPORTS_dir+"/contigs_lengths.tsv")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {output.pos_tsv} {output.lengths_tsv} {GenotypeGVCFs_REPORTS_dir}"
@@ -242,7 +242,7 @@ rule Plot_GVCFVariablesHistograms:
     output:
         GenotypeGVCFs_REPORTS_dir+"/variants_stats_histograms_VC.pdf"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
@@ -255,7 +255,7 @@ rule Plot_GVCFDPBoxplot:
     output:
         GenotypeGVCFs_REPORTS_dir+"/genotypes_DP_boxplot_VC.pdf"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
@@ -268,7 +268,7 @@ rule Plot_GVCFVariantsAlongGenome:
     output:
         GenotypeGVCFs_REPORTS_dir+"/variants_along_genome_VC.pdf"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_along_genome.py --snp-pos {input.pos_tsv} --contigs-lengths {input.lengths_tsv} --output {output}"

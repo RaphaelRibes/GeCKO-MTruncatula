@@ -126,8 +126,8 @@ if mapper == "minimap2":
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{mapping_dir}/workflow_info_{timestamp}.txt"
 
-### Container path
-GeCKO_container = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/container/GeCKO.sif"))
+### Image path
+GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/singularity_image/GeCKO.sif"))
 
 
 ### FUNCTIONS
@@ -168,7 +168,7 @@ rule Index_Reference:
     output:
         ref_index
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/index_ref.sh {input} {mapper}"
@@ -188,7 +188,7 @@ rule Mapping_PairedEndFastqs:
 
         [ paired_end and not config["REMOVE_DUP_UMI"], paired_end, paired_end, paired_end and not config["REMOVE_DUP_UMI"] ])
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     params:
         mapper = mapper,
@@ -217,7 +217,7 @@ rule Mapping_SingleEndFastqs:
 
         [ not paired_end and not config["REMOVE_DUP_UMI"], not paired_end, not paired_end, not paired_end and not config["REMOVE_DUP_UMI"] ])
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     params:
         mapper = config["MAPPER"],
@@ -238,7 +238,7 @@ rule Stats_Bams:
     output:
         bams_stats_reports_dir+"/stats_{base}"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "samtools stats {input} > {output}"
@@ -251,7 +251,7 @@ rule MarkDuplicates_Bams:
         MD_bam = temp(bams_dir+"/{base}_rmDup.bam"),
         metrics = bams_reports_dir+"/DUPLICATES_TMP/{base}.bam.metrics"
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
@@ -267,7 +267,7 @@ rule DedupUMI_Bams:
         csi = temp(bams_dir+"/{base}_sortcoord.bam.csi"),
         bam_dedup = temp(bams_dir+"/{base}_UMIdedup.bam")
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"],
         umitools_dedup_options = config["UMITOOLS_DEDUP_OPTIONS"] + (" --paired" if paired_end else "")
@@ -284,7 +284,7 @@ rule Filter_Bams:
     output:
         bams_dir+"/{base}.bam"
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS1"]
     threads: default_threads
@@ -304,7 +304,7 @@ rule Summarize_BamsReadsCount:
     output:
         bams_reports_dir+"/nb_reads_per_sample.tsv"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/summarize_stats.sh --stats_folder {bams_stats_reports_dir} --bams_folder {bams_dir} --rmdup {rm_dup} --umi {dedupUMI} --output {output};"
@@ -317,7 +317,7 @@ rule MultiQC_Bams:
     output:
         bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {bams_reports_dir} -n multiQC_ReadMapping_Bams_Report -i ReadMapping_Bams_Report -f"
@@ -330,7 +330,7 @@ rule Index_Bams:
     output:
         csi = bams_dir+"/{base}.bam.csi"
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     threads: default_threads
@@ -344,7 +344,7 @@ rule Create_BamsList:
     output:
         mapping_dir+"/bams_list.txt"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "ls -d {bams_dir}/*.bam > {output}"
@@ -356,7 +356,7 @@ rule Clean_BedFile:
     output:
         clean_bed
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         """
@@ -379,7 +379,7 @@ rule Create_BedFile:
     output:
         bed_to_create
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         min_cov = float(config["BED_MIN_MEAN_COV"]) * len(expand("{bams_dir}/{sample}.bam", sample=samples, bams_dir=bams_dir)) if len(config["BED_MIN_MEAN_COV"]) > 0 else 0,
         min_dist = config["BED_MIN_DIST"],
@@ -397,7 +397,7 @@ rule CountReadsZones_Bams:
     output:
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "echo ZONE {samples} | sed 's/ /\t/g' > {zones_stats_dir}/mean_depth_per_zone_per_sample.tsv ;"
@@ -412,7 +412,7 @@ rule Create_SubReference:
         subref = subref_dir+"/"+ref_name+"_zones.fasta",
         tmp_bed = temp(subref_dir+"/tmp_zones.bed")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "awk '{{print $1\":\"$2\"-\"$3}}' {input.bed} > {output.tmp_bed} ;"
@@ -430,7 +430,7 @@ rule Extract_PairedEndReads:
         tmp_extracted_fastq_paired_R2 = temp(subbams_dir+"/{base}_extract.R2.fastq.gz"),
         tmp_extracted_fastq_unpaired = temp(subbams_dir+"/{base}_extract.U.fastq.gz")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/extract_PEreads.sh --bam {input.bams} --sample {wildcards.base} --bed_file {input.bed} --output_dir {subbams_dir}"
@@ -452,7 +452,7 @@ rule Remapping_PairedEndExtractedFastqs:
 
         [ paired_end and not config["REMOVE_DUP_UMI"], paired_end, paired_end, paired_end, paired_end, paired_end and not config["REMOVE_DUP_UMI"] ])
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
@@ -475,7 +475,7 @@ rule Extract_SingleEndReads:
         tmp_extract_bams = temp(subbams_dir+"/{base}_extract.bam"),
         tmp_extracted_fastq = temp(subbams_dir+"/{base}_extract.fastq.gz"),
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "samtools view -F 4 -b -L {input.bed} {input.bams} > {output.tmp_extract_bams} ;"
@@ -495,7 +495,7 @@ rule Remapping_SingleEndExtractedFastqs:
 
         [ not paired_end and not config["REMOVE_DUP_UMI"], not paired_end, not paired_end, not paired_end and not config["REMOVE_DUP_UMI"] ])
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         mapper = mapper,
         extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
@@ -516,7 +516,7 @@ rule Stats_Subbams:
     output:
         subbams_stats_reports_dir+"/stats_{base}"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "samtools stats {input} > {output}"
@@ -528,7 +528,7 @@ rule Filter_Subbams:
     output:
         subbams_dir+"/{base}.bam"
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         samtools_view_filters = config["SAMTOOLS_VIEW_FILTERS2"]
     threads: default_threads
@@ -543,7 +543,7 @@ rule Summarize_SubbamsReadsCount:
     output:
         subbams_reports_dir+"/nb_reads_per_sample.tsv"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/summarize_stats.sh --stats_folder {subbams_stats_reports_dir} --bams_folder {subbams_dir} --rmdup FALSE --umi FALSE --output {output};"
@@ -555,7 +555,7 @@ rule MultiQC_Subbams:
     output:
         subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "multiqc {input.stats_files} -c {scripts_dir}/config_multiQC_clean_names.yaml -o {subbams_reports_dir} -n multiQC_ReadMapping_SubBams_Report -i ReadMapping_SubBams_Report -f"
@@ -567,7 +567,7 @@ rule Index_Subbams:
     output:
         csi = subbams_dir+"/{base}.bam.csi"
     singularity:
-        GeCKO_container
+        GeCKO_image
     params:
         samtools_index_options = config["SAMTOOLS_INDEX_OPTIONS"]
     threads: default_threads
@@ -581,7 +581,7 @@ rule Create_SubbamsList:
     output:
         mapping_dir+"/subbams_list.txt"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "ls -d {subbams_dir}/*.bam > {output}"
@@ -594,7 +594,7 @@ rule Create_RefChrSizeFile:
         ref_fai = ref+".fai",
         chr_size = mapping_dir+"/reference_chr_size.txt"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "samtools faidx {input};"

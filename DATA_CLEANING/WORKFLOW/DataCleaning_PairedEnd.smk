@@ -77,8 +77,8 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{outputs_directory}/workflow_info_{timestamp}.txt"
 
 
-### Container path
-GeCKO_container = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/container/GeCKO.sif"))
+### Image path
+GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/singularity_image/GeCKO.sif"))
 
 
 ### FUNCTIONS
@@ -118,7 +118,7 @@ rule Fastqc_RawFastqs:
     output:
         rawdata_fastqc_reports_dir+"/{base}_fastqc.zip"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "fastqc -o {rawdata_fastqc_reports_dir} {input}"
@@ -131,7 +131,7 @@ rule CountReads_RawFastqs:
     output:
         rawdata_reports_dir+"/Reads_Count_RawData.txt"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {raw_data_dir} --output {output}"
@@ -150,7 +150,7 @@ rule Demultiplex_RawFastqs:
         substitutions = config["DEMULT_SUBSTITUTIONS"],
         cutadapt_demult_extra_options = config["CUTADAPT_DEMULT_EXTRA_OPTIONS"]
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/demultiplex_with_cutadapt_PE.sh --demultdir {demult_dir} --R1 {input.fastq_R1_raw} "
@@ -169,7 +169,7 @@ rule ExtractUMI_DemultFastqs:
     params:
         umitools_extract_options = config["UMITOOLS_EXTRACT_OPTIONS"]
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "umi_tools extract --stdin {input.fastq_R1} --stdout {output.fastq_R1} --read2-in={input.fastq_R2} --read2-out={output.fastq_R2} {params.umitools_extract_options}"
@@ -182,7 +182,7 @@ rule CountReads_DemultFastqs:
     output:
         demult_reports_dir+"/Reads_Count_Demult.txt"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_dir} --output {output}"
@@ -194,7 +194,7 @@ rule Fastqc_DemultFastqs:
     output:
         demult_fastqc_reports_dir+"/{base}.{R}_fastqc.zip"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "fastqc -o {demult_fastqc_reports_dir} {input}"
@@ -209,7 +209,7 @@ rule MultiQC_DemultFastqs:
         demult_reports_dir+"/multiQC_Demult_Report.html",
         temp(demult_reports_dir+"/config_multiQC.yaml")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
@@ -224,7 +224,7 @@ rule Concatenate_DemultFastqs:
     output:
         temp(demult_dir_output+"/All_Samples_Concat_demultiplexed.{R}.fastq.gz")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "cat {input.fastqs_demult} > {output}"
@@ -236,7 +236,7 @@ rule Fastqc_ConcatDemultFastqs:
     output:
         demult_fastqc_reports_dir+"/All_Samples_Concat_demultiplexed.{R}_fastqc.zip"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "fastqc -o {demult_fastqc_reports_dir} {input} ;"
@@ -258,7 +258,7 @@ rule Trimming_DemultFastqs:
         minimum_length = config["TRIMMING_MIN_LENGTH"],
         cutadapt_trimming_extra_options = config["CUTADAPT_TRIMMING_EXTRA_OPTIONS"]
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/trimming_with_cutadapt_PE.sh --sample {wildcards.base} --trimdir {demult_trim_dir} "
@@ -275,7 +275,7 @@ rule CountReads_TrimmedFastqs:
     output:
         demult_trim_reports_dir+"/Reads_Count_DemultTrim.txt"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/fastq_read_count.sh --fastq_dir {demult_trim_dir} --output {output}"
@@ -287,7 +287,7 @@ rule Fastqc_TrimmedFastqs:
     output:
         demult_trim_fastqc_reports_dir+"/{base}.{R}_fastqc.zip"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "fastqc -o {demult_trim_fastqc_reports_dir} {input}"
@@ -304,7 +304,7 @@ rule MultiQC_TrimmedFastqs:
         demult_trim_reports_dir+"/multiQC_Trimming_Report.html",
         temp(demult_trim_reports_dir+"/config_multiQC.yaml")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "mean_nb_reads=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/NR}}' {input.nb_reads} | sed 's/\..*//');"
@@ -319,7 +319,7 @@ rule Concatenate_TrimmedFastqs:
     output:
         temp(demult_trim_dir+"/All_Samples_Concat_trimmed.{R}.fastq.gz")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "cat {input.fastqs_trim} > {output}"
@@ -331,7 +331,7 @@ rule Fastqc_ConcatTrimmedFastqs:
     output:
         demult_trim_fastqc_reports_dir+"/All_Samples_Concat_trimmed.{R}_fastqc.zip"
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "fastqc -o {demult_trim_fastqc_reports_dir} {input} ;"
@@ -354,7 +354,7 @@ rule MultiQC_Global:
         outputs_directory+"/multiQC_DataCleaning_Report.html",
         temp(outputs_directory+"/config_multiQC.yaml")
     singularity:
-        GeCKO_container
+        GeCKO_image
     threads: default_threads
     shell:
         "sum_nb_reads_R1=$(awk 'BEGIN{{T=0}}{{T=T+$2}}END{{print T/2}}' {demult_trim_reports_dir}/Reads_Count_DemultTrim.txt | sed 's/\..*//');"

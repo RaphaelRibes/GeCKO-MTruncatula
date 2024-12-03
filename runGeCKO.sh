@@ -129,10 +129,10 @@ fi
 
 
 ### Download the singularity container if it can't be found
-if [[ ! -f "${GeCKO_path}/launcher_files/container/GeCKO.sif" ]] ; then
-  mkdir -p ${GeCKO_path}/launcher_files/container
+if [[ ! -f "${GeCKO_path}/launcher_files/singularity_image/GeCKO.sif" ]] ; then
+  mkdir -p ${GeCKO_path}/launcher_files/singularity_image
   echo -e "\nDownloading the Singularity image from Sylabs cloud..."
-  singularity pull ${GeCKO_path}/launcher_files/container/GeCKO.sif library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}
+  singularity pull ${GeCKO_path}/launcher_files/singularity_image/GeCKO.sif library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}
   if [[ $? -ne 0 ]]; then
     echo -e "\nError: Failed to download the Singularity image. Exiting."
     exit 1

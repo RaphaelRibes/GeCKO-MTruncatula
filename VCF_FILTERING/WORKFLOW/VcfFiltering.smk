@@ -6,6 +6,8 @@ from datetime import datetime
 
 default_threads = 1 #this will be erased by the user's specifications for each rule in the profile yaml
 
+WF="VCF_FILTERING"
+
 ####################   DEFINE CONFIG VARIABLES BASED ON CONFIG FILE   ####################
 
 ### Variables from config file
@@ -22,12 +24,15 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ### Define outputs subfolders
-outputs_directory = working_directory+"/WORKFLOWS_OUTPUTS/VCF_FILTERING"+filtering_subfolder
+outputs_directory = f"{working_directory}/WORKFLOWS_OUTPUTS/{WF}/{filtering_subfolder}"
 VCF_reports_dir = outputs_directory+"/REPORTS"
 
 ### Generate the workflow_info name
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{outputs_directory}/workflow_info_{timestamp}.txt"
+
+### Image path
+GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/singularity_image/GeCKO.sif"))
 
 
 ### FUNCTIONS
@@ -57,8 +62,8 @@ rule Filter_Genotypes:
         vcf_raw
     output:
         outputs_directory+"/01__Genotype_Filtered.vcf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     params:
         config["BCFTOOLS_GENOTYPE_FILTERING_OPTIONS"]
     threads: default_threads
@@ -72,8 +77,8 @@ rule Filter_Loci_1:
         outputs_directory+"/01__Genotype_Filtered.vcf"
     output:
         outputs_directory+"/02__Genotype_Locus1_Filtered.vcf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     params:
         locus_filters = config["BCFTOOLS_LOCUS_FILTERING1_OPTIONS"]
     threads: default_threads
@@ -89,8 +94,8 @@ rule Filter_Samples:
         out_imiss = temp(outputs_directory+"/SampleFilter.imiss"),
         samples_to_remove = outputs_directory+"/samples_to_remove.list",
         SampleLocus_Filtered = outputs_directory+"/03__Genotype_Locus1_Sample_Filtered.vcf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     params:
         config["MAX_NA_PER_SAMPLE"]
     threads: default_threads
@@ -108,8 +113,8 @@ rule Calculate_LocusExtraStats:
         outputs_directory+"/03__Genotype_Locus1_Sample_Filtered.vcf"
     output:
         outputs_directory+"/03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "sed -i 's/=nan/=./g' {input}; python {scripts_dir}/egglib_LocusExtraStats.py --input {input} --output {output}"
@@ -120,8 +125,8 @@ rule Filter_Loci_2:
         outputs_directory+"/03__Genotype_Locus1_Sample_Filtered__withExtraStats.vcf"
     output:
         outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     params:
         config["BCFTOOLS_LOCUS_FILTERING2_OPTIONS"]
     threads: default_threads
@@ -142,8 +147,8 @@ rule Build_StatsReports:
         stats_GenotypeLocus1 = VCF_reports_dir+"/02__Genotype_Locus1_Filtered.stats",
         stats_GenotypeLocus1Sample = VCF_reports_dir+"/03__Genotype_Locus1_Sample_Filtered.stats",
         stats_GenotypeLocus1SampleLocus2 = VCF_reports_dir+"/04__Genotype_Locus1_Sample_Locus2_Filtered.stats"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "bcftools stats {input.vcf_raw} > {output.stats_raw};"
@@ -162,8 +167,8 @@ rule Build_Report:
         VCF_reports_dir+"/04__Genotype_Locus1_Sample_Locus2_Filtered.stats"
     output:
         VCF_reports_dir+"/multiQC_VcfFiltering_report.html"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "multiqc {input} -o {VCF_reports_dir} -n multiQC_VcfFiltering_report -i VcfFiltering_report -f"
@@ -178,8 +183,8 @@ rule Summarize_FinalVCFVariables:
         GT_tsv = temp(VCF_reports_dir+"/genotypes_GT_VF.tsv"),
         pos_tsv = temp(VCF_reports_dir+"/variants_pos.tsv"),
         lengths_tsv = temp(VCF_reports_dir+"/contigs_lengths.tsv")
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "{scripts_dir}/extract_variants_stats_from_vcf.sh {input} {output.stats_tsv} {output.DP_tsv} {output.GT_tsv} {output.pos_tsv} {output.lengths_tsv} {VCF_reports_dir}"
@@ -190,8 +195,8 @@ rule Plot_FinalVCFVariablesHistograms:
         VCF_reports_dir+"/variants_stats_VF.tsv"
     output:
         VCF_reports_dir+"/variants_stats_histograms_VF.pdf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_stats_histograms.py --input {input} --output {output}"
@@ -203,8 +208,8 @@ rule Plot_FinalVCFDPBoxplot:
         GT_tsv = VCF_reports_dir+"/genotypes_GT_VF.tsv"
     output:
         VCF_reports_dir+"/genotypes_DP_boxplot_VF.pdf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_DP_boxplot.py --input-DP {input.DP_tsv} --input-GT {input.GT_tsv} --output {output}"
@@ -216,8 +221,8 @@ rule Plot_FinalVCFVariantsAlongGenome:
         lengths_tsv = VCF_reports_dir+"/contigs_lengths.tsv"
     output:
         VCF_reports_dir+"/variants_along_genome_VF.pdf"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "python {scripts_dir}/plot_variants_along_genome.py --snp-pos {input.pos_tsv} --contigs-lengths {input.lengths_tsv} --output {output}"
@@ -228,8 +233,8 @@ rule Compute_MissingDataPerSample:
         outputs_directory+"/04__Genotype_Locus1_Sample_Locus2_Filtered.vcf"
     output:
         VCF_reports_dir+"/missing_data_per_sample.txt"
-    conda:
-        "ENVS/conda_tools.yml"
+    singularity:
+        GeCKO_image
     threads: default_threads
     shell:
         "echo -e \"Sample\tNA_fraction\" > {output};"
