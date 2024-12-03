@@ -112,7 +112,7 @@ Our launcher executes GeCKO's workflows using [Singularity](https://docs.sylabs.
 option. Singularity/Apptainer encapsulates software dependencies and environments within a single "image" file (.sif), enabling the creation containers for running applications in a consistent and isolated environment. This ensures reproducibility and portability without requiring you to pre-install the software required by GeCKO on your system.  
 
 ##### Automatic image download
-On the first launch, our launcher automatically downloads the required image (GeCKO.sif, ~2GB) from [Sylabs Cloud](https://cloud.sylabs.io/library/ge2pop_gecko/gecko/gecko) and stores it in GeCKO/launcher_files/container. Once downloaded, all workflow rules are executed in a container created from this image.  
+On the first launch, our launcher automatically downloads the required image (GeCKO.sif, ~2GB) from [Sylabs Cloud](https://cloud.sylabs.io/library/ge2pop_gecko/gecko/gecko) and stores it in GeCKO/launcher_files/singularity_image. Once downloaded, all workflow rules are executed in a container created from this image.  
 
 
 
