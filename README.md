@@ -1,3 +1,14 @@
+--------------------------------------------------------------------
+🔥🐲 THIS IS THE CHECKS_REFACTO BRANCH 🔥🐲  
+
+Work in progress, use it at your own risk...  
+
+To clone it:  
+```git clone -b Checks_refacto git@github.com:GE2POP/GeCKO.git```
+
+For a stable version of GeCKO, see the main branch: https://github.com/GE2POP/GeCKO
+
+--------------------------------------------------------------------
 ## Project overview  
 This repository provides several workflows to clean sequenced reads, map them to the reference of your choice, call variants and filter the resulting VCF file. They are especially appropriate for data sequenced after target enrichment capture, but can be used for other types of sequenced reads.
 
