@@ -158,6 +158,8 @@ To launch the READ_MAPPING workflow, assuming you placed your config_ReadMapping
 ```WORKFLOW_PATH=/home/user/GeCKO```  
 ```${WORKFLOW_PATH}/runGeCKO.sh --workflow ReadMapping --cluster-profile CONFIG/RM_CLUSTER_PROFILE --jobs 100``` 
 
+⚠ All the input data should be located somewhere within your home directory (as returned by ```echo $HOME```).  
+
 For more help on how to use the launcher, see GeCKO's general [README](https://github.com/GE2POP/GeCKO/tree/main#quick-start), or run:  
 ```${WORKFLOW_PATH}/runGeCKO.sh --help```  
 
