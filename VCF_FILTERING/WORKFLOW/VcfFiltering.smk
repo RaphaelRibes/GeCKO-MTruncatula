@@ -24,7 +24,7 @@ scripts_dir = snakefile_dir+"/SCRIPTS"
 working_directory = os.getcwd()
 
 ### Define outputs subfolders
-outputs_directory = f"{working_directory}/WORKFLOWS_OUTPUTS/{WF}/{filtering_subfolder}"
+outputs_directory = f"{working_directory}/WORKFLOWS_OUTPUTS/{WF}{filtering_subfolder}"
 VCF_reports_dir = outputs_directory+"/REPORTS"
 
 ### Generate the workflow_info name
