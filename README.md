@@ -100,10 +100,10 @@ Each of the four workflows generates its own set of files, organized in a WORKFL
 
 &nbsp;
 ## Environment  
-These workflows rely on snakemake, which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have snakemake and conda available on your environment. 
+These workflows rely on Snakemake, which ensures reproducible and scalable data analysis and make worflows installation straightforward since the only requirement is to have Snakemake and Singularity/Apptainer available on your environment. 
 
 #### Snakemake
-We chose to utilize [Snakemake](https://snakemake.readthedocs.io/en/stable/) as our workflow manager. It ensures reproducibility by natively supporting conda, enabling the encapsulation of software environments and dependencies for accurate result replication. It also optimizes resource utilization and performance in a cluster computing environment by intelligently distributing jobs across multiple cores or nodes. Additionally, Snakemake's portability allows workflows to be executed on different systems, promoting collaboration and flexibility in scientific projects.   
+We chose to utilize [Snakemake](https://snakemake.readthedocs.io/en/stable/) as our workflow manager. It facilitates reproducibility by supporting the use of Singularity containers to encapsulate software environments and dependencies, enabling consistent replication of results. It also optimizes resource utilization and performance in a cluster computing environment by intelligently distributing jobs across multiple cores or nodes. Additionally, Snakemake's portability allows workflows to be executed on different systems, promoting collaboration and flexibility in scientific projects.   
 We made dedicated efforts to extensively document the usage of our workflows, ensuring they are user-friendly and accessible to non-bioinformatician biologists. Our aim was to empower them to benefit from the numerous advantages of Snakemake without requiring any coding expertise on their part.
 
 #### Singularity
