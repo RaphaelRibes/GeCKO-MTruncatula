@@ -15,18 +15,18 @@ isAvailable() {
 dlImageSylabs() {
   local sylabs_image=$1
   local expected_image=$2
-  local image_file=$(basename $expected_image)
+  local image_dir=$(dirname $expected_image)
 
   if [[ ! -f "${expected_image}" ]] ; then
 
-  mkfile -p "${image_file}"
-  echo -e "\nDownloading the Singularity image from Sylabs cloud..."
-  singularity pull ${expected_image} ${sylabs_image}
-  if [[ $? -ne 0 ]]; then
-    echo -e "\ERROR: Failed to download the Singularity image."
-    exit1wMsg
+    mkdir -p "${image_dir}"
+    echo -e "\nDownloading the Singularity image from Sylabs cloud..."
+    singularity pull ${expected_image} ${sylabs_image}
+    if [[ $? -ne 0 ]]; then
+      echo -e "\ERROR: Failed to download the Singularity image."
+      exit1wMsg
+    fi
   fi
-fi
 }
 
 rmCR() {
@@ -74,7 +74,7 @@ checkMissingValue() {
         local msgs=("$@")
         missingValueErrorMsg ${value_name} ${msgs}
         exit1wMsg
-    fi  
+    fi
 }
 
 
@@ -209,4 +209,3 @@ checkFastqPE(){
         done
     fi
 }
-
