@@ -21,17 +21,6 @@ getConfigModel(){
 	echo $model_config
 }
 
-# checkConfigFormat() {
-# 	nb_col_config_file=$(grep -v '^#' $CONFIG | sed 's/#.*$//' | grep -v '^[[:space:]]*$' | awk -F ': ' '{print NF}' | sort | uniq)
-# 	nb_tabs_config_file=$(grep -v '^#' $CONFIG | sed 's/#.*$//' | grep -v '^[[:space:]]*$' | grep -c $'\t')
-# 	if [[ "$nb_col_config_file" != 2 || $nb_tabs_config_file -gt 0 ]] ; then
-# 		echo -e "\nERROR: Your config file (${CONFIG}) does not seem to be properly formated."
-# 		echo "As a reminder:"
-# 		echo "Variables must be specified in the yaml format, with one variable per row, followed by a ':' and a space before the assigned value, for example : VARIABLE_NAME: value."
-# 		echo "Some variables can be left empty, for example: VARIABLE_NAME: \"\" "
-# 		exit1wMsg
-# 	fi
-# }
 
 exitMissingConfig(){
 	echo -e "\nERROR: The workflow config file cannot be found. Please provide your config file with --config-file or place it in a CONFIG folder under the name config_${WORKFLOW}.yml.\n" >&2
@@ -81,7 +70,7 @@ exitInvalidConfig(){
 	reminderMsg $config_file_help
 	exit1wMsg
 }
-		
+
 
 rmSpaces() {
 	local yaml=$1
@@ -96,7 +85,7 @@ parse_config_yaml() {
     local model_config_yaml=$2
 	local parse_out
 
-    if ! parse_out=$(python3 "${checks_path}/parse_yaml.py" "$config_yaml" "$model_config_yaml"); then
+    if ! parse_out=$(singularity exec -B ${GeCKO_path} -B $(pwd) -B $HOME $GeCKO_sif python3 "${checks_path}/parse_yaml.py" "$config_yaml" "$model_config_yaml"); then
         exit1wMsg
     fi
     while IFS=$'\t' read -r key value; do
@@ -127,10 +116,10 @@ isWFparamMissing(){
 	fi
 }
 
-getDCsmkName(){ 
+getDCsmkName(){
 	if isTrue $PAIRED_END ; then
 		echo "${WORKFLOW}_PairedEnd.smk"
-	else 
+	else
 		echo "${WORKFLOW}_SingleEnd.smk"
 	fi
 }

@@ -139,7 +139,8 @@ isAvailable "Singularity/Apptainer" "singularity"
 
 
 ### Download the singularity container if it can't be found
-dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${checks_path}/singularity_image/GeCKO.sif"
+GeCKO_sif="${checks_path}/singularity_image/GeCKO.sif"
+dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${GeCKO_sif}"
 
 
 ### Make scripts executable
@@ -201,7 +202,7 @@ fi
 
 
 ## RUN ##
-snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-singularity --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${EXTRA_SNAKEMAKE_OPTIONS} --singularity-args \"--bind ${GeCKO_path} --bind $(pwd)\""
+snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-singularity --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${EXTRA_SNAKEMAKE_OPTIONS} --singularity-args \"--bind ${GeCKO_path} --bind $(pwd) --bind ${HOME}\""
 echo -e "\nCalling Snakemake:"
 echo -e $snakemake_command"\n"
 eval $snakemake_command
