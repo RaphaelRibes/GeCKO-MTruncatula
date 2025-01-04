@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eo pipefail
 
 SingularityImageVersion=1.2.0
 
@@ -97,82 +98,78 @@ done
 set -- "${POSITIONAL[@]}"
 
 
+
 # --------------------------------------------------------------------------------------------------------------#
 
-### Functions
-
-absolutePath () {
-  if [[ ! -z "$1" && ! "$1" = /* ]] ; then
-    fileOrFolder_absolutePath=$(readlink -f "$1") ;
-    echo ${fileOrFolder_absolutePath%/}
+printAbsolutePath () {
+  if [[ ! -z "$1" ]] ; then
+    fileOrFolder_printAbsolutePath=$(readlink -f "$1") ;
+    echo ${fileOrFolder_printAbsolutePath}
   else
-    echo ${1%/}
+    echo $1
   fi
 }
 
 # --------------------------------------------------------------------------------------------------------------#
 
-### GeCKO_path
 
-GeCKO_path=$(dirname $(absolutePath "$0"))
+### Paths
+
+GeCKO_path=$(dirname $(printAbsolutePath "$0"))
+checks_path="${GeCKO_path}/launcher_files"
+
+
+# --------------------------------------------------------------------------------------------------------------#
+
+### Functions
+
+source "${checks_path}/lib.sh"
 
 
 # --------------------------------------------------------------------------------------------------------------#
 
 
 ### Check if launcher_files folder exists
-if [[ ! -d "${GeCKO_path}/launcher_files/" ]] ; then
-  echo -e "\nERROR: No launcher_files/ folder was found in the provided workflow path (${GeCKO_path}). Please clone or copy the whole repository from GitHub: https://github.com/GE2POP/GeCKO containing all sub-directories."
-  echo -e "\nExiting.\n"
-  exit 1
-fi
+checkMissingDir $checks_path "GeCKOdir"
+
+
+### Check if Singularity/Apptainer and Snakemake are available
+isAvailable "Snakemake" "snakemake"
+isAvailable "Singularity/Apptainer" "singularity"
 
 
 ### Download the singularity container if it can't be found
-if [[ ! -f "${GeCKO_path}/launcher_files/singularity_image/GeCKO.sif" ]] ; then
-  mkdir -p ${GeCKO_path}/launcher_files/singularity_image
-  echo -e "\nDownloading the Singularity image from Sylabs cloud..."
-  singularity pull ${GeCKO_path}/launcher_files/singularity_image/GeCKO.sif library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}
-  if [[ $? -ne 0 ]]; then
-    echo -e "\nError: Failed to download the Singularity image. Exiting."
-    exit 1
-  fi
-fi
+GeCKO_sif="${checks_path}/singularity_image/GeCKO.sif"
+dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${GeCKO_sif}"
 
-### Remove CR and make scripts executable
-for file in $(ls "${GeCKO_path}/launcher_files/") ; do
-  if [[ -f "${GeCKO_path}/launcher_files/${file}" ]] ; then
-    if grep -q $'\r' ${GeCKO_path}/launcher_files/${file}; then
-      echo "Removing windows carriage returns in ${file}..."
-      sed -i 's/\r$//g' ${GeCKO_path}/launcher_files/$file
-      sed -i 's/\r/\n/g' ${GeCKO_path}/launcher_files/$file
-    fi
-    if [[ ${file} == *.sh && ! -x "${GeCKO_path}/launcher_files/${file}" ]] ; then
-      echo "Making $file executable..."
-      chmod 755 "${GeCKO_path}/launcher_files/${file}"
-    fi
-  fi
+
+### Make scripts executable
+for script in $(ls ${checks_path}/*.sh) ; do
+  makeExecutable $script
 done
+
 
 
 ### Print the help
 if [ "${HELP}" = "TRUE" ] ; then
-  cat ${GeCKO_path}/launcher_files/launcher_help.txt
+  cat ${checks_path}/launcher_help.txt
   exit 0
 fi
 
 
 ### Check variables and paths
-source "${GeCKO_path}/launcher_files/launcher_allWorkflowsCheck.sh"
-if [[ -f "${GeCKO_path}/launcher_files/launcher_${WORKFLOW}Check.sh" ]] ; then
-  source "${GeCKO_path}/launcher_files/launcher_${WORKFLOW}Check.sh"
+source "${checks_path}/launcher_allWorkflowsCheck.sh"
+if [[ -f "${checks_path}/launcher_${WORKFLOW}Check.sh" ]] ; then
+  source "${checks_path}/launcher_${WORKFLOW}Check.sh"
 fi
 
 
-### RUN APPROPRIATE SNAKEMAKE COMMANDS ###
-# Always unlock in case the folder is locked
+
+### Unlock in case the folder is locked
 snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
 
+
+### RUN APPROPRIATE SNAKEMAKE COMMANDS ###
 
 ## DRYRUN ##
 if [ "${DRYRUN}" = "TRUE" ] ; then
