@@ -600,11 +600,11 @@ rule Create_RefChrSizeFile:
         "samtools faidx {input};"
         "cut -f 1,2 {output.ref_fai} > {output.chr_size}"
 
-
 rule Write_Summary:
     input:
         buildExpectedFiles(
-        [ bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
+        [ expand("{bams_dir}/{sample}.bam.csi", sample=samples, bams_dir=bams_dir),
+        bams_reports_dir+"/multiQC_ReadMapping_Bams_Report.html",
         bams_reports_dir+"/nb_reads_per_sample.tsv",
         mapping_dir+"/bams_list.txt",
         zones_stats_dir+"/mean_depth_per_zone_per_sample.tsv",
@@ -614,7 +614,7 @@ rule Write_Summary:
         subbams_reports_dir+"/multiQC_ReadMapping_SubBams_Report.html",
         mapping_dir+"/subbams_list.txt",
         mapping_dir+"/reference_chr_size.txt" ],
-        [ True, True, True, count_reads_zones, config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"] ])
+        [ True, True, True, True, count_reads_zones, config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"], config["CREATE_SUB_BAMS"] ])
     output:
         temp(mapping_dir+"/summary.sentinel")
     params:
