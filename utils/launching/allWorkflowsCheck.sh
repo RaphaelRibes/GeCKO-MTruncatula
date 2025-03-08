@@ -101,7 +101,7 @@ exitInvalidWFname(){
 
 
 getWFfolderName(){
-	local workflow_folder_name=$(grep -w $WORKFLOW ${GeCKO_path}/launcher_files/workflows_list.tsv | cut -f2)
+	local workflow_folder_name=$(grep -w $WORKFLOW ${checks_path}/workflows_list.tsv | cut -f2)
 	if [[ -z $workflow_folder_name ]] ; then
 		exitInvalidWFname
 	fi
@@ -159,7 +159,7 @@ repo="https://github.com/GE2POP/GeCKO"
 CWD=$PWD
 fasta_ext=(".fasta" ".fas" ".fa")
 vcf_ext=(".vcf" ".vcf.gz")
-source ${GeCKO_path}/launcher_files/reminders_var.sh
+source ${checks_path}/reminders_var.sh
 
 
 ### 1/ WORKFLOW FOLDER AND ITS CONTENTS ###

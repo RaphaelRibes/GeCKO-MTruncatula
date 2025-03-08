@@ -1,0 +1,13 @@
+cutadapt
+fastqc
+multiqc
+umi_tools
+bedtools
+bowtie2
+minimap2
+samtools
+bcftools
+gatk
+bwa
+bwa-mem2
+picard

@@ -1,0 +1,5 @@
+egglib
+matplotlib
+pandas
+numpy
+seaborn

@@ -74,7 +74,7 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 workflow_info_file = f"{outputs_directory}/workflow_info_{timestamp}.txt"
 
 ### Image path
-GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../launcher_files/singularity_image/GeCKO.sif"))
+GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../utils/singularity_image/GeCKO.sif"))
 
 
 ### FUNCTIONS

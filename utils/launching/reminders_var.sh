@@ -1,7 +1,7 @@
 # all
-workflow_help=$(grep -e "^--workflow " ${GeCKO_path}/launcher_files/launcher_help.txt)
-config_file_help=$(grep -e "^--config-file " ${GeCKO_path}/launcher_files/launcher_help.txt)
-cluster_profile_help=$(grep -e "^--cluster-profile " ${GeCKO_path}/launcher_files/launcher_help.txt)
+workflow_help=$(grep -e "^--workflow " ${checks_path}/launcher_help.txt)
+config_file_help=$(grep -e "^--config-file " ${checks_path}/launcher_help.txt)
+cluster_profile_help=$(grep -e "^--cluster-profile " ${checks_path}/launcher_help.txt)
 all_PAIRED_END_msg="PAIRED_END: set to TRUE in case of paired end data (R1 + R2), to FALSE in case of single end data."
 all_yaml_msg="Variables must be specified in the yaml format, with one variable per row, followed by a ':' and a space before the assigned value, for example : VARIABLE_NAME: value.\nSome variables can be left empty, for example: VARIABLE_NAME: \"\" "
 

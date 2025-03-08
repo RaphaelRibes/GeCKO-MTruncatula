@@ -116,14 +116,14 @@ printAbsolutePath () {
 ### Paths
 
 GeCKO_path=$(dirname $(printAbsolutePath "$0"))
-checks_path="${GeCKO_path}/launcher_files"
+checks_path="${GeCKO_path}/utils/launching"
 
 
 # --------------------------------------------------------------------------------------------------------------#
 
 ### Functions
 
-source "${checks_path}/lib.sh"
+source "${checks_path}/utils.sh"
 
 
 # --------------------------------------------------------------------------------------------------------------#
@@ -139,7 +139,7 @@ isAvailable "Singularity/Apptainer" "singularity"
 
 
 ### Download the singularity container if it can't be found
-GeCKO_sif="${checks_path}/singularity_image/GeCKO.sif"
+GeCKO_sif="${GeCKO_path}/utils/singularity_image/GeCKO.sif"
 dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${GeCKO_sif}"
 
 
@@ -158,9 +158,9 @@ fi
 
 
 ### Check variables and paths
-source "${checks_path}/launcher_allWorkflowsCheck.sh"
-if [[ -f "${checks_path}/launcher_${WORKFLOW}Check.sh" ]] ; then
-  source "${checks_path}/launcher_${WORKFLOW}Check.sh"
+source "${checks_path}/allWorkflowsCheck.sh"
+if [[ -f "${checks_path}/${WORKFLOW}Check.sh" ]] ; then
+  source "${checks_path}/${WORKFLOW}Check.sh"
 fi
 
 
