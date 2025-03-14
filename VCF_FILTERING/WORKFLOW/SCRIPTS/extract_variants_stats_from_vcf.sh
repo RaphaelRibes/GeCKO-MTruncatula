@@ -14,19 +14,29 @@ outdir=$7
 
 # clean intermediate files when the script exits
 clean_intermediate_files() {
-  rm ${outdir}/tmp_variables
+  rm -f ${outdir}/tmp_variables
   rm -f $1"_sample.gz"
 }
 trap 'clean_intermediate_files' EXIT
 
-
-# Write the list of variants positions
+# Write headers
+echo -e "contig\tlength" > $contigs_lengths_tsv_output
 echo -e "contig\tpos" > $variants_pos_tsv_output
-grep -v '#' $vcf_input | cut -f1,2 >> $variants_pos_tsv_output
+echo -e "Contig\tPos\tQual" > $stats_tsv_output #will be overwritten if the input VCF file is not empty
 
 # Write the lengths of the reference contigs
-echo -e "contig\tlength" > $contigs_lengths_tsv_output
 grep '##contig=<' $vcf_input | sed 's/##contig=<ID=//' | sed 's/,length=/\t/' | sed 's/>//' >> $contigs_lengths_tsv_output
+
+
+# Stop here if the VCF is empty
+if ! grep -v '#' $vcf_input ; then
+  echo "WARNING: No polymorphisms found in the final VCF file!"
+  touch $DP_tsv_output $GT_tsv_output
+  exit
+fi 
+
+# Write the list of variants positions
+grep -v '#' $vcf_input | cut -f1,2 >> $variants_pos_tsv_output
 
 
 # if the file is very big, sample 100000 rows

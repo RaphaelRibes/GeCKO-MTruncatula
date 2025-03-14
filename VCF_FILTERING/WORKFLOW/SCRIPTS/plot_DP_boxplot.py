@@ -15,8 +15,21 @@ GT_input = args.GT
 pdf_output = args.pdf
 
 ## Read input file
-df=pd.read_csv(DP_input, header=None, sep="\t")
-GT=pd.read_csv(GT_input, header=None, sep="\t")
+try:
+    df=pd.read_csv(DP_input, header=None, sep="\t")
+    GT=pd.read_csv(GT_input, header=None, sep="\t")
+except pd.errors.EmptyDataError:
+    fig, ax = plt.subplots(figsize=(8.5, 11))
+    ax.text(0.5, 0.9, "[Input file is empty]", fontsize=16, ha='center', va='center')
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_frame_on(False)
+
+    plt.savefig(pdf_output, format="pdf")
+    plt.close()
+    exit(0)
+
+
 df = df.mask(GT=="./.", GT).mask(GT==".|.", GT).mask(GT==".", GT)
 df.drop(df.columns[[0, 1]], axis = 1, inplace = True)
 
