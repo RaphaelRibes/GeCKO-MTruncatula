@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-SingularityImageVersion=1.2.0
+SingularityImageVersion=1.2.1
 
 ### v WRITE YOUR MODULE LOAD OR CONDA ACTIVATE HERE v ###
 
