@@ -1,0 +1,13 @@
+picard	picard-3.3.0-0
+bwa	Version: 0.7.18-r1243-dirty
+bwa-mem2	2.2.1
+cutadapt	5.0
+fastqc	FastQC v0.12.1
+multiqc	multiqc, version 1.11
+umi_tools	UMI-tools version: 1.1.6
+bedtools	bedtools v2.31.1
+bowtie2	/opt/conda/envs/GeCKO_env/bin/bowtie2-align-s version 2.5.4
+minimap2	2.28-r1209
+samtools	samtools 1.21
+bcftools	bcftools 1.21
+gatk	The Genome Analysis Toolkit (GATK) v4.6.1.0

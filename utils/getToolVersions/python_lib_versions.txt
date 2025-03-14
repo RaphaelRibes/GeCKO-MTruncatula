@@ -1,0 +1,6 @@
+Python	3.9.21
+egglib	3.3.5
+matplotlib	3.9.1
+pandas	2.2.3
+numpy	2.0.2
+seaborn	0.13.2
