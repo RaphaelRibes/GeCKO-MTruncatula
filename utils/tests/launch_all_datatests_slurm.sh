@@ -1,123 +1,187 @@
 #!/usr/bin/env bash
 
-# Usage: launch_all_datatests_slurm.sh <path/to/GeCKO> agap_normal 1.2.0
-# Depends on two files (test_subfolders.txt and test_subfolder_names.txt) expected in a CONFIG directory next to the script
+# Usage: launch_all_datatests_slurm.sh --gecko-path . --partition agap_normal --image-version 1.2.0 [--clean-outputs]
+# Depends on a test_subfolders.txt file expected in a CONFIG directory next to the script
 
 set -euo pipefail
 
-
-# ---- ARGUMENTS ---- #
-GeCKOpath=$(realpath $1)
-partition=$2
-SingularityImageVersion=$3
-
 # ------- CONFIG ------- #
-configFilesDirPath=$(dirname $0)"/CONFIG"
-dirsToCleanFile=${configFilesDirPath}/test_subfolders.txt
-expectedTestSubfolderNamesFile=${configFilesDirPath}/test_subfolder_names.txt
+configPath=$(dirname $0)"/CONFIG"
+dirsFile=${configPath}/test_subfolders.txt
 
-debugTestsDir=${GeCKOpath}/utils/tests/data_tests
+declare -A workflows
+workflows["DATA_CLEANING"]="DataCleaning DC"
+workflows["READ_MAPPING"]="ReadMapping RM"
+workflows["VARIANT_CALLING"]="VariantCalling VC"
+workflows["VCF_FILTERING"]="VcfFiltering VF"
 
-# --------- DEPENDENCIES ---------- #
-source ${GeCKOpath}/utils/launching/utils.sh
-source ${GeCKOpath}/utils/utils.sh
+workflowMotifs=$(echo "${!workflows[@]}" | sed 's/ /|/g')
 
+
+# -------- ARGUMENTS -------- #
+
+shouldCleanOutputs="FALSE"
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+case $key in
+    --gecko-path)
+    geckoPath=$(realpath "$2")
+    shift
+    shift
+    ;;
+    --partition)
+    partition="$2"
+    shift
+    shift
+    ;;
+    --image-version)
+    imageVersion="$2"
+    shift
+    shift
+    ;;
+    --clean-outputs)
+    shouldCleanOutputs="TRUE"
+    shift
+    ;;
+    -*|*)
+    echo -e "\nWARNING: $1 option is unknown and will be ignored.\n"
+    shift
+    ;;
+esac
+done
 
 # -------- FUNCTIONS -------- #
 
-importConfFiles(){
-    mapfile -t dirsToClean < ${dirsToCleanFile}
-    mapfile -t expectedTestSubfolderNames < ${expectedTestSubfolderNamesFile}
+sourceDependencies(){
+    local geckoPath=$1
+    source ${geckoPath}/utils/launching/utils.sh
+    source ${geckoPath}/utils/utils.sh
+}
+
+cleanLogs(){
+    dir=$1
+    echo "Removing ${dir} previous log files..."
+    rm -fr ${dir}/slurm*.out ${dir}/Logs_*Workflow
+}
+
+cleanOutputs(){
+    dir=$1
+    echo "Removing ${dir} previous output files..."
+    rm -fr ${dir}/WORKFLOWS_OUTPUTS
 }
 
 cleanOldFiles() {
-    local GeCKOpath=$1
-    cd $GeCKOpath
-    for dir in "${dirsToClean[@]}" ; do
-        rm -fr ${dir}/slurm*.out ${dir}/Logs_*Workflow
+    local geckoPath=$1
+    local shouldCleanOutputs=$2
+    cd $geckoPath
+    for dir in "${testDirs[@]}" ; do
+        cleanLogs $dir
+        if [ $shouldCleanOutputs == "TRUE" ] ; then
+            cleanOutputs $dir
+        fi
     done
     cdSilent -
 }
 
-sbatchRunGeCKO(){
+
+sbatchRunGecko(){
     local runGeCKO=$1
-    local WFname=$2
-    local WFprefix=$3
+    local workflowName=$2
+    local workflowPrefix=$3
     local partition=$4
     shift 4
     local extraOptions=("$@")
     
-    runGeCKOcmd="sbatch --partition=${partition} --wrap=\"${runGeCKO} --workflow ${WFname} --config-file CONFIG/config_${WFname}.yml --cluster-profile CONFIG/${WFprefix}_CLUSTER_PROFILE_SLURM ${extraOptions}\""
+    runGeCKOcmd="sbatch --partition=${partition} --wrap=\"${runGeCKO} --workflow ${workflowName} --config-file CONFIG/config_${workflowName}.yml --cluster-profile CONFIG/${workflowPrefix}_CLUSTER_PROFILE_SLURM ${extraOptions}\""
     echo $runGeCKOcmd
     eval $runGeCKOcmd
 }
 
-sbatchRunGeCKOtest(){
+sbatchRunGeckoTest(){
     local runGeCKO=$1
-    local WFname=$2
-    local WFprefix=$3
+    local workflowName=$2
+    local workflowPrefix=$3
     local partition=$4
-    sbatchRunGeCKO $runGeCKO $WFname $WFprefix $partition "--jobs 20"
-}
-
-listTestSubfoldersInDir(){
-    dir=$1
-    find $dir -maxdepth 1 -type d -printf "%f\n" | grep -Fxf <(printf "%s\n" "${expectedTestSubfolderNames[@]}")
+    sbatchRunGecko $runGeCKO $workflowName $workflowPrefix $partition "--jobs 20"
 }
 
 
-launchTestFolderTests(){
-    local GeCKOpath=$1
-    local testPath=$2
-    local WFname=$3
-    local WFprefix=$4
-    local hasSubfolders=$5
-    local partition=$6
+runTest(){
+    local geckoPath=$1
+    local testDir=$2
+    local workflowName=$3
+    local workflowPrefix=$4
+    local partition=$5
 
-    runGeCKO=${GeCKOpath}/runGeCKO.sh
-
-    if [ $hasSubfolders == "TRUE" ] ; then
-        subfolders=$(listTestSubfoldersInDir ${testPath})
-    elif [ $hasSubfolders == "FALSE" ] ; then
-        subfolders="."
-    else
-        echo "ERROR: Unknown hasSubfolders argument (expected TRUE or FALSE)"
-        exit 1
-    fi
+    runGeCKO=${geckoPath}/runGeCKO.sh
     
-    for subfolder in ${subfolders} ; do
-        cd ${testPath}/${subfolder}
-        echo -e "\n"${testPath}/${subfolder}":"
-        sbatchRunGeCKOtest ${runGeCKO} ${WFname} ${WFprefix} ${partition}
+    cd ${testDir}
+    echo -e "\n"${testDir}":"
+    sbatchRunGeckoTest ${runGeCKO} ${workflowName} ${workflowPrefix} ${partition}
+    cdSilent -
+}
+
+countMotifsInPath(){
+    path=$1
+    motifs="$2"
+    nb_motifs=$(echo $path | grep -oE "${motifs}" | wc -l || true)
+    echo $nb_motifs
+}
+
+getTestWorkflow(){
+    local testDir=$1
+    local workflow
+    for workflow in "${!workflows[@]}" ; do
+        if grep -q $workflow <<< $testDir ; then
+            echo $workflow
+            return 0
+        fi
     done
 }
 
 
 
+runTests(){
+    local geckoPath=$1
+    local partition=$2
+
+    for testDir in "${testDirs[@]}"; do
+        nb_motifs=$(countMotifsInPath $testDir $workflowMotifs)
+        if [ $nb_motifs == 1 ] ; then
+            testWorkflow=$(getTestWorkflow $testDir)
+            read -r workflowName workflowPrefix <<< "${workflows[$testWorkflow]}"
+            runTest $geckoPath $testDir $workflowName $workflowPrefix $partition
+        else
+            echo "Warning: ambiguous workflow type for ${testDir}. Skipping this test."
+        fi
+    done
+}
+
 
 # ---------- MAIN --------- #
 
+sourceDependencies $geckoPath
+
 setErrorExitMsg
 
-importConfFiles
+importTestDirs $dirsFile
 
-cleanOldFiles $GeCKOpath
+cleanOldFiles $geckoPath $shouldCleanOutputs
 
-dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "utils/singularity_image/GeCKO.sif"
+dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${imageVersion}" "utils/singularity_image/GeCKO.sif"
 
-
-declare -A testFolders
-testFolders["DataCleaning_main"]="${GeCKOpath}/DATA_CLEANING/EXAMPLE DataCleaning DC TRUE" # fourth element = whether the workflow's test folder has subfolders or not
-testFolders["ReadMapping_main"]="${GeCKOpath}/READ_MAPPING/EXAMPLE ReadMapping RM TRUE"
-testFolders["VariantCalling_main"]="${GeCKOpath}/VARIANT_CALLING/EXAMPLE VariantCalling VC FALSE"
-testFolders["VcfFiltering_main"]="${GeCKOpath}/VCF_FILTERING/EXAMPLE VcfFiltering VF FALSE"
-testFolders["VcfFiltering_debug"]="${debugTestsDir}/VCF_FILTERING VcfFiltering VF TRUE"
+runTests $geckoPath $partition
 
 
-for testFolder in "${!testFolders[@]}"; do
-    read -r testPath WFname WFprefix hasSubfolders <<< "${testFolders[$testFolder]}"
-    launchTestFolderTests $GeCKOpath $testPath $WFname $WFprefix $hasSubfolders $partition
-done
+# declare -A testFolders
+# testFolders["DataCleaning_main"]="${geckoPath}/DATA_CLEANING/EXAMPLE DataCleaning DC TRUE" # fourth element = whether the workflow's test folder has subfolders or not
+# testFolders["ReadMapping_main"]="${geckoPath}/READ_MAPPING/EXAMPLE ReadMapping RM TRUE"
+# testFolders["VariantCalling_main"]="${geckoPath}/VARIANT_CALLING/EXAMPLE VariantCalling VC FALSE"
+# testFolders["VcfFiltering_main"]="${geckoPath}/VCF_FILTERING/EXAMPLE VcfFiltering VF FALSE"
+# testFolders["VcfFiltering_debug"]="${debugTestsDir}/VCF_FILTERING VcfFiltering VF TRUE"
+# testFolders["ReadMapping_debug"]="${debugTestsDir}/READ_MAPPING ReadMapping RM TRUE"
 
 
 

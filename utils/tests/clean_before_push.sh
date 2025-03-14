@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-# Usage: check_log_files.sh --gecko-path .
+# Usage: clean_before_push.sh --gecko-path .
 # Depends on a test_subfolders.txt file expected in a CONFIG directory next to the script
 
 set -euo pipefail
 
+# to-do:
+# also rm reference index files for READ_MAPPING datasets and .dict, .fai and Reference_zones_intervals_for_GATK.list for the VARIANT_CALLING ones
 
 # ------- CONFIG ------- #
 
@@ -30,7 +32,6 @@ while [[ $# -gt 0 ]]
     esac
 done
 
-
 # -------- FUNCTIONS -------- #
 
 sourceDependencies(){
@@ -38,24 +39,21 @@ sourceDependencies(){
     source ${geckoPath}/utils/utils.sh
 }
 
-
-printLogInfo(){
+cleanDir(){
     local testDir=$1
-    for log in ${testDir}/slurm*out ; do
-        echo $log":"
-        grep -i "error" $log || true
-        grep '%' $log | tail -1 || true
-        echo -e "\n"
-    done
+    cd ${testDir}
+    echo "Cleaning ${testDir}..."
+    rm -rf Logs_* .snakemake .java .config .conda WORKFLOWS_OUTPUTS slurm*
+    cdSilent -
 }
 
-printAllTestsLogInfo(){
+cleanDirs(){
     echo -e "\n"
+    cleanDir ${geckoPath}/utils/getToolVersions
     for testDir in "${testDirs[@]}" ; do
-        printLogInfo ${testDir}
+        cleanDir ${testDir}
     done
 }
-
 
 # ---------- MAIN --------- #
 
@@ -65,7 +63,4 @@ setErrorExitMsg
 
 importTestDirs $dirsFile
 
-printAllTestsLogInfo
-
-
-
+cleanDirs
