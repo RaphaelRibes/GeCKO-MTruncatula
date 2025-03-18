@@ -59,7 +59,7 @@ done
 
 sourceDependencies(){
     local geckoPath=$1
-    source ${geckoPath}/utils/launching/utils.sh
+    source ${geckoPath}/utils/launching/launching_utils.sh
     source ${geckoPath}/utils/utils.sh
 }
 
