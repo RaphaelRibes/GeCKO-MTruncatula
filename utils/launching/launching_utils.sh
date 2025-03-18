@@ -19,9 +19,11 @@ dlImageSylabs() {
 
   if [[ ! -f "${expected_image}" ]] ; then
 
+    isAvailable "Singularity/Apptainer" "singularity"
+
     mkdir -p "${image_dir}"
-    echo -e "\nDownloading the Singularity image from Sylabs cloud..."
-    singularity pull ${expected_image} ${sylabs_image}
+    echo -e "\nDownloading the Singularity image (${sylabs_image}) from Sylabs cloud..."
+    singularity --debug pull ${expected_image} ${sylabs_image}
     if [[ $? -ne 0 ]]; then
       echo -e "\ERROR: Failed to download the Singularity image."
       exit1wMsg

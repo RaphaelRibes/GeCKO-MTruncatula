@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-# Usage: launch_all_datatests_slurm.sh --gecko-path . --partition agap_normal --image-version 1.2.0 [--clean-outputs]
+# Usage:  utils/tests/launch_all_datatests_slurm.sh --gecko-path . --partition agap_normal --image-version 1.2.1 [--clean-outputs]
 # Depends on a test_subfolders.txt file expected in a CONFIG directory next to the script
 
 set -euo pipefail
+
+module purge
+module load singularity/3.6.3
 
 # ------- CONFIG ------- #
 configPath=$(dirname $0)"/CONFIG"

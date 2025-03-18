@@ -123,7 +123,7 @@ checks_path="${GeCKO_path}/utils/launching"
 
 ### Functions
 
-source "${checks_path}/utils.sh"
+source "${checks_path}/launching_utils.sh"
 
 
 # --------------------------------------------------------------------------------------------------------------#

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: clean_before_push.sh --gecko-path .
+# Usage: utils/tests/clean_before_push.sh --gecko-path .
 # Depends on a test_subfolders.txt file expected in a CONFIG directory next to the script
 
 set -euo pipefail

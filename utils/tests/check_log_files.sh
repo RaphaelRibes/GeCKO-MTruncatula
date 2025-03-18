@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-# Usage: check_log_files.sh --gecko-path .
+# Usage: utils/tests/check_log_files.sh --gecko-path .
 # Depends on a test_subfolders.txt file expected in a CONFIG directory next to the script
 
 set -euo pipefail
 
+# to-do:
+# make a smk to create all possible ref indexes for the READ_MAPPING and run it before launching the tests 
 
 # ------- CONFIG ------- #
 
