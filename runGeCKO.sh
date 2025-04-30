@@ -14,14 +14,11 @@ SingularityImageVersion=1.2.1
 
 
 ### DEFAULT OPTIONS
-JOBS=1
-LATENCY_WAIT=20
+JOBS="--jobs 1"
+LATENCY_WAIT="--latency-wait 20"
 
 ### DEFAULT ACTION VALUES
 HELP="FALSE"
-DRYRUN="FALSE"
-DIAGRAM="FALSE"
-REPORT="FALSE"
 
 ### ARGUMENTS
 POSITIONAL=()
@@ -50,7 +47,7 @@ do
     shift
     ;;
     --jobs)
-    JOBS="$2"
+    JOBS="--jobs $2"
     shift
     shift
     ;;
@@ -59,23 +56,16 @@ do
     shift
     ;;
     --latency-wait)
-    LATENCY_WAIT="$2"
+    LATENCY_WAIT="--latency-wait $2"
     shift
     shift
     ;;
     --dryrun)
-    DRYRUN="TRUE"
+    DRYRUN="--dryrun"
     shift
     ;;
     --report)
-    REPORT="TRUE"
-    REPORT_NAME="$2"
-    shift
-    shift
-    ;;
-    --diagram)
-    DIAGRAM="TRUE"
-    DIAGRAM_NAME="$2"
+    REPORT="--report $2"
     shift
     shift
     ;;
@@ -166,43 +156,12 @@ fi
 
 
 ### Unlock in case the folder is locked
-snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --jobs $JOBS --unlock --configfile ${CONFIG}
+snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} $JOBS --unlock --configfile ${CONFIG}
 
 
-### RUN APPROPRIATE SNAKEMAKE COMMANDS ###
 
-## DRYRUN ##
-if [ "${DRYRUN}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
-  echo -e "\nCalling Snakemake:"
-  echo -e $snakemake_command"\n"
-  eval $snakemake_command
-  exit 0
-fi
-
-
-## DIAGRAM ##
-if [ "${DIAGRAM}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --dryrun --dag --forceall --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS} | dot -Tsvg > $DIAGRAM_NAME"
-  echo -e "\nCalling Snakemake:"
-  echo -e $snakemake_command"\n"
-  eval $snakemake_command
-  exit 0
-fi
-
-
-## REPORT ##
-if [ "${REPORT}" = "TRUE" ] ; then
-  snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds --report $REPORT_NAME --configfile ${CONFIG} ${EXTRA_SNAKEMAKE_OPTIONS}"
-  echo -e "\nCalling Snakemake:"
-  echo -e $snakemake_command"\n"
-  eval $snakemake_command
-  exit 0
-fi
-
-
-## RUN ##
-snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL --latency-wait $LATENCY_WAIT --jobs $JOBS --use-singularity --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${EXTRA_SNAKEMAKE_OPTIONS} --singularity-args \"--bind ${GeCKO_path} --bind $(pwd) --bind ${HOME}\""
+### RUN THE WORKFLOW
+snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL $DRYRUN $REPORT $LATENCY_WAIT $JOBS --use-singularity --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${EXTRA_SNAKEMAKE_OPTIONS} --singularity-args \"--bind ${GeCKO_path} --bind $(pwd) --bind ${HOME}\""
 echo -e "\nCalling Snakemake:"
 echo -e $snakemake_command"\n"
 eval $snakemake_command

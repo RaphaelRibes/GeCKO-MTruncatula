@@ -19,9 +19,6 @@ $ ./runGeCKO.sh --workflow WorkflowName --dryrun
 --report: to write an html report of the workflow's last run
 $ ./runGeCKO.sh --workflow WorkflowName --report
 
---diagram: to write an svg diagram of the workflow
-$ ./runGeCKO.sh --workflow WorkflowName --diagram
-
 
 MANDATORY PARAMETERS FOR ALL ACTIONS except for --help and --create-gecko-env:
 --workflow [...]: the name of the workflow you want to run. Current existing options are 'DataCleaning', 'ReadMapping', 'VariantCalling' and 'VcfFiltering'

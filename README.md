@@ -61,9 +61,6 @@ The information regarding the fastq files, read index etc. will be retrieved fro
 > **--report**&nbsp;&nbsp;&nbsp;*write an html report of the workflow's last run*  
 > ```./runGeCKO.sh --workflow WorkflowName --report```  
 >
-> **--diagram**&nbsp;&nbsp;&nbsp;*write an svg diagram of the workflow*  
-> ```./runGeCKO.sh --workflow WorkflowName --diagram```  
->
 > ##### MANDATORY PARAMETER FOR ALL ACTIONS except --help:  
 > **--workflow [...]**&nbsp;&nbsp;&nbsp;*name of the workflow you want to run*  
 > Current existing options are 'DataCleaning', 'ReadMapping', 'VariantCalling' and 'VcfFiltering'  
