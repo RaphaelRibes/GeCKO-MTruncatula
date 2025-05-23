@@ -1,8 +1,0 @@
-BAMS/Tc2208.bam
-BAMS/Tc2211.bam
-BAMS/Tc2226.bam
-BAMS/Tc2228.bam
-BAMS/Tc2252.bam
-BAMS/Tc2253.bam
-BAMS/Tc2255.bam
-BAMS/Tc2258.bam
