@@ -68,6 +68,7 @@ workflow_info_file = f"{vc_dir}/workflow_info_{timestamp}.txt"
 
 ### Image path
 GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../utils/singularity_image/GeCKO.sif"))
+parabricks_image = os.path.abspath(os.path.join(snakefile_dir, "../../utils/singularity_image/clara-parabricks_4.5.0-1.sif"))
 
 
 ### FUNCTIONS
@@ -140,16 +141,41 @@ rule HaplotypeCaller:
         dict = reference_base+".dict"
     output:
         vcf = HaplotypeCaller_dir+"/{base}.g.vcf.gz",
-        tbi = HaplotypeCaller_dir+"/{base}.g.vcf.gz.tbi"
     params:
         java_options = config["GATK_HAPLOTYPE_CALLER_JAVA_OPTIONS"],
-        extra_options = config["GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS"]
+        extra_options = config["GATK_HAPLOTYPE_CALLER_EXTRA_OPTIONS"],
+        vcf_uncompressed = HaplotypeCaller_dir+"/{base}.g.vcf",
     singularity:
-        GeCKO_image
-    threads: default_threads
+        parabricks_image
+        # GeCKO_image
+    threads:
+        default_threads
+    resources:
+        gpu=1  # Request a GPU resource in Snakemake
     shell:
-        "gatk --java-options \"{params.java_options}\" HaplotypeCaller --reference {input.reference} --input {input.bams} --output {output.vcf} {params.extra_options} -ERC GVCF"
+        """
+        {scripts_dir}/haplotypeCaller.sh {input.reference} {input.bams} {params.vcf_uncompressed} {params.extra_options}
+        bcftools view -O z -o {output.vcf} {params.vcf_uncompressed}
+        """
+        # "gatk --java-options \"{params.java_options}\" HaplotypeCaller --reference {input.reference} --input {input.bams} --output {output.vcf} {params.extra_options} -ERC GVCF"
 
+rule Index_HaplotypeCaller:
+    input:
+        expand("{HaplotypeCaller_dir}/{sample}.g.vcf.gz",sample=samples,HaplotypeCaller_dir=HaplotypeCaller_dir)
+    output:
+        expand("{HaplotypeCaller_dir}/{sample}.g.vcf.gz.tbi", sample=samples, HaplotypeCaller_dir=HaplotypeCaller_dir)
+    params:
+        vcf_dir = HaplotypeCaller_dir,
+    singularity:
+        parabricks_image
+    resources:
+        gpu=1  # Request a GPU resource in Snakemake
+    threads:
+        default_threads
+    shell:
+        """
+        {scripts_dir}/indexHaplotypeCaller.sh {input.vcf_dir}
+        """
 
 rule List_Haplotype:
     input:
