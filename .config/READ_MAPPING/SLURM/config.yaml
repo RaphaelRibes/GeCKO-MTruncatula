@@ -10,11 +10,13 @@
 default-resources:
   - mem_mb=2000
   - partition=agap_normal
+  - gres='gpu:a100:0'
 
 
 ## Set resources ('partition' and/or 'mem_mb') for specific steps
 set-resources:
   - Mapping_PairedEndFastqs:mem_mb=5000
+  - Mapping_PairedEndFastqs:gres=gpu:a100:1
   - Remapping_PairedEndExtractedFastqs:mem_mb=5000
 
 
@@ -44,6 +46,7 @@ cluster:
   --mem-per-cpu={resources.mem_mb}M
   --job-name=RM.{rule}
   --output=Logs_ReadMappingWorkflow/{rule}${{WILDCARDS_NAMES}}.%j.log
+  --gres={resources.gres}
 
 
 latency-wait: 20
