@@ -130,7 +130,10 @@ isAvailable "Singularity/Apptainer" "singularity"
 
 ### Download the singularity container if it can't be found
 GeCKO_sif="${GeCKO_path}/utils/singularity_image/GeCKO.sif"
+parabricks_sif="${GeCKO_path}/utils/singularity_image/clara-parabricks_4.5.0-1.sif"
 dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${GeCKO_sif}"
+dlImageSylabs "docker://nvcr.io/nvidia/clara/clara-parabricks:4.5.0-1" "${parabricks_sif}"
+
 
 
 ### Make scripts executable
@@ -161,7 +164,7 @@ snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} $JOBS --unlock --configfi
 
 
 ### RUN THE WORKFLOW
-snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --printshellcmds $FORCEALL $DRYRUN $REPORT $LATENCY_WAIT $JOBS --use-singularity --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${EXTRA_SNAKEMAKE_OPTIONS} --singularity-args \"--bind ${GeCKO_path} --bind $(pwd) --bind ${HOME}\""
+snakemake_command="snakemake --snakefile ${workflow_path}/${WORKFLOW_SMK} --rerun-incomplete --resources gpu=2 --printshellcmds $FORCEALL $DRYRUN $REPORT $LATENCY_WAIT $JOBS --use-singularity --configfile ${CONFIG} ${PROFILE} --config configfile_name=${CONFIG} clusterprofile_name=${PROFILE_FILE} ${EXTRA_SNAKEMAKE_OPTIONS} --singularity-args \"--nv --bind ${GeCKO_path} --bind $(pwd) --bind ${HOME}\""
 echo -e "\nCalling Snakemake:"
 echo -e $snakemake_command"\n"
 eval $snakemake_command
