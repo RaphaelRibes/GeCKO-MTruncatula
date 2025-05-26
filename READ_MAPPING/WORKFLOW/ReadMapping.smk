@@ -107,20 +107,7 @@ bed_to_create = subref_dir+"/auto_zones.bed"
 clean_bed = subref_dir+"/user_clean.bed"
 
 ### Expected reference index
-if (mapper == "bwa-mem2_mem"):
-    ref_index=ref+".bwt.2bit.64"
-
-if (mapper == "bwa_mem"):
-    ref_index=ref+".bwt"
-
-if (mapper == "bowtie2"):
-    ref_base=ref.replace(".fasta","").replace(".fas","").replace(".fa","")
-    ref_index=ref_base+".1.bt2"
-
-if mapper == "minimap2":
-    ref_base=ref.replace(".fasta","").replace(".fas","").replace(".fa","")
-    ref_index=ref_base+".mmi"
-
+ref_index=ref+".bwt"
 
 ### Generate the workflow_info name
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -128,6 +115,7 @@ workflow_info_file = f"{mapping_dir}/workflow_info_{timestamp}.txt"
 
 ### Image path
 GeCKO_image = os.path.abspath(os.path.join(snakefile_dir, "../../utils/singularity_image/GeCKO.sif"))
+parabricks_with_picard = os.path.abspath(os.path.join(snakefile_dir, "../../utils/singularity_image/parabricks_with_picard.sif"))
 
 
 ### FUNCTIONS
@@ -188,17 +176,16 @@ rule Mapping_PairedEndFastqs:
 
         [ paired_end and not config["REMOVE_DUP_UMI"], paired_end, paired_end, paired_end and not config["REMOVE_DUP_UMI"] ])
     singularity:
-        GeCKO_image
+        parabricks_with_picard
     threads: default_threads
     params:
         mapper = mapper,
-        extra_mapper_options = config["EXTRA_MAPPER_OPTIONS"],
         technology = config["SEQUENCING_TECHNOLOGY"],
         picard_markduplicates_options = config["PICARD_MARKDUPLICATES_OPTIONS"],
         picard_markduplicates_java_options = config["PICARD_MARKDUPLICATES_JAVA_OPTIONS"]
     shell:
-        "{scripts_dir}/mapping.sh --paired_end --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" "
-        "--ref {input.ref} --mapper {params.mapper} --mapper_options \"{params.extra_mapper_options}\" --technology \"{params.technology}\" "
+        "{scripts_dir}/mapping.sh --fastq_R1 \"{input.fastq_paired_R1}\" --fastq_R2 \"{input.fastq_paired_R2}\" "
+        "--ref {input.ref} --technology \"{params.technology}\" "
         "--output_dir {bams_dir} --sample {wildcards.base} --MD_options \"{params.picard_markduplicates_options}\" "
         "--MD_java_options \"{params.picard_markduplicates_java_options}\" --reports_dir {bams_reports_dir} --umi {dedupUMI}"
 
