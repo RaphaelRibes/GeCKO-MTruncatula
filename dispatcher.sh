@@ -44,9 +44,11 @@ done
 input_dir="$SOURCE_DIR/$dirname"
 
 if [ "$data_cleaning" = "true" ]; then
-  echo "Running variant calling..."
+  echo "Running data cleaning..."
   # Change the dir of DEMULT_DIR in .config/DATA_CLEANING/config.yml to the input directory
   sed -i "s|DEMULT_DIR: .*|DEMULT_DIR: $input_dir|" .config/DATA_CLEANING/config.yml
+  chmod +x .config/DATA_CLEANING/makeadapters.sh
+  chmod +x runGeCKO.sh
   cd .config/DATA_CLEANING/ && ./makeadapters.sh "$input_dir" && cd ../..
   ./runGeCKO.sh --workflow DataCleaning --config-file .config/DATA_CLEANING/config.yml --cluster-profile .config/DATA_CLEANING/SLURM/ --jobs $jobs
 fi
