@@ -135,12 +135,12 @@ picard_sif="${GeCKO_path}/utils/singularity_image/picard_3.3.0--hdfd78af_0.sif"
 parabricks_picard_sif="${GeCKO_path}/utils/singularity_image/parabricks_with_picard.sif"
 
 ### Download the Singularity containers if missing
-singularity pull "${GeCKO_sif}" "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}"
-singularity pull "${parabricks_sif}" "docker://nvcr.io/nvidia/clara/clara-parabricks:4.5.0-1"
+dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${GeCKO_sif}"
+dlImageSylabs "docker://nvcr.io/nvidia/clara/clara-parabricks:4.5.0-1" "${parabricks_sif}"
 # if picard_sif does not exist, download it
 if [[ ! -f "${picard_sif}" ]]; then
     echo "Downloading Picard Singularity image..."
-    singularity pull "${picard_sif}" "https://depot.galaxyproject.org/singularity/picard:3.3.0--hdfd78af_0"
+    dlImageSylabs "https://depot.galaxyproject.org/singularity/picard:3.3.0--hdfd78af_0" "${picard_sif}"
     ### Create sandbox from Parabricks
     singularity build --sandbox parabricks_sandbox "${parabricks_sif}"
 
