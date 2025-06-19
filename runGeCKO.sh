@@ -130,48 +130,24 @@ isAvailable "Singularity/Apptainer" "singularity"
 
 ### Paths to Singularity images
 GeCKO_sif="${GeCKO_path}/utils/singularity_image/GeCKO.sif"
-parabricks_sif="${GeCKO_path}/utils/singularity_image/clara-parabricks_4.5.0-1.sif"
-picard_sif="${GeCKO_path}/utils/singularity_image/picard_3.3.0--hdfd78af_0.sif"
-parabricks_picard_sif="${GeCKO_path}/utils/singularity_image/parabricks_with_picard.sif"
+parabricks_sif="${GeCKO_path}/utils/singularity_image/parabricks.sif"
 
 ### Download the Singularity containers if missing
-dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${GeCKO_sif}"
-dlImageSylabs "docker://nvcr.io/nvidia/clara/clara-parabricks:4.5.0-1" "${parabricks_sif}"
-# if picard_sif does not exist, download it
-if [[ ! -f "${picard_sif}" ]]; then
-    echo "Downloading Picard Singularity image..."
-    dlImageSylabs "https://depot.galaxyproject.org/singularity/picard:3.3.0--hdfd78af_0" "${picard_sif}"
-    ### Create sandbox from Parabricks
-    singularity build --sandbox parabricks_sandbox "${parabricks_sif}"
-
-    ### Create sandbox from Picard
-    singularity build --sandbox picard_sandbox "${picard_sif}"
-
-    ### Locate picard.jar inside the picard sandbox
-    picard_jar_path=$(find picard_sandbox -name "picard.jar" | head -n 1)
-
-    if [[ -z "$picard_jar_path" ]]; then
-        echo "Error: picard.jar not found in picard_sandbox"
-        exit 1
-    fi
-
-    ### Copy picard.jar into the Parabricks sandbox (e.g., /opt)
-    mkdir -p parabricks_sandbox/opt/picard
-    cp "$picard_jar_path" parabricks_sandbox/opt/picard/picard.jar
-
-    ### Create a wrapper script inside the container
-    mkdir -p parabricks_sandbox/usr/local/bin
-    chmod +x parabricks_sandbox/usr/local/bin/picard
-
-    ### Rebuild the final .sif image
-    singularity build "${parabricks_picard_sif}" parabricks_sandbox
+if [ ! -f "${GeCKO_sif}" ] ; then
+  dlImageSylabs "library://ge2pop_gecko/gecko/gecko:${SingularityImageVersion}" "${GeCKO_sif}"
 else
-    echo "Picard Singularity image already exists."
+  echo -e "\nGeCKO Singularity image already exists.\n"
+fi
+
+if [ ! -f "${parabricks_sif}" ] ; then
+  dlImageSylabs "docker://nvcr.io/nvidia/clara/clara-parabricks:4.5.0-1" "${parabricks_sif}"
+else
+  echo -e "\nParabricks Singularity image already exists.\n"
 fi
 
 ### Make scripts executable
-for script in $(ls ${checks_path}/*.sh) ; do
-  makeExecutable $script
+for script in ${checks_path}/*.sh ; do
+  makeExecutable "$script"
 done
 
 
@@ -188,7 +164,6 @@ source "${checks_path}/allWorkflowsCheck.sh"
 if [[ -f "${checks_path}/${WORKFLOW}Check.sh" ]] ; then
   source "${checks_path}/${WORKFLOW}Check.sh"
 fi
-
 
 
 ### Unlock in case the folder is locked
