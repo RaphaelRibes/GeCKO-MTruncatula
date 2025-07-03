@@ -6,11 +6,11 @@ MAPPING_SUBFOLDER: ""
 
 ### INPUT FILES ###
 # Path(s) to the directory or directories containing the trimmed fastq files to be mapped. To provide several directories, separate them with spaces.
- # If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files. 
+# If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files.
 TRIM_DIRS: ""
 
 # Path to the reference file in fasta format (must end with .fa, .fas or .fasta).
-REFERENCE: "../REFERENCE/Reference.fasta"
+REFERENCE: /storage/replicated/cirad_users/ribesr/asm4pg_results/ESP099_results/02_final_assembly/hap/ESP099_final_hap.fasta
 
 # Path to the bed file listing targeted zones. Optionnal: can be left blank ("").
 BED: ""
@@ -20,6 +20,8 @@ BED_MIN_LENGTH: ""
 
 
 ### MAPPING PARAMETERS ###
+MAPPER: "minimap2"
+EXTRA_MAPPER_OPTIONS: ""
 SEQUENCING_TECHNOLOGY: "ILLUMINA"
 
 PICARD_MARKDUPLICATES_OPTIONS: "-MAX_FILE_HANDLES_FOR_READ_ENDS_MAP 1000"
@@ -35,7 +37,7 @@ REMOVE_DUP_UMI: FALSE
 UMITOOLS_DEDUP_OPTIONS: ""
 
 # options passed to 'samtools view'
-SAMTOOLS_VIEW_FILTERS1: "-F 256 -F 2048 -f 2"
+SAMTOOLS_VIEW_FILTERS1: ""
 
 ## After the remapping (options passed to 'samtools view'). If CREATE_SUB_BAMS is set to FALSE, leave blank (the command will not be called anyway)
-SAMTOOLS_VIEW_FILTERS2: "-q 30"
+SAMTOOLS_VIEW_FILTERS2: ""
