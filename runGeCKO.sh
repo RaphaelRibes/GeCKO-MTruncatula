@@ -145,6 +145,12 @@ else
   echo -e "\nParabricks Singularity image already exists.\n"
 fi
 
+if [ ! -f "${GeCKO_path}/utils/singularity_image/glnexus.sif" ] ; then
+  dlImageSylabs "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1" "${GeCKO_path}/utils/singularity_image/glnexus.sif"
+else
+  echo -e "\nGlnexus Singularity image already exists.\n"
+fi
+
 ### Make scripts executable
 for script in ${checks_path}/*.sh ; do
   makeExecutable "$script"

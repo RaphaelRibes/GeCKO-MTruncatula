@@ -15,6 +15,7 @@
 module load bioinfo-cirad
 module load singularity/3.5
 module load snakemake/7.32.4-conda
+module load bcftools/1.17
 
 SOURCE_DIR="/storage/replicated/cirad/projects/GE2POP/2024_AGRODIV/01_raw_data/01_preliminary_data/RAW_FASTQS"
 dirname=""
@@ -53,7 +54,7 @@ if [ "$data_cleaning" = "true" ]; then
   ./runGeCKO.sh --workflow DataCleaning --config-file .config/DATA_CLEANING/config.yml --cluster-profile .config/DATA_CLEANING/SLURM/ --jobs $jobs
 fi
 
-assembly_dir=/storage/simple/users/ribesr/replicated/asm4pg-hap/results/"$dirname"_results/02_final_assembly/hap
+assembly_dir=/storage/replicated/cirad_users/ribesr/asm4pg_results/"$dirname"_results/02_final_assembly/hap
 reference="$dirname"_final_hap.fasta
 
 if [ "$read_mapping" = "true" ]; then
