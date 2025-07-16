@@ -19,15 +19,17 @@ module load bcftools/1.17
 
 SOURCE_DIR="/storage/replicated/cirad/projects/GE2POP/2024_AGRODIV/01_raw_data/01_preliminary_data/RAW_FASTQS"
 dirname=""
+reference=false
 data_cleaning=false
 read_mapping=false
 variant_calling=false
 variant_filtering=false
 jobs=100
 
-while getopts "i:cmvfaj:" opt; do
+while getopts "i:rcmvfaj:" opt; do
   case $opt in
     i) dirname="$OPTARG" ;;
+    r) reference=true ;;
     c) data_cleaning=true ;;
     m) read_mapping=true ;;
     v) variant_calling=true ;;
@@ -54,19 +56,25 @@ if [ "$data_cleaning" = "true" ]; then
   ./runGeCKO.sh --workflow DataCleaning --config-file .config/DATA_CLEANING/config.yml --cluster-profile .config/DATA_CLEANING/SLURM/ --jobs $jobs
 fi
 
-assembly_dir=/storage/replicated/cirad_users/ribesr/asm4pg_results/"$dirname"_results/02_final_assembly/hap
-reference="$dirname"_final_hap.fasta
+if [ "$reference" = true ]; then
+  reference=/storage/replicated/cirad/projects/GE2POP/REFERENCES/MEDICAGO/truncat/genomeA17v5/MtrunA17r5.0-20161119-ANR.genome.fasta
+else
+  assembly_dir=/storage/replicated/cirad_users/ribesr/asm4pg_results/"$dirname"_results/02_final_assembly/hap
+  reference_file="$dirname"_final_hap.fasta
+  reference=$assembly_dir/$reference_file
+fi
+echo "Using reference: $reference"
 
 if [ "$read_mapping" = "true" ]; then
   echo "Running read mapping..."
   # Change the path of the reference in .config/READ_MAPPING/config.yml to the assembly directory
-  sed -i "s|REFERENCE: .*|REFERENCE: $assembly_dir/$reference|" .config/READ_MAPPING/config.yml
+  sed -i "s|REFERENCE: .*|REFERENCE: $reference|" .config/READ_MAPPING/config.yml
   ./runGeCKO.sh --workflow ReadMapping --config-file .config/READ_MAPPING/config.yml --cluster-profile .config/READ_MAPPING/SLURM/ --jobs $jobs
 fi
 
 if [ "$variant_calling" = "true" ]; then
   echo "Running variant calling..."
   # Change the path of the reference in .config/VARIANT_CALLING/config.yml to the assembly directory
-  sed -i "s|REFERENCE: .*|REFERENCE: $assembly_dir/$reference|" .config/VARIANT_CALLING/config.yml
+  sed -i "s|REFERENCE: .*|REFERENCE: $reference|" .config/VARIANT_CALLING/config.yml
   ./runGeCKO.sh --workflow VariantCalling --config-file .config/VARIANT_CALLING/config.yml --cluster-profile .config/VARIANT_CALLING/SLURM/ --jobs $jobs
 fi
