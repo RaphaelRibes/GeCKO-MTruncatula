@@ -24,7 +24,7 @@ set-resources:
   - Plot_GVCFVariablesHistograms:mem_mb=4000
   - Plot_GVCFDPBoxplot:mem_mb=4000
   - Plot_GVCFVariantsAlongGenome:mem_mb=4000
-  - GLnexus_JointGenotyping:mem_mb=128000
+  - GLnexus_JointGenotyping:mem_mb=8000
 
 
 ## Set a number of threads for specific steps (if not specified, default = 1)
