@@ -15,9 +15,9 @@ default-resources:
 
 ## Set resources ('partition' and/or 'mem_mb') for specific steps
 set-resources:
-  - HaplotypeCaller:partition=agap_gpu
-  - GenomicsDBImport:partition=agap_long
-  - GLnexus_JointGenotyping:partition=agap_bigmem
+  - HaplotypeCaller:partition=gpu
+  - GenomicsDBImport:partition=cpu
+  - GLnexus_JointGenotyping:partition=cpu
 
   - HaplotypeCaller:mem_mb=10000
   - HaplotypeCaller:gres=gpu:a100:1
