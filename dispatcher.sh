@@ -48,8 +48,6 @@ input_dir="$SOURCE_DIR/$dirname"
 
 if [ "$data_cleaning" = "true" ]; then
   echo "Running data cleaning..."
-  # Change the dir of DEMULT_DIR in .config/DATA_CLEANING/config.yml to the input directory
-  sed -i "s|DEMULT_DIR: .*|DEMULT_DIR: $input_dir|" .config/DATA_CLEANING/config.yml
   chmod +x .config/DATA_CLEANING/makeadapters.sh
   chmod +x runGeCKO.sh
   cd .config/DATA_CLEANING/ && ./makeadapters.sh "$input_dir" && cd ../..
@@ -59,9 +57,9 @@ fi
 if [ "$reference" = true ]; then
   reference=/storage/replicated/cirad/projects/GE2POP/REFERENCES/MEDICAGO/truncat/genomeA17v5/MtrunA17r5.0-20161119-ANR.genome.fasta
 else
-  assembly_dir=/storage/replicated/cirad_users/ribesr/asm4pg_results/"$dirname"_results/02_final_assembly/hap
-  reference_file="$dirname"_final_hap.fasta
-  reference=$assembly_dir/$reference_file
+  scaffold_dir=/storage/replicated/cirad/projects/GE2POP/2024_AGRODIV/02_results/03_results_on_assembly/03_scaffolds/"$dirname"/sorted
+  reference_file="$dirname"-M.truncatula.fa
+  reference=$scaffold_dir/$reference_file
 fi
 echo "Using reference: $reference"
 
