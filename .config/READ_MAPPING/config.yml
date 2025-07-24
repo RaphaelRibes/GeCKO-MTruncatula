@@ -7,7 +7,7 @@ MAPPING_SUBFOLDER: ""
 ### INPUT FILES ###
 # Path(s) to the directory or directories containing the trimmed fastq files to be mapped. To provide several directories, separate them with spaces.
 # If left blank, the workflow will assume the fastq files are in WORKFLOWS_OUTPUTS/DATA_CLEANING/DEMULT_TRIM, which is the path to our DATA_CLEANING workflow output files.
-TRIM_DIRS: ""
+TRIM_DIRS: "/storage/replicated/cirad/projects/GE2POP/2024_AGRODIV/01_raw_data/03_trimmed_FASTQ/F66027"
 
 # Path to the reference file in fasta format (must end with .fa, .fas or .fasta).
 REFERENCE: /storage/replicated/cirad_users/ribesr/asm4pg_results/ESP099_results/02_final_assembly/hap/ESP099_final_hap.fasta

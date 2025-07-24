@@ -1,0 +1,63 @@
+### GENERAL VARIABLES ###
+## If you want to separate results from different filtering parameters, provide a name for an extra folder to create in the VCF_FILTERING output folder. Otherwise leave blank ("").
+FILTERING_SUBFOLDER: ""
+
+
+#### INPUT FILES ###
+
+## Provide the VCF file to be filtered
+VCF_FILE: "VCF/variant_calling_converted.vcf.gz"
+
+
+### VCF FILTERING PARAMETERS ###
+
+## 01_GENOTYPE_FILTERING: Genotype filtering parameters passed to bcftools filter
+# Any genotype not meeting these conditions will be assigned a missing value. Be careful to provide them between quotes.
+# e.g.: “FMT/DP >= 5 & FMT/GQ >= 15” to set to “.” (<=> NA) any genotype that does not pass DP >= 5 AND GQ >= 15.
+# Common metrics used for filtering:
+# - FMT/DP = Approximate read depth (reads with MQ=255 or with bad mates are filtered)
+# - FMT/GQ = Genotype Quality
+
+BCFTOOLS_GENOTYPE_FILTERING_OPTIONS: "FMT/DP >= 10 & FMT/GQ >= 20"
+
+
+## 02_LOCUS_FILTERING: Locus filtering parameters passed to bcftools filter
+# Any locus not meeting these conditions will be removed. Be careful to provide them between quotes.
+# e.g.: "N_ALT=1 & TYPE=\"snp\" & QUAL >= 30 & F_MISSING <= 0.5" to keep only biallelic SNP sites with quality above 30 and less than 50% missing values.
+# Common metrics used for filtering:
+# - QUAL column = Phred-scaled probability that the site has no variant. QUAL=20 means 1 % chance that there is no variant at the site. QUAL=50 means 1 in 1e5 chance that there is no variant at the site.
+# - INFO/DP = Approximate read depth; some reads may have been filtered
+# Computed on the fly by bcftools:
+# - F_MISSING = Fraction of samples with missing genotype
+# - MAF = Frequency of minor alleles
+# - N_ALT = Number of alternate alleles
+# - TYPE = Variant type based on REF,ALT columns (indel,snp,mnp,ref,bnd,other,overlap)
+
+BCFTOOLS_LOCUS_FILTERING1_OPTIONS: "QUAL >= 30 & F_MISSING <= 0.5"
+
+
+## 03_SAMPLE_FILTERING: The maximum proportion of allowed missing data per sample. Samples above the threshold will be removed. Between 0 and 1. Set to "1" for no filtering.
+
+MAX_NA_PER_SAMPLE: "1"
+
+
+## 04_LOCUS FILTERING: Locus filtering parameters passed to bcftools filter after removing poorly covered samples and computing additional site level statistics
+# Any locus not meeting these conditions will be removed. Be careful to provide them between quotes.
+# e.g.: "F_MISSING <= 0.5 & INFO/MinHomo >= 2" to make sure all variants still have less than 50% missing data and present at least two homozygous genotypes of each allele among the remaining samples.
+# The additional available metrics:
+##INFO/SNP = Variant with at least 2 mononucleotide alleles [0 or 1]
+##INFO/INDEL = Variant with at least 2 alleles of different lengths [0 or 1]
+##INFO/nbGS = Number of genotyped samples
+##INFO/pNA = Frequency of missing genotypes for this site
+##INFO/nbG = Number of genotypes
+##INFO/nbAll = Number of alleles
+##INFO/All = List of alleles
+##INFO/AllCount = Counts of all alleles
+##INFO/AllFreq = Frequency of all alleles
+##INFO/MinHomo = Number of occurrences of the least frequent homozygous genotype
+##INFO/MAF = Minor allele frequency
+##INFO/MBF = Minor base frequency
+##INFO/He = Nei expected Heterozygosity
+##INFO/Fis = Inbreeding coefficient
+
+BCFTOOLS_LOCUS_FILTERING2_OPTIONS: "TYPE=\"snp\" & N_ALT=1 & F_MISSING <= 0.5 & INFO/Fis>=0.8"
