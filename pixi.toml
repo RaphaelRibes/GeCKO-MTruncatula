@@ -1,0 +1,13 @@
+[workspace]
+channels = ["conda-forge", "bioconda"]
+name = "GeCKO-MTruncatula-F11023-sr"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+singularity = ">=3.8.6,<4"
+snakemake = "==7.32.4"
+bcftools = ">=1.9,<2"
+python = ">=3.10,<3.11"
