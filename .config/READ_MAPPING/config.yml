@@ -10,7 +10,7 @@ MAPPING_SUBFOLDER: ""
 TRIM_DIRS: "/storage/replicated/cirad/projects/GE2POP/2024_AGRODIV/01_raw_data/03_trimmed_FASTQ/F66027"
 
 # Path to the reference file in fasta format (must end with .fa, .fas or .fasta).
-REFERENCE: /storage/replicated/cirad_users/ribesr/asm4pg_results/ESP099_results/02_final_assembly/hap/ESP099_final_hap.fasta
+REFERENCE: /storage/replicated/cirad/projects/GE2POP/REFERENCES/MEDICAGO/truncat/genomeA17v5/MtrunA17r5.0-20161119-ANR.genome.fasta
 
 # Path to the bed file listing targeted zones. Optionnal: can be left blank ("").
 BED: ""

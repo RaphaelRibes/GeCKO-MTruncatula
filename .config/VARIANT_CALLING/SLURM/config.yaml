@@ -21,9 +21,9 @@ set-resources:
 
   - HaplotypeCaller:mem_mb=10000
   - HaplotypeCaller:gres=gpu:a100:1
-  - Plot_GVCFVariablesHistograms:mem_mb=4000
-  - Plot_GVCFDPBoxplot:mem_mb=4000
-  - Plot_GVCFVariantsAlongGenome:mem_mb=4000
+  - Plot_GVCFVariablesHistograms:mem_mb=8000
+  - Plot_GVCFDPBoxplot:mem_mb=8000
+  - Plot_GVCFVariantsAlongGenome:mem_mb=8000
   - GLnexus_JointGenotyping:mem_mb=8000
 
 
