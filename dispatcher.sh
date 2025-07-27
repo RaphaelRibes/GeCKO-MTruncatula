@@ -65,3 +65,8 @@ if [ "$variant_calling" = "true" ]; then
   sed -i "s|REFERENCE: .*|REFERENCE: $reference|" .config/VARIANT_CALLING/config.yml
   ./runGeCKO.sh --workflow VariantCalling --config-file .config/VARIANT_CALLING/config.yml --cluster-profile .config/VARIANT_CALLING/SLURM/ --jobs $jobs
 fi
+
+if [ "$variant_filtering" = "true" ]; then
+  echo "Running variant filtering..."
+  ./runGeCKO.sh --workflow VCF_FILTERING --config-file .config/VCF_FILTERING/config.yml --cluster-profile .config/VCF_FILTERING/SLURM/ --jobs $jobs
+fi
