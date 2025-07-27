@@ -68,5 +68,5 @@ fi
 
 if [ "$variant_filtering" = "true" ]; then
   echo "Running variant filtering..."
-  ./runGeCKO.sh --workflow VCF_FILTERING --config-file .config/VCF_FILTERING/config.yml --cluster-profile .config/VCF_FILTERING/SLURM/ --jobs $jobs
+  ./runGeCKO.sh --workflow VcfFiltering --config-file .config/VCF_FILTERING/config.yml --cluster-profile .config/VCF_FILTERING/SLURM/ --jobs $jobs
 fi
