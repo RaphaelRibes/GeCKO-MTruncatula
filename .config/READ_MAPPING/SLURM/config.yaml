@@ -15,7 +15,11 @@ default-resources:
 ## Set resources ('partition' and/or 'mem_mb') for specific steps
 set-resources:
   - Mapping_PairedEndFastqs:mem_mb=5000
+  - Mapping_SingleEndFastqs:mem_mb=10000
+  - Mapping_SingleEndFastqs:partition=agap_bigmem
   - Remapping_PairedEndExtractedFastqs:mem_mb=5000
+  - Remapping_SingleEndExtractedFastqs:mem_mb=10000
+  - Remapping_SingleEndExtractedFastqs:partition=agap_bigmem
 
 
 
@@ -23,7 +27,9 @@ set-resources:
 # This number will be passed to the --cpus-per-task sbatch option when submitting jobs
 set-threads:
   - Mapping_PairedEndFastqs=8
+  - Mapping_SingleEndFastqs=8
   - Remapping_PairedEndExtractedFastqs=8
+  - Remapping_SingleEndExtractedFastqs=8
 
 
 
