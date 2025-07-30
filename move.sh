@@ -126,10 +126,11 @@ elif [ "$MODE" == "calling" ]; then
 fi
 
 if [ "$REF" == "A17" ]; then
-    DEST_REF_DIR="A17-vs-long_reads"
+    DEST_REF_DIR="A17-vs-"
 elif [ "$REF" == "assembly" ]; then
-    DEST_REF_DIR="assembly-vs-long_reads"
+    DEST_REF_DIR="assembly-vs-"
 fi
+DEST_REF_DIR+="${READ_TYPE}_reads"
 
 # Set read type suffix based on the chosen option.
 if [ "$READ_TYPE" == "long" ]; then
