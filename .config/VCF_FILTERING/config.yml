@@ -60,4 +60,4 @@ MAX_NA_PER_SAMPLE: "1"
 ##INFO/He = Nei expected Heterozygosity
 ##INFO/Fis = Inbreeding coefficient
 
-BCFTOOLS_LOCUS_FILTERING2_OPTIONS: "TYPE=\"snp\" & N_ALT=1 & F_MISSING <= 0.5 & INFO/Fis>=0.8"
+BCFTOOLS_LOCUS_FILTERING2_OPTIONS: "TYPE=\"snp\" & N_ALT=1 & F_MISSING <= 0.5"

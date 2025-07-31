@@ -9,7 +9,7 @@
 # The 'mem_mb' value should be an integer (representing an amount of megabytes = Mb of RAM) and will be passed to the --mem-per-cpu sbatch option when submitting jobs
 default-resources:
   - mem_mb=2000
-  - partition=cpu
+  - partition=agap_normal
 
 
 ## Set resources ('partition' and/or 'mem_mb') for specific steps
