@@ -1,0 +1,17 @@
+[workspace]
+channels = ["conda-forge", "bioconda"]
+name = "GeCKO-MTruncatula-F11023-sr"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+mapping_r = "./dispatcher.sh -r -m -i ESP099"
+mapping_a = "./dispatcher.sh -m -i ESP099"
+calling_r = "./dispatcher.sh -r -v -i ESP099"
+calling_a = "./dispatcher.sh -v -i ESP099"
+
+
+[dependencies]
+snakemake = "==7.32.4"
+bcftools = ">=1.9,<2"
+python = ">=3.10,<3.11"

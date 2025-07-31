@@ -1,21 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=GeCKO_dispatcher
-#SBATCH --output=dispatcher.out
-#SBATCH --error=dispatcher.err
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-
 # -i: input directory
 # -c: data cleaning
 # -m: read mapping
 # -v: variant calling
 # -f: variant filtering
 # -j: number of jobs
-
-module load bioinfo-cirad
-module load singularity/3.5
-module load snakemake/7.32.4-conda
-module load bcftools/1.17
 
 SOURCE_DIR="/storage/replicated/cirad/projects/GE2POP/2024_AGRODIV/01_raw_data/01_preliminary_data/RAW_FASTQS"
 dirname=""
@@ -75,4 +64,9 @@ if [ "$variant_calling" = "true" ]; then
   # Change the path of the reference in .config/VARIANT_CALLING/config.yml to the assembly directory
   sed -i "s|REFERENCE: .*|REFERENCE: $reference|" .config/VARIANT_CALLING/config.yml
   ./runGeCKO.sh --workflow VariantCalling --config-file .config/VARIANT_CALLING/config.yml --cluster-profile .config/VARIANT_CALLING/SLURM/ --jobs $jobs
+fi
+
+if [ "$variant_filtering" = "true" ]; then
+  echo "Running variant filtering..."
+  ./runGeCKO.sh --workflow VcfFiltering --config-file .config/VCF_FILTERING/config.yml --cluster-profile .config/VCF_FILTERING/SLURM/ --jobs $jobs
 fi
