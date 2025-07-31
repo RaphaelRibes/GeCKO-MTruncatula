@@ -163,11 +163,10 @@ if [ ! -d "$SOURCE_PATH" ]; then
     exit 1
 fi
 
-# If ${DEST_PATH} does not exist, send an error message.
-if [ ! -d "$DEST_PATH" ]; then
-    echo "Error: Destination directory does not exist: $DEST_PATH"
-    exit 1
-fi
+# Make sure it's the same source folder as the one used in the workflow.
+if [ ! -d "/storage/simple/users/ribesr/nv_scratch/GeCKO/GeCKO-MTruncatula-${FOLDER_NAME}${READ_SUFFIX}/WORKFLOWS_OUTPUTS/${SOURCE_TYPE}" ]; then
+    echo "Error: Source folder does not match the expected workflow output."
+    echo "Please ensure you are using the correct FOLDER_NAME and
 
 
 # Execute the copy command. The source directory itself will be copied into the destination.
