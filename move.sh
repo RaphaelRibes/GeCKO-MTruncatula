@@ -166,7 +166,8 @@ fi
 # Make sure it's the same source folder as the one used in the workflow.
 if [ ! -d "/storage/simple/users/ribesr/nv_scratch/GeCKO/GeCKO-MTruncatula-${FOLDER_NAME}${READ_SUFFIX}/WORKFLOWS_OUTPUTS/${SOURCE_TYPE}" ]; then
     echo "Error: Source folder does not match the expected workflow output."
-    echo "Please ensure you are using the correct FOLDER_NAME and
+    exit 1
+fi
 
 
 # Execute the copy command. The source directory itself will be copied into the destination.
